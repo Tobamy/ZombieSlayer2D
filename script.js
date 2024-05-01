@@ -34,12 +34,11 @@ function init() {
     background = document.getElementById("imgBackground");
 
     //player
-    player = document.getElementById("ufo");
+    player = document.getElementById("ufo");//todo id ufo umbenennen
     playerX -= player.width/2;
     playerY -= player.height/2;
 
     //Gameloop starten
-    //gameLoop(); 
     setInterval(gameLoop,16); //FPS = 1000/diese Zahl
 }
 
@@ -55,44 +54,51 @@ function borderCheck(x,y){
 function gameLoop() {
     update(); 
     draw();
-    
 }
 
 function update() {
     paceChanger();
-    updatePlayerRotation();
     updatePlayerPosition();
 }
 
-
 function draw() {
-    //Hintergrund
+    // Hintergrund
     ctx.clearRect(0,0,canvas.width, canvas.height);
 
     drawWorld();
 
-    //player
     drawPlayer();
 }
 
 function drawPlayer(){
     var playercenter = player.width / 2;
     frame += 0.2;
-    ctx.drawImage(player, playerX, playerY,player.width, player.height);
-    ctx.strokeRect(playerX,playerY, player.width, player.height);
+    // Berechne die Differenz zwischen der Mausposition und der Spielerposition
+    var dx = mouseX - (playerX + player.width / 2);
+    var dy = mouseY - (playerY + player.height / 2);
+    
+    // Berechne den Winkel zwischen der Spielerposition und der Mausposition
+    var angle = Math.atan2(dy, dx);
+    
+    // Winkel in Grad umwandeln
+    var playerAngle = angle * (180 / Math.PI);
+    
+    // Spieler drehen
+    ctx.save();
+    ctx.translate(playerX + player.width / 2, playerY + player.height / 2);
+    ctx.rotate(playerAngle * Math.PI / 180);
+    ctx.drawImage(player, -player.width / 2, -player.height / 2, player.width, player.height);
+    ctx.restore();
 }
 
 function drawWorld(){
     ctx.drawImage(background, 0,0);
 }
 
-
 function mouseClicked(ev){
     //Wenn geklickt 
     console.log(mouseX, mouseY);
 }
-
-
 
 function mouseMoved(ev){
     mouseX = ev.clientX - canvas.offsetLeft; 
@@ -197,10 +203,6 @@ function updatePlayerPosition(ev){
             playerX += schrittweite;
         }
     }
-}
-
-function updatePlayerRotation(ev){ //todo
-    //player.rotate(5);
 }
 
 document.addEventListener('keydown', (event) => {
