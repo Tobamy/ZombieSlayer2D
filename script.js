@@ -16,10 +16,15 @@
     var playerY = 500;
     var schrittweite;
     var normalPace = 2;
-    //var sprintPace = normalPace*2;  //todo Sprintfunktion und Sneakfunktion werden später eingebaut
+    var sprintPace = normalPace*2;
     //var sneakPace = normalPace/2; //todo
-    //Tastenanschläge speichern
-    var keysPressed = {};
+    //einzelne Tastenanschläge speichern
+    var upKey;
+    var leftKey;
+    var rightKey;
+    var downKey;
+    var shiftKey;
+    //var altKey;
 
 //#endregion
 
@@ -82,11 +87,16 @@ function drawPlayer(){
     
     // Winkel in Grad umwandeln
     var playerAngle = angle * (180 / Math.PI);
-    
+
+    //todo Idee: Waffe auf Maus ausrichten
+    //da muss dann die Variable playerAngle angepasst werden, 
+    //je nachdem, wie weit die Maus vom Spieler weg ist
+
     // Spieler drehen
     ctx.save();
+    //Neue (0, 0) Position setzen
     ctx.translate(playerX + player.width / 2, playerY + player.height / 2);
-    ctx.rotate(playerAngle * Math.PI / 180);
+    ctx.rotate(playerAngle * Math.PI / 180 );
     ctx.drawImage(player, -player.width / 2, -player.height / 2, player.width, player.height);
     ctx.restore();
 }
@@ -106,112 +116,162 @@ function mouseMoved(ev){
 }
 
 function paceChanger(ev){ //todo
-    /*if(keysPressed['Shift']){
+    if(shiftKey){
         schrittweite = sprintPace;
-    }else if(keysPressed['Alt']){
+    }
+    //todo auskommentiert, da preventDefault und stopPropagation nicht zu funktionieren scheinen, 
+    //sneaken mit alt oder Ctrl wird also schwer. Es werden nämlich immer Tastenkombis getriggert
+    /*else if(altKey){
         schrittweite = sneakPace;
-    }else{*/
+    }*/else{
         schrittweite = normalPace;
-    //}
+    }
 }
 
-function updatePlayerPosition(ev){
-    if (keysPressed['s'] && keysPressed['d']) {
-        if (borderCheck(playerX + schrittweite, playerY + schrittweite)) {
+//todo Diese Funktion kann man bestimmt auch schöner machen.
+//ChatGPT hat mir da schon Sachen vorgeschlagen. 
+//Das ist aber optional, momentan funktioniert es nämlich
+function updatePlayerPosition(ev){ 
+    if (downKey && rightKey) {
+        if (borderCheck(playerX + schrittweite / Math.sqrt(2), playerY + schrittweite / Math.sqrt(2))) {
             playerX += schrittweite / Math.sqrt(2);
             playerY += schrittweite / Math.sqrt(2);
         }
     }
-    if (keysPressed['s'] && keysPressed['a']) {
-        if (borderCheck(playerX - schrittweite, playerY + schrittweite)) {
+    if (downKey && leftKey) {
+        if (borderCheck(playerX - schrittweite / Math.sqrt(2), playerY + schrittweite / Math.sqrt(2))) {
             playerX -= schrittweite / Math.sqrt(2);
             playerY += schrittweite / Math.sqrt(2);
         }
     }
-    if (keysPressed['w'] && keysPressed['d']) {
-        if (borderCheck(playerX + schrittweite, playerY - schrittweite)) {
+    if (upKey && rightKey) {
+        if (borderCheck(playerX + schrittweite / Math.sqrt(2), playerY - schrittweite / Math.sqrt(2))) {
             playerX += schrittweite / Math.sqrt(2);
             playerY -= schrittweite / Math.sqrt(2);
         }
     }
-    if (keysPressed['w'] && keysPressed['a']) {
-        if (borderCheck(playerX - schrittweite, playerY - schrittweite)) {
+    if (upKey && leftKey) {
+        if (borderCheck(playerX - schrittweite / Math.sqrt(2), playerY - schrittweite / Math.sqrt(2))) {
             playerX -= schrittweite / Math.sqrt(2);
             playerY -= schrittweite / Math.sqrt(2);
         }
     }
-    if (keysPressed['s'] && !keysPressed['a'] && !keysPressed['d']) {
+    if (downKey && !leftKey && !rightKey) {
         if (borderCheck(playerX, playerY + schrittweite)) {
             playerY += schrittweite;
         }
     }
-    if (keysPressed['w'] && !keysPressed['a'] && !keysPressed['d']) {
+    if (upKey && !leftKey && !rightKey) {
         if (borderCheck(playerX, playerY - schrittweite)) {
             playerY -= schrittweite;
         }
     }
-    if (keysPressed['a'] && !keysPressed['w'] && !keysPressed['s']) {
+    if (leftKey && !upKey && !downKey) {
         if (borderCheck(playerX - schrittweite, playerY)) {
             playerX -= schrittweite;
         }
     }
-    if (keysPressed['d'] && !keysPressed['w'] && !keysPressed['s']) {
+    if (rightKey && !upKey && !downKey) {
         if (borderCheck(playerX + schrittweite, playerY)) {
             playerX += schrittweite;
         }
-    }if (keysPressed['s'] && keysPressed['d']) {
+    }if (downKey && rightKey) {
         if (borderCheck(playerX + schrittweite, playerY + schrittweite)) {
             playerX += schrittweite;
             playerY += schrittweite;
         }
     }
-    if (keysPressed['s'] && keysPressed['a']) {
+    if (downKey && leftKey) {
         if (borderCheck(playerX - schrittweite, playerY + schrittweite)) {
             playerX -= schrittweite;
             playerY += schrittweite;
         }
     }
-    if (keysPressed['w'] && keysPressed['d']) {
+    if (upKey && rightKey) {
         if (borderCheck(playerX + schrittweite, playerY - schrittweite)) {
             playerX += schrittweite;
             playerY -= schrittweite;
         }
     }
-    if (keysPressed['w'] && keysPressed['a']) {
+    if (upKey && leftKey) {
         if (borderCheck(playerX - schrittweite, playerY - schrittweite)) {
             playerX -= schrittweite;
             playerY -= schrittweite;
         }
     }
-    if (keysPressed['s'] && !keysPressed['a'] && !keysPressed['d']) {
+    if (downKey && !leftKey && !rightKey) {
         if (borderCheck(playerX, playerY + schrittweite)) {
             playerY += schrittweite;
         }
     }
-    if (keysPressed['w'] && !keysPressed['a'] && !keysPressed['d']) {
+    if (upKey && !leftKey && !rightKey) {
         if (borderCheck(playerX, playerY - schrittweite)) {
             playerY -= schrittweite;
         }
     }
-    if (keysPressed['a'] && !keysPressed['w'] && !keysPressed['s']) {
+    if (leftKey && !upKey && !downKey) {
         if (borderCheck(playerX - schrittweite, playerY)) {
             playerX -= schrittweite;
         }
     }
-    if (keysPressed['d'] && !keysPressed['w'] && !keysPressed['s']) {
+    if (rightKey && !upKey && !downKey) {
         if (borderCheck(playerX + schrittweite, playerY)) {
             playerX += schrittweite;
         }
+    }if (!rightKey && !upKey && !downKey && !leftKey) {
+        playerX = playerX;
+        playerY = playerY;
     }
+    console.log(rightKey);
 }
 
 document.addEventListener('keydown', (event) => {
-    keysPressed[event.key] = true; // Setze die Taste als gedrückt
+    if(event.key ==="w" || event.key=== "ArrowUp" || event.key ==="W"){
+        upKey = true;
+    }
+    else if(event.key ==="a" || event.key=== "ArrowLeft" || event.key ==="A"){
+        leftKey = true;
+    }
+    else if(event.key ==="s" || event.key=== "ArrowDown" || event.key ==="S"){
+        downKey = true;
+    }
+    else if(event.key ==="d" || event.key=== "ArrowRight" || event.key ==="D"){
+        rightKey = true;
+    }else if(event.key ==="Shift"){
+        shiftKey = true;
+    }
+    //todo auskommentiert, da preventDefault und stopPropagation nicht zu funktionieren scheinen, 
+    //sneaken mit alt oder Ctrl wird also schwer. Es werden nämlich immer Tastenkombis getriggert
+    /*else if(event.key ==="Alt" || (event.key ==="Alt" && (event.key === "d" || event.key === "D")) || (event.key ==="Alt" && (event.key === "w" || event.key === "W"))){
+        event.preventDefault();
+        event.stopPropagation();
+        altKey = true;
+    }*/
 });
 document.addEventListener('keyup', (event) => {
-    delete keysPressed[event.key]; // Entferne die Taste aus dem Array, wenn sie losgelassen wird
+    if(event.key ==="w" || event.key=== "ArrowUp" || event.key ==="W"){
+        upKey = false;
+    }
+    else if(event.key ==="a" || event.key=== "ArrowLeft" || event.key ==="A"){
+        leftKey = false;
+    }
+    else if(event.key ==="s" || event.key=== "ArrowDown" || event.key ==="S"){
+        downKey = false;
+    }
+    else if(event.key ==="d" || event.key=== "ArrowRight" || event.key ==="D"){
+        rightKey = false;
+        console.log("keinD");
+    }else if(event.key ==="Shift"){
+        shiftKey = false;
+    }
+    //todo auskommentiert, da preventDefault und stopPropagation nicht zu funktionieren scheinen, 
+    //sneaken mit alt oder Ctrl wird also schwer. Es werden nämlich immer Tastenkombis getriggert
+    /*else if(event.key ==="Alt"){ 
+        event.preventDefault();
+        event.stopPropagation();
+        altKey = false;
+    }*/
 });
 document.addEventListener("mousemove", mouseMoved);
-//document.addEventListener("keydown", keyboardPressed);
 document.addEventListener("mousedown", mouseClicked);
 document.addEventListener("DOMContentLoaded", init, false);
