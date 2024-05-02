@@ -43,14 +43,12 @@
     var schrittweite;
     var normalPace = 3;
     var sprintPace = normalPace*2;
-    //var sneakPace = normalPace/2; //todo
     //einzelne Tastenanschläge speichern
     var upKey;
     var leftKey;
     var rightKey;
     var downKey;
     var shiftKey;
-    //var altKey;
 
 //#endregion
 
@@ -145,11 +143,7 @@ function paceChanger(ev){ //todo
     if(shiftKey){
         schrittweite = sprintPace;
     }
-    //todo auskommentiert, da preventDefault und stopPropagation nicht zu funktionieren scheinen, 
-    //sneaken mit alt oder Ctrl wird also schwer. Es werden nämlich immer Tastenkombis getriggert
-    /*else if(altKey){
-        schrittweite = sneakPace;
-    }*/else{
+    else{
         schrittweite = normalPace;
     }
 }
@@ -158,50 +152,7 @@ function paceChanger(ev){ //todo
 //ChatGPT hat mir da schon Sachen vorgeschlagen. 
 //Das ist aber optional, momentan funktioniert es nämlich
 function updatePlayerPosition(ev){ 
-    /*if (downKey && rightKey) {
-        if (borderCheck(playerX + schrittweite / Math.sqrt(2), playerY + schrittweite / Math.sqrt(2))) {
-            playerX += schrittweite / Math.sqrt(2);
-            playerY += schrittweite / Math.sqrt(2);
-        }
-    }
-    if (downKey && leftKey) {
-        if (borderCheck(playerX - schrittweite / Math.sqrt(2), playerY + schrittweite / Math.sqrt(2))) {
-            playerX -= schrittweite / Math.sqrt(2);
-            playerY += schrittweite / Math.sqrt(2);
-        }
-    }
-    if (upKey && rightKey) {
-        if (borderCheck(playerX + schrittweite / Math.sqrt(2), playerY - schrittweite / Math.sqrt(2))) {
-            playerX += schrittweite / Math.sqrt(2);
-            playerY -= schrittweite / Math.sqrt(2);
-        }
-    }
-    if (upKey && leftKey) {
-        if (borderCheck(playerX - schrittweite / Math.sqrt(2), playerY - schrittweite / Math.sqrt(2))) {
-            playerX -= schrittweite / Math.sqrt(2);
-            playerY -= schrittweite / Math.sqrt(2);
-        }
-    }
-    if (downKey && !leftKey && !rightKey) {
-        if (borderCheck(playerX, playerY + schrittweite)) {
-            playerY += schrittweite;
-        }
-    }
-    if (upKey && !leftKey && !rightKey) {
-        if (borderCheck(playerX, playerY - schrittweite)) {
-            playerY -= schrittweite;
-        }
-    }
-    if (leftKey && !upKey && !downKey) {
-        if (borderCheck(playerX - schrittweite, playerY)) {
-            playerX -= schrittweite;
-        }
-    }
-    if (rightKey && !upKey && !downKey) {
-        if (borderCheck(playerX + schrittweite, playerY)) {
-            playerX += schrittweite;
-        }
-    }*/if (downKey && rightKey && !upKey && !leftKey) {
+    if (downKey && rightKey && !upKey && !leftKey) {
         if (borderCheck(playerX + schrittweite, playerY + schrittweite)) {
             playerX += schrittweite;
             playerY += schrittweite;
@@ -255,7 +206,6 @@ function updatePlayerPosition(ev){
     if (!downKey && leftKey && rightKey && upKey){
         playerY -= schrittweite;
     }
-    //console.log(rightKey);
 }
 
 document.addEventListener('keydown', (event) => {
@@ -273,13 +223,6 @@ document.addEventListener('keydown', (event) => {
     }else if(event.key ==="Shift"){
         shiftKey = true;
     }
-    //todo auskommentiert, da preventDefault und stopPropagation nicht zu funktionieren scheinen, 
-    //sneaken mit alt oder Ctrl wird also schwer. Es werden nämlich immer Tastenkombis getriggert
-    /*else if(event.key ==="Alt" || (event.key ==="Alt" && (event.key === "d" || event.key === "D")) || (event.key ==="Alt" && (event.key === "w" || event.key === "W"))){
-        event.preventDefault();
-        event.stopPropagation();
-        altKey = true;
-    }*/
 });
 document.addEventListener('keyup', (event) => {
     if(event.key ==="w" || event.key=== "ArrowUp" || event.key ==="W"){
@@ -293,17 +236,9 @@ document.addEventListener('keyup', (event) => {
     }
     else if(event.key ==="d" || event.key=== "ArrowRight" || event.key ==="D"){
         rightKey = false;
-        //console.log("keinD");
     }else if(event.key ==="Shift"){
         shiftKey = false;
     }
-    //todo auskommentiert, da preventDefault und stopPropagation nicht zu funktionieren scheinen, 
-    //sneaken mit alt oder Ctrl wird also schwer. Es werden nämlich immer Tastenkombis getriggert
-    /*else if(event.key ==="Alt"){ 
-        event.preventDefault();
-        event.stopPropagation();
-        altKey = false;
-    }*/
 });
 document.addEventListener("mousemove", mouseMoved);
 document.addEventListener("mousedown", mouseClicked);
