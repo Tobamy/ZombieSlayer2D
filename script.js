@@ -182,31 +182,95 @@ function drawPlayer(){
 function weaponSwitcher(ev){;
     if(ev.deltaY > 0){
         if(inventory.handgun.isEquipped){
-            inventory.handgun.isEquipped = false;
-            inventory.rifle.isEquipped = true;
+            if(inventory.rifle.isOwned){
+                inventory.handgun.isEquipped = false;
+                inventory.rifle.isEquipped = true;
+            }else if(inventory.shotgun.isOwned){
+                inventory.handgun.isEquipped = false;
+                inventory.shotgun.isEquipped = true;
+            }else if(inventory.knife.isOwned){
+                inventory.handgun.isEquipped = false;
+                inventory.knife.isEquipped = true;
+            }
         }else if(inventory.rifle.isEquipped){
-            inventory.rifle.isEquipped = false;
-            inventory.shotgun.isEquipped = true;
+            if(inventory.shotgun.isOwned){
+                inventory.rifle.isEquipped = false;
+                inventory.shotgun.isEquipped = true;
+            }else if(inventory.knife.isOwned){
+                inventory.rifle.isEquipped = false;
+                inventory.knife.isEquipped = true;
+            }else if(inventory.handgun.isOwned){
+                inventory.rifle.isEquipped = false;
+                inventory.handgun.isEquipped = true;
+            }
         }else if(inventory.shotgun.isEquipped){
-            inventory.shotgun.isEquipped = false;
-            inventory.knife.isEquipped = true;
+            if(inventory.knife.isOwned){
+                inventory.shotgun.isEquipped = false;
+                inventory.knife.isEquipped = true;
+            }else if(inventory.handgun.isOwned){
+                inventory.shotgun.isEquipped = false;
+                inventory.handgun.isEquipped = true;
+            }else if(inventory.rifle.isOwned){
+                inventory.shotgun.isEquipped = false;
+                inventory.rifle.isEquipped = true;
+            }
         }else if(inventory.knife.isEquipped){
-            inventory.knife.isEquipped = false;
-            inventory.handgun.isEquipped = true;
+            if(inventory.handgun.isOwned){
+                inventory.knife.isEquipped = false;
+                inventory.handgun.isEquipped = true;
+            }else if(inventory.rifle.isOwned){
+                inventory.knife.isEquipped = false;
+                inventory.rifle.isEquipped = true;
+            }else if(inventory.shotgun.isOwned){
+                inventory.knife.isEquipped = false;
+                inventory.shotgun.isEquipped = true;
+            }
         }
     }else if(ev.deltaY < 0){
         if(inventory.handgun.isEquipped){
-            inventory.handgun.isEquipped = false;
-            inventory.knife.isEquipped = true;
+            if(inventory.knife.isOwned){
+                inventory.handgun.isEquipped = false;
+                inventory.knife.isEquipped = true;
+            }else if(inventory.shotgun.isOwned){
+                inventory.handgun.isEquipped = false;
+                inventory.shotgun.isEquipped = true;
+            }else if(inventory.rifle.isOwned){
+                inventory.handgun.isEquipped = false;
+                inventory.rifle.isEquipped = true;
+            }
         }else if(inventory.rifle.isEquipped){
-            inventory.rifle.isEquipped = false;
-            inventory.handgun.isEquipped = true;
+            if(inventory.handgun.isOwned){
+                inventory.rifle.isEquipped = false;
+                inventory.handgun.isEquipped = true;
+            }else if(inventory.knife.isOwned){
+                inventory.rifle.isEquipped = false;
+                inventory.knife.isEquipped = true;
+            }else if(inventory.handgun.isOwned){
+                inventory.rifle.isEquipped = false;
+                inventory.shotgun.isEquipped = true;
+            }
         }else if(inventory.shotgun.isEquipped){
-            inventory.shotgun.isEquipped = false;
-            inventory.rifle.isEquipped = true;
+            if(inventory.rifle.isOwned){
+                inventory.shotgun.isEquipped = false;
+                inventory.rifle.isEquipped = true;
+            }else if(inventory.handgun.isOwned){
+                inventory.shotgun.isEquipped = false;
+                inventory.handgun.isEquipped = true;
+            }else if(inventory.knife.isOwned){
+                inventory.shotgun.isEquipped = false;
+                inventory.knife.isEquipped = true;
+            }
         }else if(inventory.knife.isEquipped){
-            inventory.knife.isEquipped = false;
-            inventory.shotgun.isEquipped = true;
+            if(inventory.shotgun.isOwned){
+                inventory.knife.isEquipped = false;
+                inventory.shotgun.isEquipped = true;
+            }else if(inventory.rifle.isOwned){
+                inventory.knife.isEquipped = false;
+                inventory.rifle.isEquipped = true;
+            }else if(inventory.handgun.isOwned){
+                inventory.knife.isEquipped = false;
+                inventory.handgun.isEquipped = true;
+            }
         }
     }
 }
@@ -331,25 +395,33 @@ document.addEventListener('keydown', (event) => {
     }
 
     if(event.key === "1" || event.key ==="!"){
-        inventory.rifle.isEquipped = false;
-        inventory.shotgun.isEquipped = false;
-        inventory.knife.isEquipped = false;
-        inventory.handgun.isEquipped = true;
+        if(inventory.handgun.isOwned){
+            inventory.rifle.isEquipped = false;
+            inventory.shotgun.isEquipped = false;
+            inventory.knife.isEquipped = false;
+            inventory.handgun.isEquipped = true;
+        }
     }else if(event.key === "2" || event.key ==='"'){
-        inventory.handgun.isEquipped = false;
-        inventory.shotgun.isEquipped = false;
-        inventory.knife.isEquipped = false;
-        inventory.rifle.isEquipped = true;
+        if(inventory.rifle.isOwned){
+            inventory.handgun.isEquipped = false;
+            inventory.shotgun.isEquipped = false;
+            inventory.knife.isEquipped = false;
+            inventory.rifle.isEquipped = true;
+        }
     }else if(event.key === "3" || event.key ==='§'){
-        inventory.handgun.isEquipped = false;
-        inventory.rifle.isEquipped = false;
-        inventory.knife.isEquipped = false;
-        inventory.shotgun.isEquipped = true;
+        if(inventory.shotgun.isOwned){
+            inventory.handgun.isEquipped = false;
+            inventory.rifle.isEquipped = false;
+            inventory.knife.isEquipped = false;
+            inventory.shotgun.isEquipped = true;
+        }
     }else if(event.key === "4" || event.key ==='$'){
-        inventory.handgun.isEquipped = false;
-        inventory.rifle.isEquipped = false;
-        inventory.shotgun.isEquipped = false;
-        inventory.knife.isEquipped = true;
+        if(inventory.knife.isOwned){
+            inventory.handgun.isEquipped = false;
+            inventory.rifle.isEquipped = false;
+            inventory.shotgun.isEquipped = false;
+            inventory.knife.isEquipped = true;
+        }
     }
 });
 document.addEventListener('keyup', (event) => {
