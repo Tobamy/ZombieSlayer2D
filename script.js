@@ -1,6 +1,7 @@
 //kommende Features
-//todoT Laufanimation
-//todoT Waffe wechseln
+//doneT Laufanimation
+    //Quelle Bilder für Spritesheet: https://opengameart.org/content/animated-top-down-survivor-player
+//doneT Waffe wechseln
 //todo Nahkampfangriff
 //todoS Schießen
     //auch Nachladen
@@ -9,6 +10,7 @@
     //mehrere Level
     //evtl. Level automatisch generieren (Rougelike)
 //todo Gegner (mit Health Bar)
+    //evtl. Bildquelle: https://opengameart.org/content/animated-top-down-zombie
 //todo Inventar
     //man sieht in einer Anzeige unten konstant alle Waffen und kann mit dem Mausrad durchscrollen
     //oder mit den Zahlen durch die Waffen wechseln
@@ -25,6 +27,7 @@
     //Coin System, um die Coins ausgeben zu können
 //todo falls noch Zeit da ist:
     //Waffe genau auf die Maus ausrichten (abhängig von der Entfernung der Maus zum Player)
+    //Größe automatisch an die Fenstergröße anpassen
 
 //Globale Variablen
     //#region Variablen
@@ -39,9 +42,12 @@
 
     //Player
     var player;
+    var feet;
     var frame=0;
     var playerX = 500;
     var playerY = 500;
+    var feetX = playerX;
+    var feetY = playerY;
     var schrittweite;
     var normalPace = 3;
     var sprintPace = normalPace*2;
@@ -51,6 +57,28 @@
     var rightKey;
     var downKey;
     var shiftKey;
+
+    //Weapons
+    var inventory = {
+        handgun: {
+            isOwned: true,
+            isEquipped: true
+        },
+        rifle: {
+            isOwned: false,
+            isEquipped: false
+        },
+        shotgun: {
+            isOwned: false,
+            isEquipped: false
+        },
+        knife: {
+            isOwned: true,
+            isEquipped: false
+        }
+    }
+    var scrollDown;
+    var scrollUp;
 
 //#endregion
 
@@ -65,9 +93,11 @@ function init() {
     background = document.getElementById("imgBackground");
 
     //player
-    player = document.getElementById("ufo");//todo id ufo umbenennen
-    playerX -= player.width/2;
-    playerY -= player.height/2;
+    player = document.getElementById("handgun");
+    //playerX -= player.width/2;
+    //playerY -= player.height/2;
+
+    feet = document.getElementById("feet");
 
     //Gameloop starten
     setInterval(gameLoop,16); //FPS = 1000/diese Zahl
@@ -90,6 +120,7 @@ function gameLoop() {
 function update() {
     paceChanger();
     updatePlayerPosition();
+
 }
 
 function draw() {
@@ -98,11 +129,23 @@ function draw() {
 
     drawWorld();
 
+    //drawFeet();
+
     drawPlayer();
 }
 
 function drawPlayer(){
-    var playercenter = player.width / 2;
+    //var playercenter = player.width / 2;
+    if(inventory.handgun.isEquipped){
+        player = document.getElementById("handgun");
+    }else if(inventory.rifle.isEquipped){
+        player = document.getElementById("rifle");
+    }else if(inventory.shotgun.isEquipped){
+        player = document.getElementById("shotgun");
+    }else if(inventory.knife.isEquipped){
+        player = document.getElementById("knife");
+    }
+    
     frame += 0.2;
     // Berechne die Differenz zwischen der Mausposition und der Spielerposition
     var dx = mouseX - (playerX + player.width / 2);
@@ -123,8 +166,57 @@ function drawPlayer(){
     //Neue (0, 0) Position setzen
     ctx.translate(playerX + player.width / 2, playerY + player.height / 2);
     ctx.rotate(playerAngle * Math.PI / 180 );
+    if(isMoving()){
+        ctx.drawImage(
+            feet, Math.floor(frame % 6)*feet.width / 6, 0,
+            feet.width / 6, feet.height, 
+            -feet.width/6/2 -50, -feet.height/2 +10, 
+            feet.width / 6, feet.height 
+        );
+    }
+    
     ctx.drawImage(player, -player.width / 2, -player.height / 2, player.width, player.height);
-    ctx.restore();
+    ctx.restore();  
+}
+
+function weaponSwitcher(ev){;
+    if(ev.deltaY > 0){
+        if(inventory.handgun.isEquipped){
+            inventory.handgun.isEquipped = false;
+            inventory.rifle.isEquipped = true;
+        }else if(inventory.rifle.isEquipped){
+            inventory.rifle.isEquipped = false;
+            inventory.shotgun.isEquipped = true;
+        }else if(inventory.shotgun.isEquipped){
+            inventory.shotgun.isEquipped = false;
+            inventory.knife.isEquipped = true;
+        }else if(inventory.knife.isEquipped){
+            inventory.knife.isEquipped = false;
+            inventory.handgun.isEquipped = true;
+        }
+    }else if(ev.deltaY < 0){
+        if(inventory.handgun.isEquipped){
+            inventory.handgun.isEquipped = false;
+            inventory.knife.isEquipped = true;
+        }else if(inventory.rifle.isEquipped){
+            inventory.rifle.isEquipped = false;
+            inventory.handgun.isEquipped = true;
+        }else if(inventory.shotgun.isEquipped){
+            inventory.shotgun.isEquipped = false;
+            inventory.rifle.isEquipped = true;
+        }else if(inventory.knife.isEquipped){
+            inventory.knife.isEquipped = false;
+            inventory.shotgun.isEquipped = true;
+        }
+    }
+}
+
+function isMoving(){
+    if(!downKey && !upKey && !leftKey && !rightKey){
+        return false;
+    }else{
+        return true;
+    }
 }
 
 function drawWorld(){
@@ -158,44 +250,56 @@ function updatePlayerPosition(ev){
         if (borderCheck(playerX + schrittweite, playerY + schrittweite)) {
             playerX += schrittweite;
             playerY += schrittweite;
+            feetX += schrittweite;
+            feetY += schrittweite;
         }
     }
     if (downKey && leftKey && !upKey && !rightKey) {
         if (borderCheck(playerX - schrittweite, playerY + schrittweite)) {
             playerX -= schrittweite;
             playerY += schrittweite;
+            feetX -= schrittweite;
+            feetY += schrittweite;
         }
     }
     if (upKey && rightKey && !downKey && !leftKey) {
         if (borderCheck(playerX + schrittweite, playerY - schrittweite)) {
             playerX += schrittweite;
             playerY -= schrittweite;
+            feetX += schrittweite;
+            feetY -= schrittweite;
         }
     }
     if (upKey && leftKey && !rightKey && !downKey) {
         if (borderCheck(playerX - schrittweite, playerY - schrittweite)) {
             playerX -= schrittweite;
             playerY -= schrittweite;
+            feetX -= schrittweite;
+            feetY -= schrittweite;
         }
     }
     if (downKey && !leftKey && !rightKey && !upKey) {
         if (borderCheck(playerX, playerY + schrittweite)) {
             playerY += schrittweite;
+            feetY += schrittweite;
         }
     }
     if (upKey && !leftKey && !rightKey && !downKey) {
         if (borderCheck(playerX, playerY - schrittweite)) {
             playerY -= schrittweite;
+            feetY -= schrittweite;
         }
     }
     if (leftKey && !upKey && !downKey && !rightKey) {
         if (borderCheck(playerX - schrittweite, playerY)) {
             playerX -= schrittweite;
+            feetX -= schrittweite;
         }
     }
     if (rightKey && !upKey && !downKey && !leftKey) {
         if (borderCheck(playerX + schrittweite, playerY)) {
             playerX += schrittweite;
+            feetX += schrittweite;
         }
     }
     if (!rightKey && !upKey && !downKey && !leftKey) {
@@ -225,6 +329,28 @@ document.addEventListener('keydown', (event) => {
     }else if(event.key ==="Shift"){
         shiftKey = true;
     }
+
+    if(event.key === "1" || event.key ==="!"){
+        inventory.rifle.isEquipped = false;
+        inventory.shotgun.isEquipped = false;
+        inventory.knife.isEquipped = false;
+        inventory.handgun.isEquipped = true;
+    }else if(event.key === "2" || event.key ==='"'){
+        inventory.handgun.isEquipped = false;
+        inventory.shotgun.isEquipped = false;
+        inventory.knife.isEquipped = false;
+        inventory.rifle.isEquipped = true;
+    }else if(event.key === "3" || event.key ==='§'){
+        inventory.handgun.isEquipped = false;
+        inventory.rifle.isEquipped = false;
+        inventory.knife.isEquipped = false;
+        inventory.shotgun.isEquipped = true;
+    }else if(event.key === "4" || event.key ==='$'){
+        inventory.handgun.isEquipped = false;
+        inventory.rifle.isEquipped = false;
+        inventory.shotgun.isEquipped = false;
+        inventory.knife.isEquipped = true;
+    }
 });
 document.addEventListener('keyup', (event) => {
     if(event.key ==="w" || event.key=== "ArrowUp" || event.key ==="W"){
@@ -242,6 +368,7 @@ document.addEventListener('keyup', (event) => {
         shiftKey = false;
     }
 });
+document.addEventListener("wheel", weaponSwitcher);
 document.addEventListener("mousemove", mouseMoved);
 document.addEventListener("mousedown", mouseClicked);
 document.addEventListener("DOMContentLoaded", init, false);
