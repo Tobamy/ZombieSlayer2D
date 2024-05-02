@@ -23,6 +23,8 @@
     //Punktesystem, bspw. ein Zombie gibt 10 Punkte
 //todo evtl. Mauern bauen/Eingänge temporär verschließen (CoD Zombies)
     //Coin System, um die Coins ausgeben zu können
+//todo falls noch Zeit da ist:
+    //Waffe genau auf die Maus ausrichten (abhängig von der Entfernung der Maus zum Player)
 
 //Globale Variablen
     //#region Variablen
