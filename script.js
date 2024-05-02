@@ -1,3 +1,29 @@
+//kommende Features
+//todoT Laufanimation
+//todoT Waffe wechseln
+//todo Nahkampfangriff
+//todoS Schießen
+    //auch Nachladen
+    //aber unendlich Munition in Reserve
+//todo map
+    //mehrere Level
+    //evtl. Level automatisch generieren (Rougelike)
+//todo Gegner (mit Health Bar)
+//todo Inventar
+    //man sieht in einer Anzeige unten konstant alle Waffen und kann mit dem Mausrad durchscrollen
+    //oder mit den Zahlen durch die Waffen wechseln
+//todo Health Bar (bspw. oben links)
+//todo Audio
+//todo Einstellungsmöglichkeiten
+    //Musik switch
+    //Soundeffekte switch
+    //evtl. Schwierigkeitsgrad
+//todoS irgendwann Startbildschirm
+//todo Highscore
+    //Punktesystem, bspw. ein Zombie gibt 10 Punkte
+//todo evtl. Mauern bauen/Eingänge temporär verschließen (CoD Zombies)
+    //Coin System, um die Coins ausgeben zu können
+
 //Globale Variablen
     //#region Variablen
     var canvas, ctx; 
@@ -15,7 +41,7 @@
     var playerX = 500;
     var playerY = 500;
     var schrittweite;
-    var normalPace = 2;
+    var normalPace = 3;
     var sprintPace = normalPace*2;
     //var sneakPace = normalPace/2; //todo
     //einzelne Tastenanschläge speichern
@@ -132,7 +158,7 @@ function paceChanger(ev){ //todo
 //ChatGPT hat mir da schon Sachen vorgeschlagen. 
 //Das ist aber optional, momentan funktioniert es nämlich
 function updatePlayerPosition(ev){ 
-    if (downKey && rightKey) {
+    /*if (downKey && rightKey) {
         if (borderCheck(playerX + schrittweite / Math.sqrt(2), playerY + schrittweite / Math.sqrt(2))) {
             playerX += schrittweite / Math.sqrt(2);
             playerY += schrittweite / Math.sqrt(2);
@@ -175,54 +201,61 @@ function updatePlayerPosition(ev){
         if (borderCheck(playerX + schrittweite, playerY)) {
             playerX += schrittweite;
         }
-    }if (downKey && rightKey) {
+    }*/if (downKey && rightKey && !upKey && !leftKey) {
         if (borderCheck(playerX + schrittweite, playerY + schrittweite)) {
             playerX += schrittweite;
             playerY += schrittweite;
         }
     }
-    if (downKey && leftKey) {
+    if (downKey && leftKey && !upKey && !rightKey) {
         if (borderCheck(playerX - schrittweite, playerY + schrittweite)) {
             playerX -= schrittweite;
             playerY += schrittweite;
         }
     }
-    if (upKey && rightKey) {
+    if (upKey && rightKey && !downKey && !leftKey) {
         if (borderCheck(playerX + schrittweite, playerY - schrittweite)) {
             playerX += schrittweite;
             playerY -= schrittweite;
         }
     }
-    if (upKey && leftKey) {
+    if (upKey && leftKey && !rightKey && !downKey) {
         if (borderCheck(playerX - schrittweite, playerY - schrittweite)) {
             playerX -= schrittweite;
             playerY -= schrittweite;
         }
     }
-    if (downKey && !leftKey && !rightKey) {
+    if (downKey && !leftKey && !rightKey && !upKey) {
         if (borderCheck(playerX, playerY + schrittweite)) {
             playerY += schrittweite;
         }
     }
-    if (upKey && !leftKey && !rightKey) {
+    if (upKey && !leftKey && !rightKey && !downKey) {
         if (borderCheck(playerX, playerY - schrittweite)) {
             playerY -= schrittweite;
         }
     }
-    if (leftKey && !upKey && !downKey) {
+    if (leftKey && !upKey && !downKey && !rightKey) {
         if (borderCheck(playerX - schrittweite, playerY)) {
             playerX -= schrittweite;
         }
     }
-    if (rightKey && !upKey && !downKey) {
+    if (rightKey && !upKey && !downKey && !leftKey) {
         if (borderCheck(playerX + schrittweite, playerY)) {
             playerX += schrittweite;
         }
-    }if (!rightKey && !upKey && !downKey && !leftKey) {
+    }
+    if (!rightKey && !upKey && !downKey && !leftKey) {
         playerX = playerX;
         playerY = playerY;
     }
-    console.log(rightKey);
+    if (downKey && leftKey && rightKey && !upKey){
+        playerY += schrittweite;
+    }
+    if (!downKey && leftKey && rightKey && upKey){
+        playerY -= schrittweite;
+    }
+    //console.log(rightKey);
 }
 
 document.addEventListener('keydown', (event) => {
@@ -260,7 +293,7 @@ document.addEventListener('keyup', (event) => {
     }
     else if(event.key ==="d" || event.key=== "ArrowRight" || event.key ==="D"){
         rightKey = false;
-        console.log("keinD");
+        //console.log("keinD");
     }else if(event.key ==="Shift"){
         shiftKey = false;
     }
