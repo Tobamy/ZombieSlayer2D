@@ -40,6 +40,16 @@
     //Images
     var background;
 
+    //Hitbox 
+    var hitboxPlayer = {
+        width: 313,
+        height: 207
+    }
+    var hitboxHandgunShot = {
+        width: 7,
+        height: 7
+    }
+
     //Player
     var player;
     var feet;
@@ -51,7 +61,7 @@
     var schrittweite;
     var normalPace = 3;
     var sprintPace = normalPace*2;
-    
+
     //einzelne Tastenanschläge speichern
     var upKey;
     var leftKey;
@@ -65,9 +75,9 @@
     var angle; 
 
     //Schuss
-    var shotSpeed = 20;
+    var shotSpeed = 20; //default auf 20
     activeShots = [];
-    var shotRadius = 7; 
+    var shotRadius = hitboxHandgunShot.width; 
 
     //Weapons
     var inventory = {
@@ -108,14 +118,16 @@ function init() {
     //playerX -= player.width/2;
     //playerY -= player.height/2;
 
+    console.log(player.height + " | " + player.width)
+
     feet = document.getElementById("feet");
 
     //Gameloop starten
     setInterval(gameLoop,16); //FPS = 1000/diese Zahl
 }
 
-function borderCheck(x,y){
-    if((x)>=0 && (x) <= canvas.width-player.width && (y) >=0 && (y) <= canvas.height-player.height){
+function borderCheck(x,y, hitbox){
+    if((x)>=0 && (x) <= canvas.width-hitbox.width && (y) >=0 && (y) <= canvas.height-hitbox.height){
         return true;
     }
     else{
@@ -169,6 +181,13 @@ function drawPlayer(){
     }
     
     frame += 0.2;
+
+    //todo: Hitbox player anzeigen -> muss wieder weg 
+    ctx.beginPath();
+    ctx.rect(playerX, playerY, hitboxPlayer.width, hitboxPlayer.height);
+    ctx.stroke();
+
+
     
     calculatePositioningBetweenMouseAndPlayer(); 
     
@@ -219,7 +238,12 @@ function drawShots() {
     for (var i = 0; i < activeShots.length; i++) {
         var shot = activeShots[i];
 
-        if(borderCheck(shot.x, shot.y)){
+        if(borderCheck(shot.x, shot.y, hitboxHandgunShot)){
+            //todo: Hitbox shot anzeigen -> muss wieder weg 
+            ctx.beginPath();
+            ctx.rect(shot.x, shot.y, hitboxHandgunShot.width, hitboxHandgunShot.height);
+            ctx.stroke();
+
             ctx.beginPath();
             ctx.arc(shot.x, shot.y, shotRadius, 0, Math.PI * 2);
             shot.x += shot.dx;
@@ -368,7 +392,7 @@ function paceChanger(ev){ //todo
 //Das ist aber optional, momentan funktioniert es nämlich
 function updatePlayerPosition(ev){ 
     if (downKey && rightKey && !upKey && !leftKey) {
-        if (borderCheck(playerX + schrittweite, playerY + schrittweite)) {
+        if (borderCheck(playerX + schrittweite, playerY + schrittweite, hitboxPlayer)) {
             playerX += schrittweite;
             playerY += schrittweite;
             feetX += schrittweite;
@@ -376,7 +400,7 @@ function updatePlayerPosition(ev){
         }
     }
     if (downKey && leftKey && !upKey && !rightKey) {
-        if (borderCheck(playerX - schrittweite, playerY + schrittweite)) {
+        if (borderCheck(playerX - schrittweite, playerY + schrittweite, hitboxPlayer)) {
             playerX -= schrittweite;
             playerY += schrittweite;
             feetX -= schrittweite;
@@ -384,7 +408,7 @@ function updatePlayerPosition(ev){
         }
     }
     if (upKey && rightKey && !downKey && !leftKey) {
-        if (borderCheck(playerX + schrittweite, playerY - schrittweite)) {
+        if (borderCheck(playerX + schrittweite, playerY - schrittweite, hitboxPlayer)) {
             playerX += schrittweite;
             playerY -= schrittweite;
             feetX += schrittweite;
@@ -392,7 +416,7 @@ function updatePlayerPosition(ev){
         }
     }
     if (upKey && leftKey && !rightKey && !downKey) {
-        if (borderCheck(playerX - schrittweite, playerY - schrittweite)) {
+        if (borderCheck(playerX - schrittweite, playerY - schrittweite, hitboxPlayer)) {
             playerX -= schrittweite;
             playerY -= schrittweite;
             feetX -= schrittweite;
@@ -400,25 +424,25 @@ function updatePlayerPosition(ev){
         }
     }
     if (downKey && !leftKey && !rightKey && !upKey) {
-        if (borderCheck(playerX, playerY + schrittweite)) {
+        if (borderCheck(playerX, playerY + schrittweite, hitboxPlayer)) {
             playerY += schrittweite;
             feetY += schrittweite;
         }
     }
     if (upKey && !leftKey && !rightKey && !downKey) {
-        if (borderCheck(playerX, playerY - schrittweite)) {
+        if (borderCheck(playerX, playerY - schrittweite, hitboxPlayer)) {
             playerY -= schrittweite;
             feetY -= schrittweite;
         }
     }
     if (leftKey && !upKey && !downKey && !rightKey) {
-        if (borderCheck(playerX - schrittweite, playerY)) {
+        if (borderCheck(playerX - schrittweite, playerY, hitboxPlayer)) {
             playerX -= schrittweite;
             feetX -= schrittweite;
         }
     }
     if (rightKey && !upKey && !downKey && !leftKey) {
-        if (borderCheck(playerX + schrittweite, playerY)) {
+        if (borderCheck(playerX + schrittweite, playerY, hitboxPlayer)) {
             playerX += schrittweite;
             feetX += schrittweite;
         }
