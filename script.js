@@ -51,12 +51,23 @@
     var schrittweite;
     var normalPace = 3;
     var sprintPace = normalPace*2;
+    
     //einzelne Tastenanschläge speichern
     var upKey;
     var leftKey;
     var rightKey;
     var downKey;
     var shiftKey;
+
+    //Ausrichtung zwischen Maus und Spieler
+    var dx; 
+    var dy; 
+    var angle; 
+
+    //Schuss
+    var shotSpeed = 20;
+    activeShots = [];
+    var shotRadius = 7; 
 
     //Weapons
     var inventory = {
@@ -132,6 +143,17 @@ function draw() {
     //drawFeet();
 
     drawPlayer();
+
+    drawShots();
+}
+
+function calculatePositioningBetweenMouseAndPlayer (){
+    // Berechne die Differenz zwischen der Mausposition und der Spielerposition
+    dx = mouseX - (playerX + player.width / 2);
+    dy = mouseY - (playerY + player.height / 2);
+    
+    // Berechne den Winkel zwischen der Spielerposition und der Mausposition
+    angle = Math.atan2(dy, dx);
 }
 
 function drawPlayer(){
@@ -147,15 +169,11 @@ function drawPlayer(){
     }
     
     frame += 0.2;
-    // Berechne die Differenz zwischen der Mausposition und der Spielerposition
-    var dx = mouseX - (playerX + player.width / 2);
-    var dy = mouseY - (playerY + player.height / 2);
     
-    // Berechne den Winkel zwischen der Spielerposition und der Mausposition
-    var angle = Math.atan2(dy, dx);
+    calculatePositioningBetweenMouseAndPlayer(); 
     
     // Winkel in Grad umwandeln
-    var playerAngle = angle * (180 / Math.PI);
+    var playerAngle = angle * (180 / Math.PI) - 10;
 
     //todo Idee: Waffe auf Maus ausrichten
     //da muss dann die Variable playerAngle angepasst werden, 
@@ -177,6 +195,45 @@ function drawPlayer(){
     
     ctx.drawImage(player, -player.width / 2, -player.height / 2, player.width, player.height);
     ctx.restore();  
+}
+
+function fireShot() {
+
+    calculatePositioningBetweenMouseAndPlayer();
+    
+    // Erstelle ein neues Schussobjekt mit der Richtung und Position des Spielers
+    var shot = {
+        x: playerX + player.width / 2,
+        y: playerY + player.height / 2,
+        dx: Math.cos(angle) * shotSpeed, // Geschwindigkeit des Schusses in x-Richtung
+        dy: Math.sin(angle) * shotSpeed // Geschwindigkeit des Schusses in y-Richtung
+    };
+
+    // Füge den Schuss zum Array der aktiven Schüsse hinzu
+    activeShots.push(shot);
+}
+
+function drawShots() {
+    // Gehe durch alle aktiven Schüsse und zeichne sie
+    
+    for (var i = 0; i < activeShots.length; i++) {
+        var shot = activeShots[i];
+
+        if(borderCheck(shot.x, shot.y)){
+            ctx.beginPath();
+            ctx.arc(shot.x, shot.y, shotRadius, 0, Math.PI * 2);
+            shot.x += shot.dx;
+            shot.y += shot.dy; 
+            ctx.fillStyle = "black"; // Farbe des Schusses
+            ctx.fill();
+            ctx.closePath();
+            console.log(shot);
+        }else{
+            activeShots[i].splice; 
+        }
+        
+    }
+    
 }
 
 function weaponSwitcher(ev){;
@@ -442,5 +499,5 @@ document.addEventListener('keyup', (event) => {
 });
 document.addEventListener("wheel", weaponSwitcher);
 document.addEventListener("mousemove", mouseMoved);
-document.addEventListener("mousedown", mouseClicked);
+document.addEventListener("mousedown", mouseClicked && fireShot);
 document.addEventListener("DOMContentLoaded", init, false);
