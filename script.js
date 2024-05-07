@@ -290,16 +290,34 @@ function fireShot() {
         var shotStartPositionX = playerX + weaponOffsetX + player.width / 2;
         var shotStartPositionY = playerY + weaponOffsetY + player.height / 2;
         
-        // Erstelle ein neues Schussobjekt mit der Richtung und Position des Spielers
-        var shot = {
-            x: shotStartPositionX,
-            y: shotStartPositionY,
-            dx: Math.cos(angle) * shotSpeed, // Geschwindigkeit des Schusses in x-Richtung
-            dy: Math.sin(angle) * shotSpeed // Geschwindigkeit des Schusses in y-Richtung
+        let i; 
+        let shotgunSpread = 0.13; 
+
+        if(inventory.shotgun.isEquipped){
+            i = 0; 
+            var isShotgun = true;
+            angle -=shotgunSpread;
+        }else{
+            i = 2
         };
 
-        // Füge den Schuss zum Array der aktiven Schüsse hinzu
-        activeShots.push(shot);
+        for(i; i < 3; i++){
+
+            // Erstelle ein neues Schussobjekt mit der Richtung und Position des Spielers
+            var shot = {
+                x: shotStartPositionX,
+                y: shotStartPositionY,
+                dx: Math.cos(angle) * shotSpeed, // Geschwindigkeit des Schusses in x-Richtung
+                dy: Math.sin(angle) * shotSpeed // Geschwindigkeit des Schusses in y-Richtung
+            };
+
+            // Füge den Schuss zum Array der aktiven Schüsse hinzu
+            activeShots.push(shot);
+
+            if(isShotgun)angle +=shotgunSpread;
+        }
+        
+
     }
 }
 
