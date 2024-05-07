@@ -51,12 +51,12 @@
 
     //Hitbox 
     var hitboxPlayer = {
-        width: 313,
-        height: 207
+        width: 156,
+        height: 103
     }
     var hitboxHandgunShot = {
-        width: 7,
-        height: 7
+        width: 3,
+        height: 3
     }
 
     //Player
@@ -186,6 +186,9 @@ function drawPlayer(){
     }else if(inventory.knife.isEquipped){
         player = document.getElementById("knife");
     }
+
+    var initWeaponOffsetX = 40; 
+    var initweaponOffsetY = 28; 
     
     frame += 0.2;
 
@@ -199,7 +202,7 @@ function drawPlayer(){
     calculatePositioningBetweenMouseAndPlayer(); 
     
     // Winkel in Grad umwandeln
-    playerAngle = angle * (180 / Math.PI) - 10;
+    playerAngle = angle * (180 / Math.PI) - 5;
 
     //todo Idee: Waffe auf Maus ausrichten
     //da muss dann die Variable playerAngle angepasst werden, 
@@ -211,8 +214,8 @@ function drawPlayer(){
     ctx.translate(playerX + player.width / 2, playerY + player.height / 2);
 
     // Vor der Rotation den Punkt (80, 60) relativ zum Spieler berechnen
-    weaponOffsetX = 80 * Math.cos(playerAngle * Math.PI / 180) - 60 * Math.sin(playerAngle * Math.PI / 180);
-    weaponOffsetY = 80 * Math.sin(playerAngle * Math.PI / 180) + 60 * Math.cos(playerAngle * Math.PI / 180);
+    weaponOffsetX = initWeaponOffsetX * Math.cos(playerAngle * Math.PI / 180) - initweaponOffsetY * Math.sin(playerAngle * Math.PI / 180);
+    weaponOffsetY = initWeaponOffsetX * Math.sin(playerAngle * Math.PI / 180) + initweaponOffsetY * Math.cos(playerAngle * Math.PI / 180);
 
     ctx.rotate(playerAngle * Math.PI / 180 );
     if(isMoving()){
