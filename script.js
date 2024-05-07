@@ -4,14 +4,23 @@
 //doneT Waffe wechseln
 //todo Nahkampfangriff
 //todoS Schießen
+    //anderen Waffen Start deffinieren
+    //shotgun drei Projektile pro Schuss (ggf. mit begrenzter Reichweite)
+        //Schaden des einzelnen Projektils ist nur bei 50%
+    //Unterschiedliche Delay zwischen den Schüssen in Abhängigkeit der Waffen
+    //unterschiedliche Schussgeschwindigkeit 
+        //Shotgun schnell aber nicht so weit 
+        //handgun langsam
+        //rifle deutlich schneller als handgun 
     //auch Nachladen
     //aber unendlich Munition in Reserve
-//todo map
+//todoS map
     //mehrere Level
     //evtl. Level automatisch generieren (Rougelike)
-//todo Gegner (mit Health Bar)
+    //collision Detection 
+//todoT Gegner (mit Health Bar)
     //evtl. Bildquelle: https://opengameart.org/content/animated-top-down-zombie
-//todo Inventar
+//todoT Inventar
     //man sieht in einer Anzeige unten konstant alle Waffen und kann mit dem Mausrad durchscrollen
     //oder mit den Zahlen durch die Waffen wechseln
 //todo Health Bar (bspw. oben links)
@@ -54,13 +63,14 @@
     var player;
     var feet;
     var frame=0;
-    var playerX = 500;
-    var playerY = 500;
+    var playerX = 200;
+    var playerY = 200;
     var feetX = playerX;
     var feetY = playerY;
     var schrittweite;
     var normalPace = 3;
     var sprintPace = normalPace*2;
+    var playerAngle; 
 
     //einzelne Tastenanschläge speichern
     var upKey;
@@ -78,6 +88,8 @@
     var shotSpeed = 20; //default auf 20
     activeShots = [];
     var shotRadius = hitboxHandgunShot.width; 
+    var weaponOffsetX;
+    var weaponOffsetY; 
 
     //Weapons
     var inventory = {
@@ -86,11 +98,11 @@
             isEquipped: true
         },
         rifle: {
-            isOwned: false,
+            isOwned: true,
             isEquipped: false
         },
         shotgun: {
-            isOwned: false,
+            isOwned: true,
             isEquipped: false
         },
         knife: {
@@ -118,15 +130,13 @@ function init() {
     //playerX -= player.width/2;
     //playerY -= player.height/2;
 
-    console.log(player.height + " | " + player.width)
-
     feet = document.getElementById("feet");
 
     //Gameloop starten
     setInterval(gameLoop,16); //FPS = 1000/diese Zahl
 }
 
-function borderCheck(x,y, hitbox){
+function borderCheck(x, y, hitbox){
     if((x)>=0 && (x) <= canvas.width-hitbox.width && (y) >=0 && (y) <= canvas.height-hitbox.height){
         return true;
     }
@@ -143,7 +153,6 @@ function gameLoop() {
 function update() {
     paceChanger();
     updatePlayerPosition();
-
 }
 
 function draw() {
@@ -151,8 +160,6 @@ function draw() {
     ctx.clearRect(0,0,canvas.width, canvas.height);
 
     drawWorld();
-
-    //drawFeet();
 
     drawPlayer();
 
@@ -192,7 +199,7 @@ function drawPlayer(){
     calculatePositioningBetweenMouseAndPlayer(); 
     
     // Winkel in Grad umwandeln
-    var playerAngle = angle * (180 / Math.PI) - 10;
+    playerAngle = angle * (180 / Math.PI) - 10;
 
     //todo Idee: Waffe auf Maus ausrichten
     //da muss dann die Variable playerAngle angepasst werden, 
@@ -202,28 +209,47 @@ function drawPlayer(){
     ctx.save();
     //Neue (0, 0) Position setzen
     ctx.translate(playerX + player.width / 2, playerY + player.height / 2);
+
+    // Vor der Rotation den Punkt (80, 60) relativ zum Spieler berechnen
+    weaponOffsetX = 80 * Math.cos(playerAngle * Math.PI / 180) - 60 * Math.sin(playerAngle * Math.PI / 180);
+    weaponOffsetY = 80 * Math.sin(playerAngle * Math.PI / 180) + 60 * Math.cos(playerAngle * Math.PI / 180);
+
     ctx.rotate(playerAngle * Math.PI / 180 );
     if(isMoving()){
         ctx.drawImage(
             feet, Math.floor(frame % 6)*feet.width / 6, 0,
             feet.width / 6, feet.height, 
-            -feet.width/6/2 -50, -feet.height/2 +10, 
+            -feet.width/6/2 - 25, -feet.height/2 + 8, 
             feet.width / 6, feet.height 
         );
     }
     
     ctx.drawImage(player, -player.width / 2, -player.height / 2, player.width, player.height);
-    ctx.restore();  
+
+    ctx.restore(); 
+}
+
+function calculatePositioningBetweenMouseAndWeapon() {
+    // Berechne die Differenz zwischen der Mausposition und der Position der Waffe
+    var dxWeapon = mouseX - (playerX + weaponOffsetX + player.width / 2);
+    var dyWeapon = mouseY - (playerY + weaponOffsetY + player.height / 2);
+    
+    // Berechne den Winkel zwischen der Waffe und der Mausposition
+    angle = Math.atan2(dyWeapon, dxWeapon);
 }
 
 function fireShot() {
 
-    calculatePositioningBetweenMouseAndPlayer();
+    calculatePositioningBetweenMouseAndWeapon();
+
+    // Berechne die Startposition des Schusses unter Berücksichtigung der Waffenverschiebung
+    var shotStartPositionX = playerX + weaponOffsetX + player.width / 2;
+    var shotStartPositionY = playerY + weaponOffsetY + player.height / 2;
     
     // Erstelle ein neues Schussobjekt mit der Richtung und Position des Spielers
     var shot = {
-        x: playerX + player.width / 2,
-        y: playerY + player.height / 2,
+        x: shotStartPositionX,
+        y: shotStartPositionY,
         dx: Math.cos(angle) * shotSpeed, // Geschwindigkeit des Schusses in x-Richtung
         dy: Math.sin(angle) * shotSpeed // Geschwindigkeit des Schusses in y-Richtung
     };
@@ -239,11 +265,6 @@ function drawShots() {
         var shot = activeShots[i];
 
         if(borderCheck(shot.x, shot.y, hitboxHandgunShot)){
-            //todo: Hitbox shot anzeigen -> muss wieder weg 
-            ctx.beginPath();
-            ctx.rect(shot.x, shot.y, hitboxHandgunShot.width, hitboxHandgunShot.height);
-            ctx.stroke();
-
             ctx.beginPath();
             ctx.arc(shot.x, shot.y, shotRadius, 0, Math.PI * 2);
             shot.x += shot.dx;
@@ -251,7 +272,6 @@ function drawShots() {
             ctx.fillStyle = "black"; // Farbe des Schusses
             ctx.fill();
             ctx.closePath();
-            console.log(shot);
         }else{
             activeShots[i].splice; 
         }
@@ -365,12 +385,13 @@ function isMoving(){
 }
 
 function drawWorld(){
-    ctx.drawImage(background, 0,0);
+    //ctx.drawImage(background, 0,0);
 }
 
 function mouseClicked(ev){
     //Wenn geklickt 
     console.log(mouseX, mouseY);
+    fireShot();
 }
 
 function mouseMoved(ev){
@@ -523,5 +544,5 @@ document.addEventListener('keyup', (event) => {
 });
 document.addEventListener("wheel", weaponSwitcher);
 document.addEventListener("mousemove", mouseMoved);
-document.addEventListener("mousedown", mouseClicked && fireShot);
+document.addEventListener("mousedown", mouseClicked);
 document.addEventListener("DOMContentLoaded", init, false);
