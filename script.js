@@ -59,6 +59,41 @@
         height: 3
     }
 
+    //Waffen 
+    var handgun = {
+        shotspeed: 20, 
+        initWeaponOffset: {
+            x: 40, 
+            y: 28
+        },
+        hitboxShot: {
+            width: 3,
+            height: 3
+        },
+    }; 
+    var shotgun = {
+        shotspeed: 20, 
+        initWeaponOffset: {
+            x: 65, 
+            y: 24
+        },
+        hitboxShot: {
+            width: 3,
+            height: 3
+        },
+    }
+    var rifle = {
+        shotspeed: 20, 
+        initWeaponOffset: {
+            x: 65, 
+            y: 24
+        },
+        hitboxShot: {
+            width: 3,
+            height: 3
+        },
+    }
+
     //Player
     var player;
     var feet;
@@ -176,19 +211,25 @@ function calculatePositioningBetweenMouseAndPlayer (){
 }
 
 function drawPlayer(){
+    var initWeaponOffsetX; 
+    var initWeaponOffsetY;
+
     //var playercenter = player.width / 2;
     if(inventory.handgun.isEquipped){
         player = document.getElementById("handgun");
+        initWeaponOffsetX = handgun.initWeaponOffset.x;
+        initWeaponOffsetY = handgun.initWeaponOffset.y;
     }else if(inventory.rifle.isEquipped){
         player = document.getElementById("rifle");
+        initWeaponOffsetX = rifle.initWeaponOffset.x;
+        initWeaponOffsetY = rifle.initWeaponOffset.y;
     }else if(inventory.shotgun.isEquipped){
         player = document.getElementById("shotgun");
+        initWeaponOffsetX = shotgun.initWeaponOffset.x;
+        initWeaponOffsetY = shotgun.initWeaponOffset.y;
     }else if(inventory.knife.isEquipped){
         player = document.getElementById("knife");
     }
-
-    var initWeaponOffsetX = 40; 
-    var initweaponOffsetY = 28; 
     
     frame += 0.2;
 
@@ -214,8 +255,8 @@ function drawPlayer(){
     ctx.translate(playerX + player.width / 2, playerY + player.height / 2);
 
     // Vor der Rotation den Punkt (80, 60) relativ zum Spieler berechnen
-    weaponOffsetX = initWeaponOffsetX * Math.cos(playerAngle * Math.PI / 180) - initweaponOffsetY * Math.sin(playerAngle * Math.PI / 180);
-    weaponOffsetY = initWeaponOffsetX * Math.sin(playerAngle * Math.PI / 180) + initweaponOffsetY * Math.cos(playerAngle * Math.PI / 180);
+    weaponOffsetX = initWeaponOffsetX * Math.cos(playerAngle * Math.PI / 180) - initWeaponOffsetY * Math.sin(playerAngle * Math.PI / 180);
+    weaponOffsetY = initWeaponOffsetX * Math.sin(playerAngle * Math.PI / 180) + initWeaponOffsetY * Math.cos(playerAngle * Math.PI / 180);
 
     ctx.rotate(playerAngle * Math.PI / 180 );
     if(isMoving()){
@@ -242,23 +283,24 @@ function calculatePositioningBetweenMouseAndWeapon() {
 }
 
 function fireShot() {
+    if(!inventory.knife.isEquipped){
+        calculatePositioningBetweenMouseAndWeapon();
 
-    calculatePositioningBetweenMouseAndWeapon();
+        // Berechne die Startposition des Schusses unter Berücksichtigung der Waffenverschiebung
+        var shotStartPositionX = playerX + weaponOffsetX + player.width / 2;
+        var shotStartPositionY = playerY + weaponOffsetY + player.height / 2;
+        
+        // Erstelle ein neues Schussobjekt mit der Richtung und Position des Spielers
+        var shot = {
+            x: shotStartPositionX,
+            y: shotStartPositionY,
+            dx: Math.cos(angle) * shotSpeed, // Geschwindigkeit des Schusses in x-Richtung
+            dy: Math.sin(angle) * shotSpeed // Geschwindigkeit des Schusses in y-Richtung
+        };
 
-    // Berechne die Startposition des Schusses unter Berücksichtigung der Waffenverschiebung
-    var shotStartPositionX = playerX + weaponOffsetX + player.width / 2;
-    var shotStartPositionY = playerY + weaponOffsetY + player.height / 2;
-    
-    // Erstelle ein neues Schussobjekt mit der Richtung und Position des Spielers
-    var shot = {
-        x: shotStartPositionX,
-        y: shotStartPositionY,
-        dx: Math.cos(angle) * shotSpeed, // Geschwindigkeit des Schusses in x-Richtung
-        dy: Math.sin(angle) * shotSpeed // Geschwindigkeit des Schusses in y-Richtung
-    };
-
-    // Füge den Schuss zum Array der aktiven Schüsse hinzu
-    activeShots.push(shot);
+        // Füge den Schuss zum Array der aktiven Schüsse hinzu
+        activeShots.push(shot);
+    }
 }
 
 function drawShots() {
