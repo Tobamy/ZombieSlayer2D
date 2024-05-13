@@ -22,6 +22,8 @@
 //todoT Gegner (mit Health Bar)
     //evtl. Bildquelle: https://opengameart.org/content/animated-top-down-zombie
     //hit detection mit modulo? Torben fragen
+    //evtl. line of sight etablieren, damit die Gegner nur auf einen zulaufen, wenn sie einen sehen
+        //wenn sie einen nicht sehen, dann random bewegen
 //todoT Inventar
     //man sieht in einer Anzeige unten konstant alle Waffen und kann mit dem Mausrad durchscrollen
     //oder mit den Zahlen durch die Waffen wechseln
@@ -43,6 +45,7 @@
     //Größe automatisch an die Fenstergröße anpassen
 //Bug: 
     //Diagonal läuft man schneller
+//todo Credits (u.a. Bilder vom Player)
 
 //Globale Variablen
     //#region Variablen
