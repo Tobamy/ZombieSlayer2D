@@ -60,6 +60,10 @@
         width: 3,
         height: 3
     }
+    var hitboxEnemy = {
+        width: 80,
+        height: 80
+    }
 
     //Waffen 
     var handgun = {
@@ -109,6 +113,10 @@
     var sprintPace = normalPace*2;
     var playerAngle; 
 
+    //Gegner
+    var enemySpeed = 2;
+    var activeEnemys = [];
+
     //einzelne Tastenanschläge speichern
     var upKey;
     var leftKey;
@@ -128,7 +136,7 @@
     var weaponOffsetX;
     var weaponOffsetY; 
 
-    //Weapons
+    //Inventar
     var inventory = {
         handgun: {
             isOwned: true,
@@ -225,6 +233,8 @@ function draw() {
     drawMap();
 
     drawPlayer();
+
+    drawEnemy();
 
     drawShots();
 }
@@ -324,6 +334,49 @@ function calculatePositioningBetweenMouseAndWeapon() {
     angle = Math.atan2(dyWeapon, dxWeapon);
 }
 
+function calculatePositionBetweenEnemyAndPlayer(currentEnemy) {
+    var dxEnemy = (playerX + player.width / 2)-(currentEnemy.x + hitboxEnemy.width/2);
+    var dyEnemy = (playerY + player.height / 2)-(currentEnemy.y + hitboxEnemy.height/2);
+
+    angle = Math.atan2(dyEnemy, dxEnemy);
+}
+
+function spawnEnemy (startX = 500, startY = 500){
+    // Erstelle ein neues Zombieobjekt mit der Richtung und Position des Spielers
+    var enemy = {
+        x: 500,
+        y: 500,
+        dx: 0,
+        dy: 0,
+        health: 100
+    };
+
+    // Füge den Schuss zum Array der aktiven Schüsse hinzu
+    activeEnemys.push(enemy);
+    console.log(activeEnemys);
+}
+
+function drawEnemy (){
+
+    for (let j = 0; j < activeEnemys.length; j++) {
+        var enemy = activeEnemys[j];
+        calculatePositionBetweenEnemyAndPlayer(enemy);
+        enemy.dx = Math.cos(angle) * enemySpeed;
+        enemy.dy = Math.sin(angle) * enemySpeed;
+
+        if(enemy.health > 0){
+            enemy.x += enemy.dx;
+            enemy.y += enemy.dy;
+            ctx.beginPath();
+            ctx.rect(enemy.x, enemy.y, hitboxEnemy.width, hitboxEnemy.height);
+            ctx.stroke();
+        }else{
+            activeEnemys[j].splice; 
+        }
+        
+    }
+}
+
 function fireShot() {
     if(!inventory.knife.isEquipped){
         calculatePositioningBetweenMouseAndWeapon();
@@ -366,7 +419,7 @@ function fireShot() {
 function drawShots() {
     // Gehe durch alle aktiven Schüsse und zeichne sie
     
-    for (var i = 0; i < activeShots.length; i++) {
+    for (let i = 0; i < activeShots.length; i++) {
         var shot = activeShots[i];
 
         if(borderCheck(shot.x, shot.y, hitboxHandgunShot)){
@@ -603,6 +656,10 @@ document.addEventListener('keydown', (event) => {
         rightKey = true;
     }else if(event.key ==="Shift"){
         shiftKey = true;
+    }
+
+    if(event.key === "j" || event.key === "J"){
+        spawnEnemy();
     }
 
     if(event.key === "1" || event.key ==="!"){
