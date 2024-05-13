@@ -133,6 +133,7 @@
     //Gegner
     var enemySpeed = 2;
     var activeEnemys = [];
+    var zombieWalk;
 
     //einzelne Tastenanschläge speichern
     var upKey;
@@ -220,6 +221,8 @@ function init() {
     //playerY -= player.height/2;
 
     feet = document.getElementById("feet");
+
+    zombieWalk = document.getElementById("zombieWalk");
 
     //Gameloop starten
     setInterval(gameLoop,16); //FPS = 1000/diese Zahl
@@ -369,7 +372,8 @@ function spawnEnemy (startX = 500, startY = 500){
         y: 500,
         dx: 0,
         dy: 0,
-        health: 100
+        health: 100,
+        maxHealth: 100
     };
 
     // Füge den Schuss zum Array der aktiven Schüsse hinzu
@@ -388,8 +392,34 @@ function drawEnemy (){
         if(enemy.health > 0){
             enemy.x += enemy.dx;
             enemy.y += enemy.dy;
+
+            var zombieAngle = angle * (180 / Math.PI) - 5;
+            ctx.save();
+            //Neue (0, 0) Position setzen
+            ctx.translate(enemy.x + hitboxEnemy.width / 2, enemy.y + hitboxEnemy.height / 2);
+            ctx.rotate(zombieAngle * Math.PI / 180 );
+            /*if(isMoving()){*/  //evtl. später was einbauen, dass der sich nicht im Stillstand bewegt. Momentan läuft er aber immer, also passt das erstmal so.
+                ctx.drawImage(
+                    zombieWalk, Math.floor(frame % 9)*zombieWalk.width / 9, 0,
+                    zombieWalk.width / 9, zombieWalk.height, 
+                    -zombieWalk.width/9/2 , -zombieWalk.height/2, 
+                    zombieWalk.width / 9, zombieWalk.height 
+                );
+            /*}*/
+                    ctx.restore(); 
+
+            //aktuelle HP berechnen
+            var healthPercentage = (enemy.health/enemy.maxHealth) * hitboxEnemy.width;
+            //Hintergrund der Health Bar
+            ctx.fillStyle = 'gray';
+            ctx.fillRect(enemy.x, enemy.y - 10, hitboxEnemy.width, 10);
+
+            //gefüllter Teil der Health Bar
+            ctx.fillStyle = 'red';
+            ctx.fillRect(enemy.x, enemy.y - 10, healthPercentage, 10);
+
             ctx.beginPath();
-            ctx.rect(enemy.x, enemy.y, hitboxEnemy.width, hitboxEnemy.height);
+            ctx.rect(enemy.x, enemy.y, hitboxEnemy.width, hitboxEnemy.height, 10);
             ctx.stroke();
         }else{
             activeEnemys.splice(j,1);
