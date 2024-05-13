@@ -14,12 +14,14 @@
         //rifle deutlich schneller als handgun 
     //auch Nachladen
     //aber unendlich Munition in Reserve
+//todo Berechnung Winkel verstehen (also die Mathematik dahinter)
 //todoS map
     //mehrere Level
     //evtl. Level automatisch generieren (Rougelike)
     //collision Detection 
 //todoT Gegner (mit Health Bar)
     //evtl. Bildquelle: https://opengameart.org/content/animated-top-down-zombie
+    //hit detection mit modulo? Torben fragen
 //todoT Inventar
     //man sieht in einer Anzeige unten konstant alle Waffen und kann mit dem Mausrad durchscrollen
     //oder mit den Zahlen durch die Waffen wechseln
@@ -80,6 +82,7 @@
             width: 3,
             height: 3
         },
+        damage: 20
     }; 
     var shotgun = {
         shotspeed: 20, 
@@ -91,6 +94,7 @@
             width: 3,
             height: 3
         },
+        damage: 17
     }
     var rifle = {
         shotspeed: 20, 
@@ -102,6 +106,7 @@
             width: 3,
             height: 3
         },
+        damage: 30
     }
 
     //Player
@@ -157,7 +162,9 @@
         knife: {
             isOwned: true,
             isEquipped: false
-        }
+        },
+        currentWeapon: handgun,
+        health: 100
     }
     var scrollDown;
     var scrollUp;
@@ -237,6 +244,8 @@ function draw() {
     drawMap();
 
     drawPlayer();
+
+    enemyHit();
 
     drawEnemy();
 
@@ -357,7 +366,7 @@ function spawnEnemy (startX = 500, startY = 500){
 
     // Füge den Schuss zum Array der aktiven Schüsse hinzu
     activeEnemys.push(enemy);
-    console.log(activeEnemys);
+    //console.log(activeEnemys);
 }
 
 function drawEnemy (){
@@ -375,10 +384,42 @@ function drawEnemy (){
             ctx.rect(enemy.x, enemy.y, hitboxEnemy.width, hitboxEnemy.height);
             ctx.stroke();
         }else{
-            activeEnemys[j].splice; 
+            activeEnemys.splice(j,1);
+            j--;
         }
         
     }
+}
+
+function enemyHit (){
+    for (let j = 0; j < activeEnemys.length; j++) {
+        for (let i = 0; i < activeShots.length; i++) {
+            if(hitCheck(activeEnemys[j], activeShots[i])){
+                activeEnemys[j].health -= activeShots[i].damage;
+                activeShots.splice(i, 1);
+                i--;
+                //console.log(activeShots[i]);
+            }
+        }
+    }
+}
+
+function hitCheck(enemy, shot){
+    var shotLeft = shot.x;
+    var shotRight = shot.x + (inventory.currentWeapon).hitboxShot.width;
+    var shotTop = shot.y;
+    var shotBottom = shot.y + (inventory.currentWeapon).hitboxShot.height;
+
+    var enemyLeft = enemy.x;
+    var enemyRight = enemy.x + hitboxEnemy.width;
+    var enemyTop = enemy.y;
+    var enemyBottom = enemy.y + hitboxEnemy.height;
+
+    // Check if the two rectangles intersect
+    return (shotRight >= enemyLeft &&
+            shotLeft <= enemyRight &&
+            shotBottom >= enemyTop &&
+            shotTop <= enemyBottom);
 }
 
 function fireShot() {
@@ -407,16 +448,17 @@ function fireShot() {
                 x: shotStartPositionX,
                 y: shotStartPositionY,
                 dx: Math.cos(angle) * shotSpeed, // Geschwindigkeit des Schusses in x-Richtung
-                dy: Math.sin(angle) * shotSpeed // Geschwindigkeit des Schusses in y-Richtung
+                dy: Math.sin(angle) * shotSpeed, // Geschwindigkeit des Schusses in y-Richtung
+                damage: (inventory.currentWeapon).damage
             };
 
+            //shot.damage = (inventory.currentWeapon).damage;
+            //console.log(shot.damage);
             // Füge den Schuss zum Array der aktiven Schüsse hinzu
             activeShots.push(shot);
 
             if(isShotgun)angle +=shotgunSpread;
         }
-        
-
     }
 }
 
@@ -448,45 +490,57 @@ function weaponSwitcher(ev){;
             if(inventory.rifle.isOwned){
                 inventory.handgun.isEquipped = false;
                 inventory.rifle.isEquipped = true;
+                inventory.currentWeapon = rifle;
             }else if(inventory.shotgun.isOwned){
                 inventory.handgun.isEquipped = false;
                 inventory.shotgun.isEquipped = true;
+                inventory.currentWeapon = shotgun;
             }else if(inventory.knife.isOwned){
                 inventory.handgun.isEquipped = false;
                 inventory.knife.isEquipped = true;
+                inventory.currentWeapon = knife;
             }
         }else if(inventory.rifle.isEquipped){
             if(inventory.shotgun.isOwned){
                 inventory.rifle.isEquipped = false;
                 inventory.shotgun.isEquipped = true;
+                inventory.currentWeapon = shotgun;
             }else if(inventory.knife.isOwned){
                 inventory.rifle.isEquipped = false;
                 inventory.knife.isEquipped = true;
+                inventory.currentWeapon = knife;
             }else if(inventory.handgun.isOwned){
                 inventory.rifle.isEquipped = false;
                 inventory.handgun.isEquipped = true;
+                inventory.currentWeapon = handgun;
             }
         }else if(inventory.shotgun.isEquipped){
             if(inventory.knife.isOwned){
                 inventory.shotgun.isEquipped = false;
                 inventory.knife.isEquipped = true;
+                inventory.currentWeapon = knife;
             }else if(inventory.handgun.isOwned){
                 inventory.shotgun.isEquipped = false;
                 inventory.handgun.isEquipped = true;
+                inventory.currentWeapon = handgun;
             }else if(inventory.rifle.isOwned){
                 inventory.shotgun.isEquipped = false;
                 inventory.rifle.isEquipped = true;
+                inventory.currentWeapon = rifle;
             }
         }else if(inventory.knife.isEquipped){
             if(inventory.handgun.isOwned){
                 inventory.knife.isEquipped = false;
                 inventory.handgun.isEquipped = true;
+                inventory.currentWeapon = handgun;
             }else if(inventory.rifle.isOwned){
                 inventory.knife.isEquipped = false;
                 inventory.rifle.isEquipped = true;
+                inventory.currentWeapon = rifle;
             }else if(inventory.shotgun.isOwned){
                 inventory.knife.isEquipped = false;
                 inventory.shotgun.isEquipped = true;
+                inventory.currentWeapon = shotgun;
             }
         }
     }else if(ev.deltaY < 0){
@@ -494,48 +548,61 @@ function weaponSwitcher(ev){;
             if(inventory.knife.isOwned){
                 inventory.handgun.isEquipped = false;
                 inventory.knife.isEquipped = true;
+                inventory.currentWeapon = knife;
             }else if(inventory.shotgun.isOwned){
                 inventory.handgun.isEquipped = false;
                 inventory.shotgun.isEquipped = true;
+                inventory.currentWeapon = shotgun;
             }else if(inventory.rifle.isOwned){
                 inventory.handgun.isEquipped = false;
                 inventory.rifle.isEquipped = true;
+                inventory.currentWeapon = rifle;
             }
         }else if(inventory.rifle.isEquipped){
             if(inventory.handgun.isOwned){
                 inventory.rifle.isEquipped = false;
                 inventory.handgun.isEquipped = true;
+                inventory.currentWeapon = handgun;
             }else if(inventory.knife.isOwned){
                 inventory.rifle.isEquipped = false;
                 inventory.knife.isEquipped = true;
+                inventory.currentWeapon = knife;
             }else if(inventory.handgun.isOwned){
                 inventory.rifle.isEquipped = false;
                 inventory.shotgun.isEquipped = true;
+                inventory.currentWeapon = shotgun;
             }
         }else if(inventory.shotgun.isEquipped){
             if(inventory.rifle.isOwned){
                 inventory.shotgun.isEquipped = false;
                 inventory.rifle.isEquipped = true;
+                inventory.currentWeapon = rifle;
             }else if(inventory.handgun.isOwned){
                 inventory.shotgun.isEquipped = false;
                 inventory.handgun.isEquipped = true;
+                inventory.currentWeapon = handgun;
             }else if(inventory.knife.isOwned){
                 inventory.shotgun.isEquipped = false;
                 inventory.knife.isEquipped = true;
+                inventory.currentWeapon = knife;
             }
         }else if(inventory.knife.isEquipped){
             if(inventory.shotgun.isOwned){
                 inventory.knife.isEquipped = false;
                 inventory.shotgun.isEquipped = true;
+                inventory.currentWeapon = shotgun;
             }else if(inventory.rifle.isOwned){
                 inventory.knife.isEquipped = false;
                 inventory.rifle.isEquipped = true;
+                inventory.currentWeapon = rifle;
             }else if(inventory.handgun.isOwned){
                 inventory.knife.isEquipped = false;
                 inventory.handgun.isEquipped = true;
+                inventory.currentWeapon = handgun;
             }
         }
     }
+    console.log((inventory.currentWeapon).hitboxShot.width);
 }
 
 function isMoving(){
@@ -672,6 +739,7 @@ document.addEventListener('keydown', (event) => {
             inventory.shotgun.isEquipped = false;
             inventory.knife.isEquipped = false;
             inventory.handgun.isEquipped = true;
+            inventory.currentWeapon = handgun;
         }
     }else if(event.key === "2" || event.key ==='"'){
         if(inventory.rifle.isOwned){
@@ -679,6 +747,7 @@ document.addEventListener('keydown', (event) => {
             inventory.shotgun.isEquipped = false;
             inventory.knife.isEquipped = false;
             inventory.rifle.isEquipped = true;
+            inventory.currentWeapon = rifle;
         }
     }else if(event.key === "3" || event.key ==='§'){
         if(inventory.shotgun.isOwned){
@@ -686,6 +755,7 @@ document.addEventListener('keydown', (event) => {
             inventory.rifle.isEquipped = false;
             inventory.knife.isEquipped = false;
             inventory.shotgun.isEquipped = true;
+            inventory.currentWeapon = shotgun;
         }
     }else if(event.key === "4" || event.key ==='$'){
         if(inventory.knife.isOwned){
@@ -693,6 +763,7 @@ document.addEventListener('keydown', (event) => {
             inventory.rifle.isEquipped = false;
             inventory.shotgun.isEquipped = false;
             inventory.knife.isEquipped = true;
+            inventory.currentWeapon = knife;
         }
     }
 });
