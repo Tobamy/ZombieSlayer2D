@@ -108,6 +108,10 @@
         },
         damage: 30
     }
+    var knife= {
+        damage: 100,
+        range: 100
+    }
 
     //Player
     var player;
@@ -405,21 +409,24 @@ function enemyHit (){
 }
 
 function hitCheck(enemy, shot){
-    var shotLeft = shot.x;
-    var shotRight = shot.x + (inventory.currentWeapon).hitboxShot.width;
-    var shotTop = shot.y;
-    var shotBottom = shot.y + (inventory.currentWeapon).hitboxShot.height;
-
-    var enemyLeft = enemy.x;
-    var enemyRight = enemy.x + hitboxEnemy.width;
-    var enemyTop = enemy.y;
-    var enemyBottom = enemy.y + hitboxEnemy.height;
-
-    // Check if the two rectangles intersect
-    return (shotRight >= enemyLeft &&
-            shotLeft <= enemyRight &&
-            shotBottom >= enemyTop &&
-            shotTop <= enemyBottom);
+    if(!inventory.knife.isEquipped){
+        var shotLeft = shot.x;
+        var shotRight = shot.x + (inventory.currentWeapon).hitboxShot.width;
+        var shotTop = shot.y;
+        var shotBottom = shot.y + (inventory.currentWeapon).hitboxShot.height;
+    
+        var enemyLeft = enemy.x;
+        var enemyRight = enemy.x + hitboxEnemy.width;
+        var enemyTop = enemy.y;
+        var enemyBottom = enemy.y + hitboxEnemy.height;
+    
+        // Check if the two rectangles intersect
+        return (shotRight >= enemyLeft &&
+                shotLeft <= enemyRight &&
+                shotBottom >= enemyTop &&
+                shotTop <= enemyBottom);
+    }
+    
 }
 
 function fireShot() {
@@ -602,7 +609,7 @@ function weaponSwitcher(ev){;
             }
         }
     }
-    console.log((inventory.currentWeapon).hitboxShot.width);
+    //console.log((inventory.currentWeapon).hitboxShot.width);
 }
 
 function isMoving(){
