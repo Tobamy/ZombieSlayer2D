@@ -27,7 +27,8 @@
 //todoT Inventar
     //man sieht in einer Anzeige unten konstant alle Waffen und kann mit dem Mausrad durchscrollen
     //oder mit den Zahlen durch die Waffen wechseln
-//todo Health Bar (bspw. oben links)
+//todoT Health Bar (bspw. oben links)
+    //mit Logik, Spieler soll Schaden bekommen können
 //todo Audio
 //todo Einstellungsmöglichkeiten
     //Musik switch
