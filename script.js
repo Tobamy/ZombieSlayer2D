@@ -39,6 +39,8 @@
 //todo falls noch Zeit da ist:
     //Waffe genau auf die Maus ausrichten (abhängig von der Entfernung der Maus zum Player)
     //Größe automatisch an die Fenstergröße anpassen
+//Bug: 
+    //Diagonal läuft man schneller
 
 //Globale Variablen
     //#region Variablen
@@ -53,8 +55,10 @@
 
     //Hitbox 
     var hitboxPlayer = {
-        width: 156,
-        height: 103
+        width: 80,
+        height: 80,
+        calibrationX: 40,
+        calibrationY: 15
     }
     var hitboxHandgunShot = {
         width: 3,
@@ -104,14 +108,14 @@
     var player;
     var feet;
     var frame=0;
-    var playerX = 200;
-    var playerY = 200;
+    var playerX = 650;
+    var playerY = 300;
     var feetX = playerX;
     var feetY = playerY;
     var schrittweite;
     var normalPace = 3;
     var sprintPace = normalPace*2;
-    var playerAngle; 
+    var playerAngle;
 
     //Gegner
     var enemySpeed = 2;
@@ -166,12 +170,12 @@
     const gridCols = 28;
 
     var map = [
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0],
-        [0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+        [0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0],
+        [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
         [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
         [0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
         [0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -179,8 +183,8 @@
         [0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
         [0,0,1,0,0,0,0,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0],
         [0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        [1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     ]
 
 //#endregion
@@ -273,7 +277,7 @@ function drawPlayer(){
 
     //todo: Hitbox player anzeigen -> muss wieder weg 
     ctx.beginPath();
-    ctx.rect(playerX, playerY, hitboxPlayer.width, hitboxPlayer.height);
+    ctx.rect(playerX+hitboxPlayer.calibrationX, playerY+hitboxPlayer.calibrationY, hitboxPlayer.width, hitboxPlayer.height);
     ctx.stroke();
 
 
@@ -571,7 +575,7 @@ function paceChanger(ev){ //todo
 //Das ist aber optional, momentan funktioniert es nämlich
 function updatePlayerPosition(ev){ 
     if (downKey && rightKey && !upKey && !leftKey) {
-        if (borderCheck(playerX + schrittweite, playerY + schrittweite, hitboxPlayer)) {
+        if (borderCheck(playerX + schrittweite + hitboxPlayer.calibrationX, playerY + schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
             playerX += schrittweite;
             playerY += schrittweite;
             feetX += schrittweite;
@@ -579,7 +583,7 @@ function updatePlayerPosition(ev){
         }
     }
     if (downKey && leftKey && !upKey && !rightKey) {
-        if (borderCheck(playerX - schrittweite, playerY + schrittweite, hitboxPlayer)) {
+        if (borderCheck(playerX - schrittweite + hitboxPlayer.calibrationX, playerY + schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
             playerX -= schrittweite;
             playerY += schrittweite;
             feetX -= schrittweite;
@@ -587,7 +591,7 @@ function updatePlayerPosition(ev){
         }
     }
     if (upKey && rightKey && !downKey && !leftKey) {
-        if (borderCheck(playerX + schrittweite, playerY - schrittweite, hitboxPlayer)) {
+        if (borderCheck(playerX + schrittweite + hitboxPlayer.calibrationX, playerY - schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
             playerX += schrittweite;
             playerY -= schrittweite;
             feetX += schrittweite;
@@ -595,7 +599,7 @@ function updatePlayerPosition(ev){
         }
     }
     if (upKey && leftKey && !rightKey && !downKey) {
-        if (borderCheck(playerX - schrittweite, playerY - schrittweite, hitboxPlayer)) {
+        if (borderCheck(playerX - schrittweite + hitboxPlayer.calibrationX, playerY - schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
             playerX -= schrittweite;
             playerY -= schrittweite;
             feetX -= schrittweite;
@@ -603,25 +607,25 @@ function updatePlayerPosition(ev){
         }
     }
     if (downKey && !leftKey && !rightKey && !upKey) {
-        if (borderCheck(playerX, playerY + schrittweite, hitboxPlayer)) {
+        if (borderCheck(playerX + hitboxPlayer.calibrationX, playerY + schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
             playerY += schrittweite;
             feetY += schrittweite;
         }
     }
     if (upKey && !leftKey && !rightKey && !downKey) {
-        if (borderCheck(playerX, playerY - schrittweite, hitboxPlayer)) {
+        if (borderCheck(playerX + hitboxPlayer.calibrationX, playerY - schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
             playerY -= schrittweite;
             feetY -= schrittweite;
         }
     }
     if (leftKey && !upKey && !downKey && !rightKey) {
-        if (borderCheck(playerX - schrittweite, playerY, hitboxPlayer)) {
+        if (borderCheck(playerX - schrittweite + hitboxPlayer.calibrationX, playerY + hitboxPlayer.calibrationY, hitboxPlayer)) {
             playerX -= schrittweite;
             feetX -= schrittweite;
         }
     }
     if (rightKey && !upKey && !downKey && !leftKey) {
-        if (borderCheck(playerX + schrittweite, playerY, hitboxPlayer)) {
+        if (borderCheck(playerX + schrittweite + hitboxPlayer.calibrationX, playerY + hitboxPlayer.calibrationY, hitboxPlayer)) {
             playerX += schrittweite;
             feetX += schrittweite;
         }
@@ -631,12 +635,12 @@ function updatePlayerPosition(ev){
         playerY = playerY;
     }
     if (downKey && leftKey && rightKey && !upKey){
-        if (borderCheck(playerX, playerY + schrittweite, hitboxPlayer)) {
+        if (borderCheck(playerX + hitboxPlayer.calibrationX, playerY + schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
             playerY += schrittweite;
         }
     }
     if (!downKey && leftKey && rightKey && upKey){
-        if (borderCheck(playerX, playerY - schrittweite, hitboxPlayer)) {
+        if (borderCheck(playerX + hitboxPlayer.calibrationX, playerY - schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
             playerY -= schrittweite;
         }
     }
