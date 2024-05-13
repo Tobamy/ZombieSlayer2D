@@ -32,6 +32,8 @@
 //todoS irgendwann Startbildschirm
 //todo Highscore
     //Punktesystem, bspw. ein Zombie gibt 10 Punkte
+    // sollen wir ganz einfach in Cookies abspeicher können -> Name sollte nicht highsocre sein, sondern auf das Speil bezogen
+    // Cookies sollen wohl nur eine Zeile Code sein in JS 
 //todo evtl. Mauern bauen/Eingänge temporär verschließen (CoD Zombies)
     //Coin System, um die Coins ausgeben zu können
 //todo falls noch Zeit da ist:
@@ -148,6 +150,31 @@
     var scrollDown;
     var scrollUp;
 
+    //map 
+    const tileW = 50; 
+    const tileH = 50; 
+
+    const gridRows = 15; 
+    const gridCols = 28;
+
+    var map = [
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0],
+        [0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+        [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+        [0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+        [0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0],
+        [0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+        [0,0,1,0,0,0,0,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0],
+        [0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    ]
+
 //#endregion
 
 
@@ -195,6 +222,7 @@ function draw() {
     ctx.clearRect(0,0,canvas.width, canvas.height);
 
     drawWorld();
+    drawMap();
 
     drawPlayer();
 
@@ -271,6 +299,20 @@ function drawPlayer(){
     ctx.drawImage(player, -player.width / 2, -player.height / 2, player.width, player.height);
 
     ctx.restore(); 
+}
+
+function drawMap(){
+    for(let eachRow = 0; eachRow < gridRows; eachRow++) {
+        for(let eachCol = 0; eachCol < gridCols; eachCol++){
+            if(map[eachRow][eachCol] === 1) {
+                ctx.fillStyle = "black";
+                ctx.fillRect(tileW*eachCol, tileH*eachRow, tileW, tileH);
+            }else {
+                ctx.fillStyle= "lightgray";
+                ctx.fillRect(tileW*eachCol, tileH*eachRow, tileW, tileH);
+            }
+        }
+    }
 }
 
 function calculatePositioningBetweenMouseAndWeapon() {
@@ -536,10 +578,14 @@ function updatePlayerPosition(ev){
         playerY = playerY;
     }
     if (downKey && leftKey && rightKey && !upKey){
-        playerY += schrittweite;
+        if (borderCheck(playerX, playerY + schrittweite, hitboxPlayer)) {
+            playerY += schrittweite;
+        }
     }
     if (!downKey && leftKey && rightKey && upKey){
-        playerY -= schrittweite;
+        if (borderCheck(playerX, playerY - schrittweite, hitboxPlayer)) {
+            playerY -= schrittweite;
+        }
     }
 }
 
