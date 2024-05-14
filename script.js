@@ -24,6 +24,7 @@
     //hit detection mit modulo? Torben fragen
     //evtl. line of sight etablieren, damit die Gegner nur auf einen zulaufen, wenn sie einen sehen
         //wenn sie einen nicht sehen, dann random bewegen
+        // wenn sie gegen eine Wand laufen, etwas andere Richtung ausprobieren, weil die sonst festhängen
 //todoT Inventar
     //man sieht in einer Anzeige unten konstant alle Waffen und kann mit dem Mausrad durchscrollen
     //oder mit den Zahlen durch die Waffen wechseln
@@ -68,11 +69,15 @@
     }
     var hitboxHandgunShot = {
         width: 3,
-        height: 3
+        height: 3,
+        calibrationX: 0,
+        calibrationY: 0
     }
     var hitboxEnemy = {
         width: 80,
-        height: 80
+        height: 80,
+        calibrationX: 0,
+        calibrationY: 0
     }
 
     //Waffen 
@@ -185,6 +190,8 @@
     const gridRows = 15; 
     const gridCols = 28;
 
+    var activeWalls = []; 
+
     var map = [
         [0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0],
         [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
@@ -229,12 +236,42 @@ function init() {
 }
 
 function borderCheck(x, y, hitbox){
+    let isNotCollision = true; 
+
+    x += hitbox.calibrationX;
+    y += hitbox.calibrationY;
     if((x)>=0 && (x) <= canvas.width-hitbox.width && (y) >=0 && (y) <= canvas.height-hitbox.height){
-        return true;
+        isNotCollision = true;
     }
     else{
-        return false;
+        isNotCollision = false;
     }
+
+    const objectLeft = x;
+    const objectRight = x + hitbox.width; 
+    const objectTop = y; 
+    const objectBottom = y + hitbox.height; 
+
+    if(isNotCollision){
+        for(let i = 0; i < activeWalls.length; i++){
+            const currentWall = activeWalls[i]; 
+    
+            const wallLeft = currentWall.x; 
+            const wallRight = currentWall.x + tileW; 
+            const wallTop = currentWall.y; 
+            const wallBottom = currentWall.y + tileH; 
+    
+            if(objectRight > wallLeft && objectLeft < wallRight && objectBottom > wallTop && objectTop < wallBottom){
+                isNotCollision = false;
+                break;
+            }else{
+                isNotCollision = true;  
+            }
+        }
+    }
+    
+    
+    return isNotCollision; 
 }
 
 function gameLoop() {
@@ -261,6 +298,25 @@ function draw() {
     drawEnemy();
 
     drawShots();
+}
+
+function drawMap(){
+    for(let eachRow = 0; eachRow < gridRows; eachRow++) {
+        for(let eachCol = 0; eachCol < gridCols; eachCol++){
+            if(map[eachRow][eachCol] === 1) {
+                var wall = {
+                    x: tileW*eachCol,
+                    y: tileH*eachRow, 
+                };
+                activeWalls.push(wall);
+                ctx.fillStyle = "black";
+                ctx.fillRect(wall.x, wall.y, tileW, tileH);
+            }else {
+                ctx.fillStyle= "lightgray";
+                ctx.fillRect(tileW*eachCol, tileH*eachRow, tileW, tileH);
+            }
+        }
+    }
 }
 
 function calculatePositioningBetweenMouseAndPlayer (){
@@ -335,20 +391,6 @@ function drawPlayer(){
     ctx.restore(); 
 }
 
-function drawMap(){
-    for(let eachRow = 0; eachRow < gridRows; eachRow++) {
-        for(let eachCol = 0; eachCol < gridCols; eachCol++){
-            if(map[eachRow][eachCol] === 1) {
-                ctx.fillStyle = "black";
-                ctx.fillRect(tileW*eachCol, tileH*eachRow, tileW, tileH);
-            }else {
-                ctx.fillStyle= "lightgray";
-                ctx.fillRect(tileW*eachCol, tileH*eachRow, tileW, tileH);
-            }
-        }
-    }
-}
-
 function calculatePositioningBetweenMouseAndWeapon() {
     // Berechne die Differenz zwischen der Mausposition und der Position der Waffe
     var dxWeapon = mouseX - (playerX + weaponOffsetX + player.width / 2);
@@ -390,8 +432,10 @@ function drawEnemy (){
         enemy.dy = Math.sin(angle) * enemySpeed;
 
         if(enemy.health > 0){
-            enemy.x += enemy.dx;
-            enemy.y += enemy.dy;
+            if(borderCheck(enemy.x + enemy.dx, enemy.y + enemy.dy, hitboxEnemy)){
+                enemy.x += enemy.dx;
+                enemy.y += enemy.dy;
+            }
 
             var zombieAngle = angle * (180 / Math.PI) - 5;
             ctx.save();
@@ -425,8 +469,7 @@ function drawEnemy (){
             activeEnemys.splice(j,1);
             j--;
         }
-        
-    }
+    }       
 }
 
 function enemyHit (){
@@ -518,7 +561,8 @@ function drawShots() {
             ctx.fill();
             ctx.closePath();
         }else{
-            activeShots[i].splice; 
+            activeShots.splice(i, 1);
+            i--; 
         }
         
     }
@@ -683,7 +727,7 @@ function paceChanger(ev){ //todo
 //Das ist aber optional, momentan funktioniert es nämlich
 function updatePlayerPosition(ev){ 
     if (downKey && rightKey && !upKey && !leftKey) {
-        if (borderCheck(playerX + schrittweite + hitboxPlayer.calibrationX, playerY + schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
+        if (borderCheck(playerX + schrittweite, playerY + schrittweite, hitboxPlayer)) {
             playerX += schrittweite;
             playerY += schrittweite;
             feetX += schrittweite;
@@ -691,7 +735,7 @@ function updatePlayerPosition(ev){
         }
     }
     if (downKey && leftKey && !upKey && !rightKey) {
-        if (borderCheck(playerX - schrittweite + hitboxPlayer.calibrationX, playerY + schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
+        if (borderCheck(playerX - schrittweite, playerY + schrittweite, hitboxPlayer)) {
             playerX -= schrittweite;
             playerY += schrittweite;
             feetX -= schrittweite;
@@ -699,7 +743,7 @@ function updatePlayerPosition(ev){
         }
     }
     if (upKey && rightKey && !downKey && !leftKey) {
-        if (borderCheck(playerX + schrittweite + hitboxPlayer.calibrationX, playerY - schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
+        if (borderCheck(playerX + schrittweite, playerY - schrittweite, hitboxPlayer)) {
             playerX += schrittweite;
             playerY -= schrittweite;
             feetX += schrittweite;
@@ -707,7 +751,7 @@ function updatePlayerPosition(ev){
         }
     }
     if (upKey && leftKey && !rightKey && !downKey) {
-        if (borderCheck(playerX - schrittweite + hitboxPlayer.calibrationX, playerY - schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
+        if (borderCheck(playerX - schrittweite, playerY - schrittweite, hitboxPlayer)) {
             playerX -= schrittweite;
             playerY -= schrittweite;
             feetX -= schrittweite;
@@ -715,25 +759,25 @@ function updatePlayerPosition(ev){
         }
     }
     if (downKey && !leftKey && !rightKey && !upKey) {
-        if (borderCheck(playerX + hitboxPlayer.calibrationX, playerY + schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
+        if (borderCheck(playerX, playerY + schrittweite, hitboxPlayer)) {
             playerY += schrittweite;
             feetY += schrittweite;
         }
     }
     if (upKey && !leftKey && !rightKey && !downKey) {
-        if (borderCheck(playerX + hitboxPlayer.calibrationX, playerY - schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
+        if (borderCheck(playerX, playerY - schrittweite, hitboxPlayer)) {
             playerY -= schrittweite;
             feetY -= schrittweite;
         }
     }
     if (leftKey && !upKey && !downKey && !rightKey) {
-        if (borderCheck(playerX - schrittweite + hitboxPlayer.calibrationX, playerY + hitboxPlayer.calibrationY, hitboxPlayer)) {
+        if (borderCheck(playerX - schrittweite, playerY, hitboxPlayer)) {
             playerX -= schrittweite;
             feetX -= schrittweite;
         }
     }
     if (rightKey && !upKey && !downKey && !leftKey) {
-        if (borderCheck(playerX + schrittweite + hitboxPlayer.calibrationX, playerY + hitboxPlayer.calibrationY, hitboxPlayer)) {
+        if (borderCheck(playerX + schrittweite, playerY, hitboxPlayer)) {
             playerX += schrittweite;
             feetX += schrittweite;
         }
@@ -743,12 +787,12 @@ function updatePlayerPosition(ev){
         playerY = playerY;
     }
     if (downKey && leftKey && rightKey && !upKey){
-        if (borderCheck(playerX + hitboxPlayer.calibrationX, playerY + schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
+        if (borderCheck(playerX, playerY + schrittweite, hitboxPlayer)) {
             playerY += schrittweite;
         }
     }
     if (!downKey && leftKey && rightKey && upKey){
-        if (borderCheck(playerX + hitboxPlayer.calibrationX, playerY - schrittweite + hitboxPlayer.calibrationY, hitboxPlayer)) {
+        if (borderCheck(playerX, playerY - schrittweite, hitboxPlayer)) {
             playerY -= schrittweite;
         }
     }
