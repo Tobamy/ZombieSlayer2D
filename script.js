@@ -729,34 +729,34 @@ function paceChanger(ev){ //todo
 function updatePlayerPosition(ev){ 
     if (downKey && rightKey && !upKey && !leftKey) {
         if (borderCheck(playerX + schrittweite, playerY + schrittweite, hitboxPlayer)) {
-            playerX += schrittweite;
-            playerY += schrittweite;
-            feetX += schrittweite;
-            feetY += schrittweite;
+            playerX += schrittweite / Math.sqrt(2);
+            playerY += schrittweite / Math.sqrt(2);
+            feetX += schrittweite / Math.sqrt(2);
+            feetY += schrittweite / Math.sqrt(2);
         }
     }
     if (downKey && leftKey && !upKey && !rightKey) {
         if (borderCheck(playerX - schrittweite, playerY + schrittweite, hitboxPlayer)) {
-            playerX -= schrittweite;
-            playerY += schrittweite;
-            feetX -= schrittweite;
-            feetY += schrittweite;
+            playerX -= schrittweite / Math.sqrt(2);
+            playerY += schrittweite / Math.sqrt(2);
+            feetX -= schrittweite / Math.sqrt(2);;
+            feetY += schrittweite / Math.sqrt(2);;
         }
     }
     if (upKey && rightKey && !downKey && !leftKey) {
         if (borderCheck(playerX + schrittweite, playerY - schrittweite, hitboxPlayer)) {
-            playerX += schrittweite;
-            playerY -= schrittweite;
-            feetX += schrittweite;
-            feetY -= schrittweite;
+            playerX += schrittweite / Math.sqrt(2);;
+            playerY -= schrittweite / Math.sqrt(2);;
+            feetX += schrittweite / Math.sqrt(2);;
+            feetY -= schrittweite / Math.sqrt(2);;
         }
     }
     if (upKey && leftKey && !rightKey && !downKey) {
         if (borderCheck(playerX - schrittweite, playerY - schrittweite, hitboxPlayer)) {
-            playerX -= schrittweite;
-            playerY -= schrittweite;
-            feetX -= schrittweite;
-            feetY -= schrittweite;
+            playerX -= schrittweite / Math.sqrt(2);;
+            playerY -= schrittweite / Math.sqrt(2);;
+            feetX -= schrittweite / Math.sqrt(2);;
+            feetY -= schrittweite / Math.sqrt(2);;
         }
     }
     if (downKey && !leftKey && !rightKey && !upKey) {
