@@ -136,6 +136,16 @@
     var sprintPace = normalPace*2;
     var playerAngle;
 
+    //Messer
+    var meleeAttackSheet;
+    var meleeAttackAnimation = {
+        currentFrame: 0,
+        totalFrames: 3, // Assuming the sprite sheet has 5 frames
+        frameDuration: 100, // Duration of each frame in milliseconds
+        lastFrameTime: Date.now(), // Timestamp of the last frame update
+        isPlaying: false // Indicates if the animation is currently playing
+    };
+
     //Gegner
     var enemySpeed = 2;
     var activeEnemys = [];
@@ -179,7 +189,8 @@
             isEquipped: false
         },
         currentWeapon: handgun,
-        health: 100
+        health: 100,
+        maxHealth: 100
     }
     var scrollDown;
     var scrollUp;
@@ -233,6 +244,8 @@ function init() {
 
     zombieWalk = document.getElementById("zombieWalk");
 
+    meleeAttackSheet = document.getElementById("meleeAttack");
+
     //Gameloop starten
     setInterval(gameLoop,16); //FPS = 1000/diese Zahl
 }
@@ -284,6 +297,7 @@ function gameLoop() {
 function update() {
     paceChanger();
     updatePlayerPosition();
+    updateMeleeAttackAnimation();
 }
 
 function draw() {
@@ -378,16 +392,29 @@ function drawPlayer(){
     weaponOffsetY = initWeaponOffsetX * Math.sin(playerAngle * Math.PI / 180) + initWeaponOffsetY * Math.cos(playerAngle * Math.PI / 180);
 
     ctx.rotate(playerAngle * Math.PI / 180 );
+    //Füße malen
     if(isMoving()){
         ctx.drawImage(
-            feet, Math.floor(frame % 6)*feet.width / 6, 0,
+            feet, 
+            Math.floor(frame % 6)*feet.width / 6, 0,
             feet.width / 6, feet.height, 
             -feet.width/6/2 - 25, -feet.height/2 + 8, 
             feet.width / 6, feet.height 
         );
     }
     
-    ctx.drawImage(player, -player.width / 2, -player.height / 2, player.width, player.height);
+    if(meleeAttackAnimation.isPlaying){
+        ctx.drawImage(
+            meleeAttackSheet, 
+            meleeAttackAnimation.currentFrame * meleeAttackSheet.width/3,0,
+            meleeAttackSheet.width/3, meleeAttackSheet.height,
+            -meleeAttackSheet.width/3/2, -meleeAttackSheet.height/2 + 15,
+            meleeAttackSheet.width/3, meleeAttackSheet.height
+        )
+    }else{
+        ctx.drawImage(player, -player.width / 2, -player.height / 2, player.width, player.height);
+    }
+
 
     ctx.restore(); 
 }
@@ -421,7 +448,6 @@ function spawnEnemy (startX = 500, startY = 500){
 
     // Füge den Schuss zum Array der aktiven Schüsse hinzu
     activeEnemys.push(enemy);
-    //console.log(activeEnemys);
 }
 
 function drawEnemy (){
@@ -480,7 +506,6 @@ function enemyHit (){
                 activeEnemys[j].health -= activeShots[i].damage;
                 activeShots.splice(i, 1);
                 i--;
-                //console.log(activeShots[i]);
             }
         }
     }
@@ -505,6 +530,70 @@ function hitCheck(enemy, shot){
                 shotTop <= enemyBottom);
     }
     
+}
+
+function useKnife() {
+    if(inventory.knife.isEquipped){
+        if (inventory.knife.isEquipped && !meleeAttackAnimation.isPlaying) {
+            meleeAttackAnimation.isPlaying = true;
+            meleeAttackAnimation.currentFrame = 0;
+            meleeAttackAnimation.lastFrameTime = Date.now();
+        }
+        activeEnemys.forEach((enemy, index)=>{
+            if (isEnemyInMeleeRange(enemy)) {
+                enemy.health -= knife.damage;
+                if (enemy.health <= 0){
+                    activeEnemys.splice(index, 1);
+                }
+            }
+        });
+    }
+}
+
+function isEnemyInMeleeRange (enemy){
+    let distance = Math.sqrt(((playerX + player.width/2) - (enemy.x + hitboxEnemy.width/2)) ** 2 + ((playerY + player.height/2) - (enemy.y + hitboxEnemy.height/2)) ** 2);
+    if (distance > (knife.range)) {
+        return false;
+    }
+    calculatePositioningBetweenMouseAndPlayer ();
+
+    let currentPlayerAngle = angle;
+    let enemyAngle = Math.atan2(enemy.y - playerY, enemy.x - playerX);
+    let fov = Math.Pi/4;
+
+    let angleDifference = Math.abs(enemyAngle - currentPlayerAngle);
+    // Correct for angle wrap-around
+    if (angleDifference > Math.PI) {
+        angleDifference = (2 * Math.PI) - angleDifference;
+    }
+    return angleDifference <= 1.3;
+
+}
+
+function updateMeleeAttackAnimation() {
+    if (!meleeAttackAnimation.isPlaying) return;
+
+    var now = Date.now();
+    if (now - meleeAttackAnimation.lastFrameTime >= meleeAttackAnimation.frameDuration) {
+        meleeAttackAnimation.currentFrame++;
+        meleeAttackAnimation.lastFrameTime = now;
+
+        if (meleeAttackAnimation.currentFrame >= meleeAttackAnimation.totalFrames) {
+            meleeAttackAnimation.currentFrame = 0;
+            meleeAttackAnimation.isPlaying = false; // Stop the animation after one cycle
+        }
+    }
+}
+
+//für später, wenn man Schaden bekommt
+function flashScreen() {
+    const originalFill = ctx.fillStyle;
+    ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';  // Flash a red overlay
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    setTimeout(() => {
+        ctx.fillStyle = originalFill;
+        draw();  // Redraw the original screen
+    }, 100);
 }
 
 function fireShot() {
@@ -538,7 +627,6 @@ function fireShot() {
             };
 
             //shot.damage = (inventory.currentWeapon).damage;
-            //console.log(shot.damage);
             // Füge den Schuss zum Array der aktiven Schüsse hinzu
             activeShots.push(shot);
 
@@ -688,7 +776,6 @@ function weaponSwitcher(ev){;
             }
         }
     }
-    //console.log((inventory.currentWeapon).hitboxShot.width);
 }
 
 function isMoving(){
@@ -707,6 +794,7 @@ function mouseClicked(ev){
     //Wenn geklickt 
     console.log(mouseX, mouseY);
     fireShot();
+    useKnife();
 }
 
 function mouseMoved(ev){
