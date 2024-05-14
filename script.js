@@ -59,6 +59,7 @@
 
     //Images
     var background;
+    var imgWall;
 
     //Hitbox 
     var hitboxPlayer = {
@@ -221,6 +222,7 @@ function init() {
 
     //Bilder
     background = document.getElementById("imgBackground");
+    imgWall = document.getElementById("imgWall");
 
     //player
     player = document.getElementById("handgun");
@@ -309,11 +311,10 @@ function drawMap(){
                     y: tileH*eachRow, 
                 };
                 activeWalls.push(wall);
-                ctx.fillStyle = "black";
-                ctx.fillRect(wall.x, wall.y, tileW, tileH);
-            }else {
-                ctx.fillStyle= "lightgray";
-                ctx.fillRect(tileW*eachCol, tileH*eachRow, tileW, tileH);
+                //todo muss noch weggemacht werden, wenn wir es nicht mehr brauchen
+                // ctx.fillStyle = "black";
+                // ctx.fillRect(wall.x, wall.y, tileW, tileH);
+                ctx.drawImage(imgWall, wall.x,wall.y);
             }
         }
     }
@@ -699,7 +700,7 @@ function isMoving(){
 }
 
 function drawWorld(){
-    //ctx.drawImage(background, 0,0);
+    ctx.drawImage(background, 0,0);
 }
 
 function mouseClicked(ev){
