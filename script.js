@@ -316,6 +316,8 @@ function update() {
     paceChanger();
     updatePlayerPosition();
     updateMeleeAttackAnimation();
+    updateEnemyAttackCooldown();
+    attackPlayer();
 }
 
 function draw() {
@@ -435,6 +437,20 @@ function drawPlayer(){
 
 
     ctx.restore(); 
+
+    //erste Healthbar nur zum Testen
+    //aktuelle HP berechnen
+    var playerHealthPercentage = (inventory.health/inventory.maxHealth) * hitboxPlayer.width;
+    //Hintergrund der Health Bar
+    ctx.fillStyle = 'red';
+    ctx.fillRect(playerX + 40, playerY - 10, hitboxPlayer.width, 10);
+
+    //gefüllter Teil der Health Bar
+    ctx.fillStyle = 'green';
+    ctx.fillRect(playerX + 40, playerY - 10, playerHealthPercentage, 10);
+    ctx.fillStyle = 'black';
+    ctx.font = "15px Verdana";
+    ctx.fillText(inventory.health, playerX + 50, playerY - 3);
 }
 
 function calculatePositioningBetweenMouseAndWeapon() {
@@ -461,7 +477,11 @@ function spawnEnemy (startX = 500, startY = 500){
         dx: 0,
         dy: 0,
         health: 100,
-        maxHealth: 100
+        maxHealth: 100,
+        attackRange: 80,
+        isOnCooldown: false,
+        lastAttack: Date.now(),
+        attackCooldown: 2000, //2 Sekunden
     };
 
     // Füge den Schuss zum Array der aktiven Schüsse hinzu
@@ -515,6 +535,40 @@ function drawEnemy (){
             j--;
         }
     }       
+}
+
+function attackPlayer(){
+    activeEnemys.forEach((enemy, index)=>{
+        if(isPlayerInAttackRange(enemy) && !enemy.isOnCooldown){
+            enemy.lastAttack = Date.now();
+            inventory.health -= 5;
+            enemy.isOnCooldown = true;
+            console.log(inventory.health);        
+        }
+    });
+}
+
+function isPlayerInAttackRange(enemy){
+    let distance = Math.sqrt(((playerX + player.width/2) - (enemy.x + hitboxEnemy.width/2)) ** 2 + ((playerY + player.height/2) - (enemy.y + hitboxEnemy.height/2)) ** 2);
+    if (distance > (enemy.attackRange)) {
+        return false;
+    }else{
+        return true; //hier müssen keine Winkel geprüft werden, da der enemy eh immer auf den Spieler guckt
+    }
+    
+
+}
+
+function updateEnemyAttackCooldown(){
+    activeEnemys.forEach((enemy, index)=>{
+        if(!enemy.isOnCooldown){
+            return;
+        } 
+        now = Date.now();
+        if(now - enemy.lastAttack >= enemy.attackCooldown){
+            enemy.isOnCooldown = false;
+        }
+    });
 }
 
 function enemyHit (){
