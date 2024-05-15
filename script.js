@@ -169,6 +169,7 @@
     var enemySpeed = 2;
     var activeEnemys = [];
     var zombieWalk;
+    var zombieAttack;
 
     //einzelne Tastenanschläge speichern
     var upKey;
@@ -261,6 +262,7 @@ function init() {
     feet = document.getElementById("feet");
 
     zombieWalk = document.getElementById("zombieWalk");
+    zombieAttack = document.getElementById("zombieAttack");
 
     meleeAttackSheet = document.getElementById("meleeAttack");
 
@@ -317,6 +319,7 @@ function update() {
     updatePlayerPosition();
     updateMeleeAttackAnimation();
     updateEnemyAttackCooldown();
+    updateEnemyAttackAnimation();
     attackPlayer();
 }
 
@@ -482,6 +485,14 @@ function spawnEnemy (startX = 500, startY = 500){
         isOnCooldown: false,
         lastAttack: Date.now(),
         attackCooldown: 2000, //2 Sekunden
+        damagePending: false,
+        enemyAttackAnimation: {
+            currentFrame: 0,
+            totalFrames: 2, // Assuming the sprite sheet has 5 frames
+            frameDuration: 200, // Duration of each frame in milliseconds
+            lastFrameTime: Date.now(), // Timestamp of the last frame update
+            isPlaying: false // Indicates if the animation is currently playing
+        },
     };
 
     // Füge den Schuss zum Array der aktiven Schüsse hinzu
@@ -508,12 +519,24 @@ function drawEnemy (){
             ctx.translate(enemy.x + hitboxEnemy.width / 2, enemy.y + hitboxEnemy.height / 2);
             ctx.rotate(zombieAngle * Math.PI / 180 );
             /*if(isMoving()){*/  //evtl. später was einbauen, dass der sich nicht im Stillstand bewegt. Momentan läuft er aber immer, also passt das erstmal so.
+            if(enemy.enemyAttackAnimation.isPlaying){
+                ctx.drawImage(
+                    zombieAttack, 
+                    enemy.enemyAttackAnimation.currentFrame * zombieAttack.width/2,0,
+                    zombieAttack.width/2, zombieAttack.height,
+                    -zombieAttack.width/2/2, -zombieAttack.height/2,
+                    zombieAttack.width/2, zombieAttack.height
+                )
+            }else{
                 ctx.drawImage(
                     zombieWalk, Math.floor(frame % 9)*zombieWalk.width / 9, 0,
                     zombieWalk.width / 9, zombieWalk.height, 
                     -zombieWalk.width/9/2 , -zombieWalk.height/2, 
                     zombieWalk.width / 9, zombieWalk.height 
                 );
+            }
+            
+                
             /*}*/
                     ctx.restore(); 
 
@@ -538,19 +561,23 @@ function drawEnemy (){
 }
 
 function attackPlayer(){
-    activeEnemys.forEach((enemy, index)=>{
+    activeEnemys.forEach((enemy)=>{
         if(isPlayerInAttackRange(enemy) && !enemy.isOnCooldown){
             enemy.lastAttack = Date.now();
-            inventory.health -= 5;
+            enemy.enemyAttackAnimation.isPlaying = true;
+            enemy.enemyAttackAnimation.currentFrame = 0;
+            enemy.enemyAttackAnimation.lastFrameTime = Date.now();
+            //inventory.health -= 5;
             enemy.isOnCooldown = true;
-            console.log(inventory.health);        
+            enemy.damagePending = true;      
         }
     });
 }
 
-function isPlayerInAttackRange(enemy){
+
+function isPlayerInAttackRange(enemy, additionalRange = 0){
     let distance = Math.sqrt(((playerX + player.width/2) - (enemy.x + hitboxEnemy.width/2)) ** 2 + ((playerY + player.height/2) - (enemy.y + hitboxEnemy.height/2)) ** 2);
-    if (distance > (enemy.attackRange)) {
+    if (distance > (enemy.attackRange + additionalRange)) {
         return false;
     }else{
         return true; //hier müssen keine Winkel geprüft werden, da der enemy eh immer auf den Spieler guckt
@@ -560,13 +587,41 @@ function isPlayerInAttackRange(enemy){
 }
 
 function updateEnemyAttackCooldown(){
-    activeEnemys.forEach((enemy, index)=>{
+    activeEnemys.forEach((enemy)=>{
         if(!enemy.isOnCooldown){
             return;
         } 
         now = Date.now();
         if(now - enemy.lastAttack >= enemy.attackCooldown){
             enemy.isOnCooldown = false;
+        }
+    });
+}
+
+//Hier wird auch Schaden gemacht
+function updateEnemyAttackAnimation() {
+    activeEnemys.forEach((enemy) => {
+        if (!enemy.enemyAttackAnimation.isPlaying) return;
+
+        var now = Date.now();
+        if (now - enemy.enemyAttackAnimation.lastFrameTime >= enemy.enemyAttackAnimation.frameDuration) {
+            enemy.enemyAttackAnimation.currentFrame++;
+            enemy.enemyAttackAnimation.lastFrameTime = now;
+
+            if (enemy.enemyAttackAnimation.currentFrame >= enemy.enemyAttackAnimation.totalFrames) {
+                enemy.enemyAttackAnimation.currentFrame = 0;
+                enemy.enemyAttackAnimation.isPlaying = false; // Stop the animation after one cycle
+
+                activeEnemys.forEach((enemy) => {
+                    if (enemy.damagePending) {
+                        if(isPlayerInAttackRange(enemy, 30)){
+                            inventory.health -= 5;
+                        }
+                        enemy.damagePending = false;
+                        console.log(inventory.health);
+                    }
+                });
+            }
         }
     });
 }
