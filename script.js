@@ -12,7 +12,7 @@
         //Shotgun schnell aber nicht so weit 
         //handgun langsam
         //rifle deutlich schneller als handgun 
-    //auch Nachladen
+    //auch Reload
     //aber unendlich Munition in Reserve
 //todo Berechnung Winkel verstehen (also die Mathematik dahinter)
 //todoS map
@@ -92,8 +92,14 @@
             width: 3,
             height: 3
         },
-        damage: 20
-    }; 
+        damage: 20, 
+        numberOfShots: 10,
+        tempNumberofShots: 10,
+        delayPerShot: 0, 
+        tempDelayPerShot: 0,
+        delayReload: 1,
+        tempDelayReload: 1
+    } 
     var shotgun = {
         shotspeed: 20, 
         initWeaponOffset: {
@@ -104,7 +110,13 @@
             width: 3,
             height: 3
         },
-        damage: 17
+        damage: 17,
+        numberOfShots: 5,
+        tempNumberofShots: 5,
+        delayPerShot: 1, 
+        tempDelayPerShot: 1,
+        delayReload: 3,
+        tempDelayReload: 3
     }
     var rifle = {
         shotspeed: 20, 
@@ -116,8 +128,15 @@
             width: 3,
             height: 3
         },
-        damage: 30
+        damage: 30,
+        numberOfShots: 20,
+        tempNumberofShots: 20,
+        delayPerShot: 0,
+        tempDelayPerShot: 0, 
+        delayReload: 1,
+        tempDelayReload: 1
     }
+
     var knife= {
         damage: 100,
         range: 100
@@ -164,7 +183,6 @@
     var angle; 
 
     //Schuss
-    var shotSpeed = 20; //default auf 20
     activeShots = [];
     var shotRadius = hitboxHandgunShot.width; 
     var weaponOffsetX;
@@ -209,7 +227,7 @@
         [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
         [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,1,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
         [0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
         [0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -596,48 +614,83 @@ function flashScreen() {
     }, 100);
 }
 
+function calculateDelay (isFromDrawShot){
+    if(inventory.currentWeapon.tempDelayPerShot < inventory.currentWeapon.delayPerShot){
+        if(isFromDrawShot){
+            inventory.currentWeapon.tempDelayPerShot += 0.01;
+        }
+    }else if(inventory.currentWeapon.tempDelayReload < inventory.currentWeapon.delayReload){
+        if(isFromDrawShot){
+            inventory.currentWeapon.tempDelayReload += 0.01;
+        }
+    }else{
+        return true;
+    }
+
+    return false; 
+}
+
+function reloadWeapon(){
+    inventory.currentWeapon.tempDelayReload = 0; 
+    inventory.currentWeapon.tempDelayPerShot = inventory.currentWeapon.delayPerShot;
+    inventory.currentWeapon.tempNumberofShots = inventory.currentWeapon.numberOfShots;
+}
+
+
 function fireShot() {
     if(!inventory.knife.isEquipped){
-        calculatePositioningBetweenMouseAndWeapon();
 
-        // Berechne die Startposition des Schusses unter Berücksichtigung der Waffenverschiebung
-        var shotStartPositionX = playerX + weaponOffsetX + player.width / 2;
-        var shotStartPositionY = playerY + weaponOffsetY + player.height / 2;
-        
-        let i; 
-        let shotgunSpread = 0.13; 
+        let isFromDrawShot = false
 
-        if(inventory.shotgun.isEquipped){
-            i = 0; 
-            var isShotgun = true;
-            angle -=shotgunSpread;
-        }else{
-            i = 2
-        };
+        if(calculateDelay(isFromDrawShot) && !(inventory.currentWeapon.tempNumberofShots === 0)){
+            calculatePositioningBetweenMouseAndWeapon();
 
-        for(i; i < 3; i++){
+            // Berechne die Startposition des Schusses unter Berücksichtigung der Waffenverschiebung
+            var shotStartPositionX = playerX + weaponOffsetX + player.width / 2;
+            var shotStartPositionY = playerY + weaponOffsetY + player.height / 2;
+            
+            let i; 
+            let shotgunSpread = 0.13; 
 
-            // Erstelle ein neues Schussobjekt mit der Richtung und Position des Spielers
-            var shot = {
-                x: shotStartPositionX,
-                y: shotStartPositionY,
-                dx: Math.cos(angle) * shotSpeed, // Geschwindigkeit des Schusses in x-Richtung
-                dy: Math.sin(angle) * shotSpeed, // Geschwindigkeit des Schusses in y-Richtung
-                damage: (inventory.currentWeapon).damage
+            if(inventory.shotgun.isEquipped){
+                i = 0; 
+                var isShotgun = true;
+                angle -=shotgunSpread;
+            }else{
+                i = 2
             };
 
-            //shot.damage = (inventory.currentWeapon).damage;
-            // Füge den Schuss zum Array der aktiven Schüsse hinzu
-            activeShots.push(shot);
+            for(i; i < 3; i++){
 
-            if(isShotgun)angle +=shotgunSpread;
+                // Erstelle ein neues Schussobjekt mit der Richtung und Position des Spielers
+                var shot = {
+                    x: shotStartPositionX,
+                    y: shotStartPositionY,
+                    dx: Math.cos(angle) * inventory.currentWeapon.shotspeed, // Geschwindigkeit des Schusses in x-Richtung
+                    dy: Math.sin(angle) * inventory.currentWeapon.shotspeed, // Geschwindigkeit des Schusses in y-Richtung
+                    damage: (inventory.currentWeapon).damage
+                };
+
+                //shot.damage = (inventory.currentWeapon).damage;
+                // Füge den Schuss zum Array der aktiven Schüsse hinzu
+                activeShots.push(shot);
+
+                if(isShotgun)angle +=shotgunSpread;
+            }
+
+            inventory.currentWeapon.tempDelayPerShot = 0;
+            inventory.currentWeapon.tempNumberofShots -= 1;  
         }
-    }
+    } 
 }
 
 function drawShots() {
     // Gehe durch alle aktiven Schüsse und zeichne sie
     
+    let isFromDrawShot = true; 
+    
+    calculateDelay(isFromDrawShot);
+
     for (let i = 0; i < activeShots.length; i++) {
         var shot = activeShots[i];
 
@@ -652,10 +705,8 @@ function drawShots() {
         }else{
             activeShots.splice(i, 1);
             i--; 
-        }
-        
+        }  
     }
-    
 }
 
 function weaponSwitcher(ev){;
@@ -905,6 +956,10 @@ document.addEventListener('keydown', (event) => {
 
     if(event.key === "j" || event.key === "J"){
         spawnEnemy();
+    }
+
+    if(event.key === "r" || event.key === "R"){
+        reloadWeapon();
     }
 
     if(event.key === "1" || event.key ==="!"){
