@@ -97,7 +97,7 @@
         tempNumberofShots: 10,
         delayPerShot: 0, 
         tempDelayPerShot: 0,
-        delayReload: 1,
+        delayReload: 0.5,
         tempDelayReload: 1
     } 
     var shotgun = {
@@ -115,7 +115,7 @@
         tempNumberofShots: 5,
         delayPerShot: 0.5, 
         tempDelayPerShot: 1,
-        delayReload: 3,
+        delayReload: 1.5,
         tempDelayReload: 3
     }
     var rifle = {
@@ -133,7 +133,7 @@
         tempNumberofShots: 20,
         delayPerShot: 0,
         tempDelayPerShot: 0, 
-        delayReload: 1,
+        delayReload: 0.5,
         tempDelayReload: 1
     }
 
@@ -446,14 +446,14 @@ function drawPlayer(){
     var playerHealthPercentage = (inventory.health/inventory.maxHealth) * hitboxPlayer.width;
     //Hintergrund der Health Bar
     ctx.fillStyle = 'red';
-    ctx.fillRect(playerX + 40, playerY - 10, hitboxPlayer.width, 10);
+    ctx.fillRect(40, 10, hitboxPlayer.width, 10);
 
     //gefüllter Teil der Health Bar
     ctx.fillStyle = 'green';
-    ctx.fillRect(playerX + 40, playerY - 10, playerHealthPercentage, 10);
+    ctx.fillRect( 40, 10, playerHealthPercentage, 10);
     ctx.fillStyle = 'black';
     ctx.font = "15px Verdana";
-    ctx.fillText(inventory.health, playerX + 50, playerY - 3);
+    ctx.fillText(inventory.health, 50, 10);
 }
 
 function calculatePositioningBetweenMouseAndWeapon() {
@@ -686,7 +686,7 @@ function isEnemyInMeleeRange (enemy){
 
     let currentPlayerAngle = angle;
     let enemyAngle = Math.atan2(enemy.y - playerY, enemy.x - playerX);
-    let fov = Math.Pi/4;
+    // let fov = Math.Pi/4;
 
     let angleDifference = Math.abs(enemyAngle - currentPlayerAngle);
     // Correct for angle wrap-around
@@ -723,6 +723,18 @@ function flashScreen() {
     }, 100);
 }
 
+function drawReloadAnimation() {
+    //aktuellen Nachladevorgang in Prozent berechnen
+    var reloadPercentage = (inventory.currentWeapon.tempDelayReload/inventory.currentWeapon.delayReload) * hitboxPlayer.width;
+    //Hintergrund der Nachladeanimation
+    ctx.fillStyle = 'lighgray';
+    ctx.fillRect(playerX + 40, playerY - 10, hitboxPlayer.width, 10);
+
+    //Teil, der sich füllt
+    ctx.fillStyle = 'gray';
+    ctx.fillRect(playerX + 40, playerY - 10, reloadPercentage, 10);
+}
+
 function calculateDelay (isFromDrawShot){
     if(inventory.currentWeapon.tempDelayPerShot < inventory.currentWeapon.delayPerShot){
         if(isFromDrawShot){
@@ -730,12 +742,12 @@ function calculateDelay (isFromDrawShot){
         }
     }else if(inventory.currentWeapon.tempDelayReload < inventory.currentWeapon.delayReload){
         if(isFromDrawShot){
+            drawReloadAnimation();
             inventory.currentWeapon.tempDelayReload += 0.01;
         }
     }else{
         return true;
     }
-
     return false; 
 }
 
@@ -935,6 +947,9 @@ function weaponSwitcher(ev){;
                 inventory.currentWeapon = handgun;
             }
         }
+    }
+    if(inventory.currentWeapon.tempNumberofShots <= 3){
+        reloadWeapon();
     }
 }
 
