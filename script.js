@@ -45,6 +45,7 @@
 //todo falls noch Zeit da ist:
     //Waffe genau auf die Maus ausrichten (abhängig von der Entfernung der Maus zum Player)
     //Größe automatisch an die Fenstergröße anpassen
+    //Nachladen mit Spritesheets animieren
 //Bug: 
     //Diagonal läuft man schneller
 //todo Credits (u.a. Bilder vom Player)
@@ -52,6 +53,7 @@
 //Globale Variablen
     //#region Variablen
     var canvas, ctx; 
+    var backgroundCanvas, backgroundCtx;
 
     //Maus
     var mouseX = 0; 
@@ -139,7 +141,9 @@
 
     var knife= {
         damage: 100,
-        range: 100
+        range: 100,
+        numberOfShots: "∞",
+        tempNumberofShots: "∞",
     }
 
     //Player
@@ -250,6 +254,10 @@ function init() {
     canvas.style.border="red 3px solid";
     ctx = canvas.getContext("2d");
 
+    backgroundCanvas = document.getElementById("backgroundCanvas");
+    backgroundCanvas.style.border="green 3px solid";
+    backgroundCtx = backgroundCanvas.getContext("2d");
+
     //Bilder
     background = document.getElementById("imgBackground");
     imgWall = document.getElementById("imgWall");
@@ -330,6 +338,8 @@ function draw() {
     drawWorld();
     drawMap();
 
+    drawBackground();
+
     drawPlayer();
 
     enemyHit();
@@ -355,6 +365,31 @@ function drawMap(){
             }
         }
     }
+}
+
+function drawBackground(){
+    //healthbar
+    //aktuelle HP berechnen
+    var playerHealthPercentage = (inventory.health/inventory.maxHealth) * 500;
+    //Hintergrund der Health Bar
+    backgroundCtx.fillStyle = 'red';
+    backgroundCtx.fillRect(100, 20, 500, 50);
+
+    //gefüllter Teil der Health Bar
+    backgroundCtx.fillStyle = 'green';
+    backgroundCtx.fillRect( 100, 20, playerHealthPercentage, 50);
+    backgroundCtx.fillStyle = 'black';
+    backgroundCtx.font = "45px Verdana";
+    backgroundCtx.fillText(inventory.health, 120, 60);
+
+
+    //current ammo
+    backgroundCtx.clearRect(1300, 850, 500, 100);
+
+    let currentAmmo = inventory.currentWeapon.tempNumberofShots;
+    let maxAmmo = inventory.currentWeapon.numberOfShots;
+    let ammoText = `${currentAmmo} / ${maxAmmo}`;
+    backgroundCtx.fillText(ammoText, 1350, 900);
 }
 
 function calculatePositioningBetweenMouseAndPlayer (){
@@ -440,20 +475,6 @@ function drawPlayer(){
 
 
     ctx.restore(); 
-
-    //erste Healthbar nur zum Testen
-    //aktuelle HP berechnen
-    var playerHealthPercentage = (inventory.health/inventory.maxHealth) * hitboxPlayer.width;
-    //Hintergrund der Health Bar
-    ctx.fillStyle = 'red';
-    ctx.fillRect(40, 10, hitboxPlayer.width, 10);
-
-    //gefüllter Teil der Health Bar
-    ctx.fillStyle = 'green';
-    ctx.fillRect( 40, 10, playerHealthPercentage, 10);
-    ctx.fillStyle = 'black';
-    ctx.font = "15px Verdana";
-    ctx.fillText(inventory.health, 50, 10);
 }
 
 function calculatePositioningBetweenMouseAndWeapon() {
