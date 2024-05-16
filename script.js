@@ -85,6 +85,10 @@
     }
 
     //Waffen 
+    var reloadHandgun; 
+    var reloadRifle;
+    var reloadShotgun;
+
     var handgun = {
         shotspeed: 20, 
         initWeaponOffset: {
@@ -98,10 +102,18 @@
         damage: 20, 
         numberOfShots: 10,
         tempNumberofShots: 10,
-        delayPerShot: 0, 
+        delayPerShot: 0.2, 
         tempDelayPerShot: 0,
-        delayReload: 0.5,
-        tempDelayReload: 1
+        reloadAnimation: {
+            reloadSprite: null,
+            currentFrame: 0,
+            totalFrames: 5,
+            frameDuration: 100,
+            lastFrameTime: Date.now(),
+            isPlaying: false,
+            offSetX: -15,
+            offSetY: +4,
+        },
     } 
     var shotgun = {
         shotspeed: 20, 
@@ -118,8 +130,16 @@
         tempNumberofShots: 5,
         delayPerShot: 0.5, 
         tempDelayPerShot: 1,
-        delayReload: 1.5,
-        tempDelayReload: 3
+        reloadAnimation: {
+            reloadSprite: null,
+            currentFrame: 0,
+            totalFrames: 5,
+            frameDuration: 200,
+            lastFrameTime: Date.now(),
+            isPlaying: false,
+            offSetX: -1,
+            offSetY: +2,
+        },
     }
     var rifle = {
         shotspeed: 20, 
@@ -136,8 +156,16 @@
         tempNumberofShots: 20,
         delayPerShot: 0,
         tempDelayPerShot: 0, 
-        delayReload: 0.5,
-        tempDelayReload: 1
+        reloadAnimation: {
+            reloadSprite: null,
+            currentFrame: 0,
+            totalFrames: 5,
+            frameDuration: 150,
+            lastFrameTime: Date.now(),
+            isPlaying: false,
+            offSetX: -1,
+            offSetY: +2,
+        },
     }
 
     var knife= {
@@ -289,6 +317,15 @@ function init() {
     invShotgun = document.getElementById("invShotgun");
     invKnife = document.getElementById("invKnife");
 
+    reloadHandgun = document.getElementById("reloadHandgun");
+    handgun.reloadAnimation.reloadSprite = reloadHandgun;
+
+    reloadRifle = document.getElementById("reloadRifle");
+    rifle.reloadAnimation.reloadSprite = reloadRifle;
+
+    reloadShotgun = document.getElementById("reloadShotgun");
+    shotgun.reloadAnimation.reloadSprite = reloadShotgun;
+
     //Gameloop starten
     setInterval(gameLoop,16); //FPS = 1000/diese Zahl
 }
@@ -340,6 +377,7 @@ function gameLoop() {
 function update() {
     paceChanger();
     updatePlayerPosition();
+    updateReloadAnimation();
     updateMeleeAttackAnimation();
     updateEnemyAttackCooldown();
     updateEnemyAttackAnimation();
@@ -547,7 +585,6 @@ function drawPlayer(){
             feet.width / 6, feet.height 
         );
     }
-    
     if(meleeAttackAnimation.isPlaying){
         ctx.drawImage(
             meleeAttackSheet, 
@@ -555,6 +592,18 @@ function drawPlayer(){
             meleeAttackSheet.width/3, meleeAttackSheet.height,
             -meleeAttackSheet.width/3/2, -meleeAttackSheet.height/2 + 15,
             meleeAttackSheet.width/3, meleeAttackSheet.height
+        )
+    }else if(inventory.currentWeapon != knife && inventory.currentWeapon.reloadAnimation.isPlaying){
+        ctx.drawImage(
+            inventory.currentWeapon.reloadAnimation.reloadSprite,
+            inventory.currentWeapon.reloadAnimation.currentFrame * inventory.currentWeapon.reloadAnimation.reloadSprite.width/inventory.currentWeapon.reloadAnimation.totalFrames,
+            0,
+            inventory.currentWeapon.reloadAnimation.reloadSprite.width/inventory.currentWeapon.reloadAnimation.totalFrames,
+            inventory.currentWeapon.reloadAnimation.reloadSprite.height,
+            -inventory.currentWeapon.reloadAnimation.reloadSprite.width/inventory.currentWeapon.reloadAnimation.totalFrames/2 + inventory.currentWeapon.reloadAnimation.offSetX,
+            -inventory.currentWeapon.reloadAnimation.reloadSprite.height/2 + inventory.currentWeapon.reloadAnimation.offSetY,
+            inventory.currentWeapon.reloadAnimation.reloadSprite.width/inventory.currentWeapon.reloadAnimation.totalFrames,
+            inventory.currentWeapon.reloadAnimation.reloadSprite.height
         )
     }else{
         ctx.drawImage(player, -player.width / 2, -player.height / 2, player.width, player.height);
@@ -831,27 +880,10 @@ function flashScreen() {
     }, 100);
 }
 
-function drawReloadAnimation() {
-    //aktuellen Nachladevorgang in Prozent berechnen
-    var reloadPercentage = (inventory.currentWeapon.tempDelayReload/inventory.currentWeapon.delayReload) * hitboxPlayer.width;
-    //Hintergrund der Nachladeanimation
-    ctx.fillStyle = 'lighgray';
-    ctx.fillRect(playerX + 40, playerY - 10, hitboxPlayer.width, 10);
-
-    //Teil, der sich füllt
-    ctx.fillStyle = 'gray';
-    ctx.fillRect(playerX + 40, playerY - 10, reloadPercentage, 10);
-}
-
 function calculateDelay (isFromDrawShot){
     if(inventory.currentWeapon.tempDelayPerShot < inventory.currentWeapon.delayPerShot){
         if(isFromDrawShot){
             inventory.currentWeapon.tempDelayPerShot += 0.01;
-        }
-    }else if(inventory.currentWeapon.tempDelayReload < inventory.currentWeapon.delayReload){
-        if(isFromDrawShot){
-            drawReloadAnimation();
-            inventory.currentWeapon.tempDelayReload += 0.01;
         }
     }else{
         return true;
@@ -860,9 +892,25 @@ function calculateDelay (isFromDrawShot){
 }
 
 function reloadWeapon(){
-    inventory.currentWeapon.tempDelayReload = 0; 
-    inventory.currentWeapon.tempDelayPerShot = inventory.currentWeapon.delayPerShot;
-    inventory.currentWeapon.tempNumberofShots = inventory.currentWeapon.numberOfShots;
+    if(inventory.currentWeapon != knife && !inventory.currentWeapon.reloadAnimation.isPlaying){
+        inventory.currentWeapon.reloadAnimation.isPlaying = true;
+        inventory.currentWeapon.reloadAnimation.currentFrame = 0;
+        inventory.currentWeapon.reloadAnimation.lastFrameTime = Date.now();
+    }
+}
+
+function updateReloadAnimation(){
+    if(inventory.currentWeapon === knife || !inventory.currentWeapon.reloadAnimation.isPlaying) return;
+    now = Date.now();
+    if(now - inventory.currentWeapon.reloadAnimation.lastFrameTime >= inventory.currentWeapon.reloadAnimation.frameDuration){
+        inventory.currentWeapon.reloadAnimation.currentFrame++;
+        inventory.currentWeapon.reloadAnimation.lastFrameTime = now;
+        if(inventory.currentWeapon.reloadAnimation.currentFrame >= inventory.currentWeapon.reloadAnimation.totalFrames){
+            inventory.currentWeapon.reloadAnimation.currentFrame = 0;
+            inventory.currentWeapon.reloadAnimation.isPlaying = false;
+            inventory.currentWeapon.tempNumberofShots = inventory.currentWeapon.numberOfShots;
+        }
+    }
 }
 
 
@@ -871,7 +919,7 @@ function fireShot() {
 
         let isFromDrawShot = false
 
-        if(calculateDelay(isFromDrawShot) && !(inventory.currentWeapon.tempNumberofShots === 0)){
+        if(calculateDelay(isFromDrawShot) && !inventory.currentWeapon.reloadAnimation.isPlaying && !(inventory.currentWeapon.tempNumberofShots === 0)){
             calculatePositioningBetweenMouseAndWeapon();
 
             // Berechne die Startposition des Schusses unter Berücksichtigung der Waffenverschiebung
@@ -935,6 +983,9 @@ function drawShots() {
             activeShots.splice(i, 1);
             i--; 
         }  
+    }
+    if(inventory.currentWeapon.tempNumberofShots === 0){
+        reloadWeapon();
     }
 }
 
@@ -1056,9 +1107,6 @@ function weaponSwitcher(ev){;
                 inventory.currentWeapon = handgun;
             }
         }
-    }
-    if(inventory.currentWeapon.tempNumberofShots <= 3){
-        reloadWeapon();
     }
 }
 
