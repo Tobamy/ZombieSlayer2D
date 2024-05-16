@@ -27,6 +27,7 @@
         // wenn sie gegen eine Wand laufen, etwas andere Richtung ausprobieren, weil die sonst festhängen
 //todoT Inventar
     //man sieht in einer Anzeige unten konstant alle Waffen und kann mit dem Mausrad durchscrollen
+        //Quelle Waffensymbole: https://vladpenn.itch.io/weapon
     //oder mit den Zahlen durch die Waffen wechseln
 //todoT Health Bar (bspw. oben links)
     //mit Logik, Spieler soll Schaden bekommen können
@@ -218,6 +219,15 @@
     var scrollDown;
     var scrollUp;
 
+    var invHandgun, invRifle, invShotgun, invKnife;
+
+    var invDrawing = {
+        startingPointX: 200,
+        startingPointY: 850,
+        imageWidth: 152,
+        imageHeight: 77,
+    }
+
     //map 
     const tileW = 50; 
     const tileH = 50; 
@@ -273,6 +283,11 @@ function init() {
     zombieAttack = document.getElementById("zombieAttack");
 
     meleeAttackSheet = document.getElementById("meleeAttack");
+
+    invHandgun = document.getElementById("invHandgun");
+    invRifle = document.getElementById("invRifle");
+    invShotgun = document.getElementById("invShotgun");
+    invKnife = document.getElementById("invKnife");
 
     //Gameloop starten
     setInterval(gameLoop,16); //FPS = 1000/diese Zahl
@@ -390,6 +405,78 @@ function drawBackground(){
     let maxAmmo = inventory.currentWeapon.numberOfShots;
     let ammoText = `${currentAmmo} / ${maxAmmo}`;
     backgroundCtx.fillText(ammoText, 1350, 900);
+
+    
+    //inventory
+    backgroundCtx.clearRect(invDrawing.startingPointX-10, invDrawing.startingPointY, invDrawing.imageWidth*4+20, invDrawing.imageHeight +5);
+    if(!inventory.handgun.isOwned){
+        backgroundCtx.globalAlpha = 0.7;
+        backgroundCtx.fillStyle="gray";
+        backgroundCtx.drawImage(invHandgun, invDrawing.startingPointX, invDrawing.startingPointY);
+        backgroundCtx.fillRect(invDrawing.startingPointX, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
+        backgroundCtx.globalAlpha = 1;
+    }else if(inventory.handgun.isOwned){
+        backgroundCtx.fillStyle="gray";
+        backgroundCtx.fillRect(invDrawing.startingPointX, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
+        backgroundCtx.drawImage(invHandgun, invDrawing.startingPointX, invDrawing.startingPointY);
+    }
+    if(!inventory.rifle.isOwned){
+        backgroundCtx.globalAlpha = 0.7;
+        backgroundCtx.fillStyle="gray";
+        backgroundCtx.drawImage(invRifle, invDrawing.startingPointX+invDrawing.imageWidth, invDrawing.startingPointY);
+        backgroundCtx.fillRect(invDrawing.startingPointX+invDrawing.imageWidth, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
+        backgroundCtx.globalAlpha = 1;
+    }else if(inventory.rifle.isOwned){
+        backgroundCtx.fillStyle="gray";
+        backgroundCtx.fillRect(invDrawing.startingPointX+invDrawing.imageWidth, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
+        backgroundCtx.drawImage(invRifle, invDrawing.startingPointX+invDrawing.imageWidth, invDrawing.startingPointY);
+    }
+    if(!inventory.shotgun.isOwned){
+        backgroundCtx.globalAlpha = 0.7;
+        backgroundCtx.fillStyle="gray";
+        backgroundCtx.drawImage(invShotgun, invDrawing.startingPointX+invDrawing.imageWidth*2, invDrawing.startingPointY);
+        backgroundCtx.fillRect(invDrawing.startingPointX+invDrawing.imageWidth*2, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
+        backgroundCtx.globalAlpha = 1;
+    }else if(inventory.shotgun.isOwned){
+        backgroundCtx.fillStyle="gray";
+        backgroundCtx.fillRect(invDrawing.startingPointX+invDrawing.imageWidth*2, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
+        backgroundCtx.drawImage(invShotgun, invDrawing.startingPointX+invDrawing.imageWidth*2, invDrawing.startingPointY);
+    }
+    if(!inventory.knife.isOwned){
+        backgroundCtx.globalAlpha = 0.7;
+        backgroundCtx.fillStyle="gray";
+        backgroundCtx.drawImage(invKnife, invDrawing.startingPointX+invDrawing.imageWidth*3, invDrawing.startingPointY);
+        backgroundCtx.fillRect(invDrawing.startingPointX+invDrawing.imageWidth*3, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
+        backgroundCtx.globalAlpha = 1;
+    }else if(inventory.knife.isOwned){
+        backgroundCtx.fillStyle="gray";
+        backgroundCtx.fillRect(invDrawing.startingPointX+invDrawing.imageWidth*3, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
+        backgroundCtx.drawImage(invKnife, invDrawing.startingPointX+invDrawing.imageWidth*3, invDrawing.startingPointY);
+    }
+
+    if(inventory.currentWeapon === handgun){
+        backgroundCtx.beginPath();
+        backgroundCtx.lineWidth = 5;
+        backgroundCtx.rect(invDrawing.startingPointX, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
+        backgroundCtx.stroke();
+    }else if(inventory.currentWeapon === rifle){
+        backgroundCtx.beginPath();
+        backgroundCtx.lineWidth = 5;
+        backgroundCtx.rect(invDrawing.startingPointX+invDrawing.imageWidth, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
+        backgroundCtx.stroke();
+    }else if(inventory.currentWeapon === shotgun){
+        backgroundCtx.beginPath();
+        backgroundCtx.lineWidth = 5;
+        backgroundCtx.rect(invDrawing.startingPointX+invDrawing.imageWidth*2, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
+        backgroundCtx.stroke();
+    }else if(inventory.currentWeapon === knife){
+        backgroundCtx.beginPath();
+        backgroundCtx.lineWidth = 5;
+        backgroundCtx.rect(invDrawing.startingPointX+invDrawing.imageWidth*3, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
+        backgroundCtx.stroke();
+    }
+    
+    
 }
 
 function calculatePositioningBetweenMouseAndPlayer (){
