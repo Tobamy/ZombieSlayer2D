@@ -222,7 +222,7 @@
     var invHandgun, invRifle, invShotgun, invKnife;
 
     var invDrawing = {
-        startingPointX: 200,
+        startingPointX: 100,
         startingPointY: 850,
         imageWidth: 152,
         imageHeight: 77,
@@ -388,23 +388,23 @@ function drawBackground(){
     var playerHealthPercentage = (inventory.health/inventory.maxHealth) * 500;
     //Hintergrund der Health Bar
     backgroundCtx.fillStyle = 'red';
-    backgroundCtx.fillRect(100, 20, 500, 50);
+    backgroundCtx.fillRect(0, 20, 500, 50);
 
     //gefüllter Teil der Health Bar
     backgroundCtx.fillStyle = 'green';
-    backgroundCtx.fillRect( 100, 20, playerHealthPercentage, 50);
+    backgroundCtx.fillRect(0, 20, playerHealthPercentage, 50);
     backgroundCtx.fillStyle = 'black';
     backgroundCtx.font = "45px Verdana";
-    backgroundCtx.fillText(inventory.health, 120, 60);
+    backgroundCtx.fillText(inventory.health, 20, 60);
 
 
     //current ammo
-    backgroundCtx.clearRect(1300, 850, 500, 100);
+    backgroundCtx.clearRect(1200, 850, 500, 100);
 
     let currentAmmo = inventory.currentWeapon.tempNumberofShots;
     let maxAmmo = inventory.currentWeapon.numberOfShots;
     let ammoText = `${currentAmmo} / ${maxAmmo}`;
-    backgroundCtx.fillText(ammoText, 1350, 900);
+    backgroundCtx.fillText(ammoText, 1200, 900);
 
     
     //inventory
@@ -939,6 +939,7 @@ function drawShots() {
 }
 
 function weaponSwitcher(ev){;
+    ev.preventDefault();
     if(ev.deltaY > 0){
         if(inventory.handgun.isEquipped){
             if(inventory.rifle.isOwned){
@@ -1244,7 +1245,7 @@ document.addEventListener('keyup', (event) => {
         shiftKey = false;
     }
 });
-document.addEventListener("wheel", weaponSwitcher);
+document.addEventListener("wheel", weaponSwitcher, {passive:false});
 document.addEventListener("mousemove", mouseMoved);
 document.addEventListener("mousedown", mouseClicked);
 document.addEventListener("DOMContentLoaded", init, false);
