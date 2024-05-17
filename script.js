@@ -285,7 +285,6 @@
 
 //#endregion
 
-
 function init() {
     //Setup
     canvas = document.getElementById("myCanvas");
@@ -512,9 +511,7 @@ function drawBackground(){
         backgroundCtx.lineWidth = 5;
         backgroundCtx.rect(invDrawing.startingPointX+invDrawing.imageWidth*3, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
         backgroundCtx.stroke();
-    }
-    
-    
+    } 
 }
 
 function calculatePositioningBetweenMouseAndPlayer (){
@@ -554,8 +551,6 @@ function drawPlayer(){
     ctx.rect(playerX+hitboxPlayer.calibrationX, playerY+hitboxPlayer.calibrationY, hitboxPlayer.width, hitboxPlayer.height);
     ctx.stroke();
 
-
-    
     calculatePositioningBetweenMouseAndPlayer(); 
     
     // Winkel in Grad umwandeln
@@ -608,8 +603,6 @@ function drawPlayer(){
     }else{
         ctx.drawImage(player, -player.width / 2, -player.height / 2, player.width, player.height);
     }
-
-
     ctx.restore(); 
 }
 
@@ -619,7 +612,7 @@ function calculatePositioningBetweenMouseAndWeapon() {
     var dyWeapon = mouseY - (playerY + weaponOffsetY + player.height / 2);
     
     // Berechne den Winkel zwischen der Waffe und der Mausposition
-    angle = Math.atan2(dyWeapon, dxWeapon);
+    angle = Math.atan2(dyWeapon + 13.5, dxWeapon);
 }
 
 function calculatePositionBetweenEnemyAndPlayer(currentEnemy) {
@@ -656,18 +649,55 @@ function spawnEnemy (startX = 500, startY = 500){
     activeEnemys.push(enemy);
 }
 
+function calculateDistance(enemyX, enemyY, x = 0, y = 0){
+    let distance = Math.sqrt(((playerX + player.width/2) - (enemyX + hitboxEnemy.width/2 + x)) ** 2 + ((playerY + player.height/2) - (enemyY + hitboxEnemy.height/2 + y)) ** 2);
+    return distance
+}
+
 function drawEnemy (){
 
     for (let j = 0; j < activeEnemys.length; j++) {
         var enemy = activeEnemys[j];
         calculatePositionBetweenEnemyAndPlayer(enemy);
         enemy.dx = Math.cos(angle) * enemySpeed;
-        enemy.dy = Math.sin(angle) * enemySpeed;
+        enemy.dy = Math.sin(angle) * enemySpeed; 
+
+        let arrayDistance = [];
+
+        // Potentielle Bewegungen in vier Richtungen
+        let potentialMoves = [
+            { x: enemySpeed, y: 0 },
+            { x: -enemySpeed, y: 0 },
+            { x: 0, y: enemySpeed },
+            { x: 0, y: -enemySpeed }
+        ];
+
+        // Überprüfung jeder möglichen Bewegung
+        for (let move of potentialMoves) {
+            if (borderCheck(enemy.x + move.x, enemy.y + move.y, hitboxEnemy)) {
+                let distance = calculateDistance(enemy.x + move.x, enemy.y + move.y);
+                arrayDistance.push({ ...move, distance });
+            }
+        }
+
+        let tempDx;
+        let tempDy;
+
+        // Finden der besten Bewegung (die zum Spieler führt)
+        if (arrayDistance.length > 0) {
+            let bestMove = arrayDistance.reduce((min, move) => move.distance < min.distance ? move : min);
+
+            tempDx = bestMove.x;
+            tempDy = bestMove.y;
+        }
 
         if(enemy.health > 0){
             if(borderCheck(enemy.x + enemy.dx, enemy.y + enemy.dy, hitboxEnemy)){
                 enemy.x += enemy.dx;
                 enemy.y += enemy.dy;
+            }else{
+                enemy.x += tempDx;
+                enemy.y += tempDy;
             }
 
             var zombieAngle = angle * (180 / Math.PI) - 5;
@@ -731,7 +761,6 @@ function attackPlayer(){
     });
 }
 
-
 function isPlayerInAttackRange(enemy, additionalRange = 0){
     let distance = Math.sqrt(((playerX + player.width/2) - (enemy.x + hitboxEnemy.width/2)) ** 2 + ((playerY + player.height/2) - (enemy.y + hitboxEnemy.height/2)) ** 2);
     if (distance > (enemy.attackRange + additionalRange)) {
@@ -739,8 +768,6 @@ function isPlayerInAttackRange(enemy, additionalRange = 0){
     }else{
         return true; //hier müssen keine Winkel geprüft werden, da der enemy eh immer auf den Spieler guckt
     }
-    
-
 }
 
 function updateEnemyAttackCooldown(){
@@ -920,6 +947,7 @@ function fireShot() {
         let isFromDrawShot = false
 
         if(calculateDelay(isFromDrawShot) && !inventory.currentWeapon.reloadAnimation.isPlaying && !(inventory.currentWeapon.tempNumberofShots === 0)){
+            
             calculatePositioningBetweenMouseAndWeapon();
 
             // Berechne die Startposition des Schusses unter Berücksichtigung der Waffenverschiebung
@@ -932,7 +960,7 @@ function fireShot() {
             if(inventory.shotgun.isEquipped){
                 i = 0; 
                 var isShotgun = true;
-                angle -=shotgunSpread;
+                angle -= shotgunSpread;
             }else{
                 i = 2
             };
