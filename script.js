@@ -266,22 +266,75 @@
 
     var activeWalls = []; 
 
-    var map = [
-        [0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0],
-        [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
-        [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
-        [0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
-        [0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    var initalMap = [
+        [0,0,'x',0,0,0,0,0,0,0,0,0,0,0,'x',0,0,0,0,0,0,'x',0,,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0],
-        [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
-        [0,0,1,0,0,0,0,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0],
-        [1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'x',0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        ['x',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'x',0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0,0,0],
+        [0,0,'x',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    ]; 
+
+    var map = [];
+
+    var mapTeile = [
+        [
+            [1,1],
+            [0,1]
+        ],
+        [
+            [1,0],
+            [1,1]
+        ],
+        [
+            [0,1],
+            [1,1]
+        ],
+        [
+            [0,1,0],
+            [1,1,1]
+        ],
+        [
+            [1,1,1]
+        ],
+        [
+            [1,1,1],
+            [1],
+        ],
+        [
+            [1],
+            [1],
+            [1]
+        ],
+        [
+            [1,1],
+            [1],
+            [1]
+        ],
+        [
+            [1,1],
+            [1],
+            [1]
+        ],
+        [
+            [1,1,1],
+            [1],
+            [1]
+        ],
+        [
+            [1,1],
+            [0,1,1],
+            [0,0,1,1]
+        ],
     ]
 
 //#endregion
@@ -328,8 +381,73 @@ function init() {
 
     gameStarted = true; 
 
+    //generateMapTeile(12);
+
+    generateMap();
+
     //Gameloop starten
     setInterval(gameLoop,16); //FPS = 1000/diese Zahl
+}
+
+// ist noch nicht ausgereift 
+// wenn man das noch irgendwie implementiert bekommt wäre das super
+// function generateMapTeile(count) {
+
+//     for (let i = 0; i < count; i++) {
+//         const rows = Math.floor(Math.random() * 3) + 1; // Zufällige Anzahl von Zeilen (1 bis 3)
+//         const cols = Math.floor(Math.random() * 4) + 1; // Zufällige Anzahl von Spalten (1 bis 4)
+
+//         const teil = [];
+//         let hasOne = false;
+
+//         for (let r = 0; r < rows; r++) {
+//             const row = [];
+//             for (let c = 0; c < cols; c++) {
+//                 const value = Math.floor(Math.random() * 2);
+//                 if (value === 1) hasOne = true;
+//                 row.push(value);
+//             }
+//             teil.push(row);
+//         }
+
+//         // Wenn das Teil keine 1 hat, eine zufällige Position auf 1 setzen
+//         if (!hasOne) {
+//             const randomRow = Math.floor(Math.random() * rows);
+//             const randomCol = Math.floor(Math.random() * cols);
+//             teil[randomRow][randomCol] = 1;
+//         }
+
+//         mapTeile.push(teil);
+//     }
+// }
+
+function generateMap(){
+
+    for(let eachRow = 0; eachRow < gridRows; eachRow++) {
+        for(let eachCol = 0; eachCol < gridCols; eachCol++){
+            if(initalMap[eachRow][eachCol] === 'x'){
+                const randomIndexForMapTeile = Math.floor(Math.random() * mapTeile.length);
+
+                let mapTeil = mapTeile[randomIndexForMapTeile];
+
+                if (mapTeil) {
+                    for(let eachRowMapTeil = 0; eachRowMapTeil < mapTeil.length; eachRowMapTeil++) {
+                        for(let eachColMapTeil = 0; eachColMapTeil < mapTeil[eachRowMapTeil].length; eachColMapTeil++){
+                            if(initalMap[eachRow + eachRowMapTeil] !== undefined && initalMap[eachRow + eachRowMapTeil][eachCol + eachColMapTeil] !== undefined) {
+                                initalMap[eachRow + eachRowMapTeil][eachCol + eachColMapTeil] = mapTeil[eachRowMapTeil][eachColMapTeil];
+                            }
+                            
+                        }
+                    }
+                }else{
+                    initalMap[eachRow][eachCol] = 0; 
+                }
+                
+            }
+        }
+    }
+
+    map = initalMap; 
 }
 
 function borderCheck(x, y, hitbox){
@@ -615,7 +733,7 @@ function calculatePositioningBetweenMouseAndWeapon() {
     var dyWeapon = mouseY - (playerY + weaponOffsetY + player.height / 2);
     
     // Berechne den Winkel zwischen der Waffe und der Mausposition
-    angle = Math.atan2(dyWeapon + 13.5, dxWeapon);
+    angle = Math.atan2(dyWeapon, dxWeapon);
 }
 
 function calculatePositionBetweenEnemyAndPlayer(currentEnemy) {
