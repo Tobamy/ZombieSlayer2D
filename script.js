@@ -56,6 +56,7 @@
     var canvas, ctx; 
     var backgroundCanvas, backgroundCtx;
 
+    let gameStarted = false; 
     //Maus
     var mouseX = 0; 
     var mouseY = 0; 
@@ -324,6 +325,8 @@ function init() {
 
     reloadShotgun = document.getElementById("reloadShotgun");
     shotgun.reloadAnimation.reloadSprite = reloadShotgun;
+
+    gameStarted = true; 
 
     //Gameloop starten
     setInterval(gameLoop,16); //FPS = 1000/diese Zahl
@@ -643,6 +646,9 @@ function spawnEnemy (startX = 500, startY = 500){
             lastFrameTime: Date.now(), // Timestamp of the last frame update
             isPlaying: false // Indicates if the animation is currently playing
         },
+        evadeDx: 0,
+        evadeDy: 0, 
+        evadeTime: 0
     };
 
     // Füge den Schuss zum Array der aktiven Schüsse hinzu
@@ -695,9 +701,19 @@ function drawEnemy (){
             if(borderCheck(enemy.x + enemy.dx, enemy.y + enemy.dy, hitboxEnemy)){
                 enemy.x += enemy.dx;
                 enemy.y += enemy.dy;
-            }else{
+            } else if (enemy.evadeTime > 0 && borderCheck(enemy.x + enemy.evadeDx, enemy.y + enemy.evadeDy, hitboxEnemy)) {
+                // Wenn eine Ausweichbewegung aktiv ist, diese nutzen
+                enemy.x += enemy.evadeDx;
+                enemy.y += enemy.evadeDy;
+                enemy.evadeTime--;
+            } else if (tempDx !== undefined && tempDy !== undefined) {
+                // Wenn keine Ausweichbewegung aktiv ist, aber eine alternative Bewegung möglich ist
                 enemy.x += tempDx;
                 enemy.y += tempDy;
+                // Ausweichbewegung speichern und Zeit setzen
+                enemy.evadeDx = tempDx;
+                enemy.evadeDy = tempDy;
+                enemy.evadeTime = 90; // Zeit für die Ausweichbewegung (kann angepasst werden)
             }
 
             var zombieAngle = angle * (180 / Math.PI) - 5;
@@ -1158,6 +1174,7 @@ function mouseClicked(ev){
 }
 
 function mouseMoved(ev){
+    if (!gameStarted) return;
     mouseX = ev.clientX - canvas.offsetLeft; 
     mouseY = ev.clientY - canvas.offsetTop;
 }
@@ -1324,4 +1341,13 @@ document.addEventListener('keyup', (event) => {
 document.addEventListener("wheel", weaponSwitcher, {passive:false});
 document.addEventListener("mousemove", mouseMoved);
 document.addEventListener("mousedown", mouseClicked);
-document.addEventListener("DOMContentLoaded", init, false);
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('start-game').addEventListener('click', () => {
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('game-container').style.display = 'flex';
+        document.getElementById('backgroundCanvas').style.display = 'block';
+        document.getElementById('myCanvas').style.display = 'block';
+        init();
+    });
+});

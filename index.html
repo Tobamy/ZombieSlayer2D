@@ -3,11 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ZombieSlayer2D</title>
     <script src="script.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <div id="start-screen">
+        <div class="container">
+            <button id="start-game">Starten</button>
+            <button id="settings">Einstellungen</button>
+        </div>
+    </div>
+
     <img id="imgBackground" style="display:none" width="1400" height="750" src="assets/map.png"/>
     <img id="imgWall" style="display:none" width="50" height="50" src="assets/wall.png"/>
 
@@ -33,11 +41,15 @@
     <img id="reloadRifle" style="display:none" src="assets/SpriteSheets/reload_rifle.png"/>
     <img id="reloadShotgun" style="display:none" src="assets/SpriteSheets/reload_shotgun.png"/>
 
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <canvas id="backgroundCanvas" width="1400" height="950" style="position:absolute;"></canvas>
-        <canvas id="myCanvas" width="1400" height="750" style="position:absolute;"></canvas>
-        
+    <div id="game-container" style="display: none; justify-content: center; align-items: center; height: 100vh;">
+        <canvas id="backgroundCanvas" width="1400" height="950" style="display: none; position:absolute;"></canvas>
+        <canvas id="myCanvas" width="1400" height="750" style="display: none; position:absolute;"></canvas>
     </div>
+
+    <footer>
+        <a href="datenschutzerklaerung.html">Datenschutzerklärung</a>
+        <a href="impressum.html">Impressum</a>
+    </footer>
     
 </body>
 </html>
