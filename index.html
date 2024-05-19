@@ -16,6 +16,12 @@
         </div>
     </div>
 
+    <div id="gameover-screen" style="display: none;">
+        <div class="container">
+            <button id="exit-game">Exit</button>
+        </div>
+    </div>
+
     <img id="imgBackground" style="display:none" width="1400" height="750" src="assets/map.png"/>
     <img id="imgWall" style="display:none" width="50" height="50" src="assets/wall.png"/>
 
@@ -42,8 +48,8 @@
     <img id="reloadShotgun" style="display:none" src="assets/SpriteSheets/reload_shotgun.png"/>
 
     <div id="game-container" style="display: none; justify-content: center; align-items: center; height: 100vh;">
-        <canvas id="backgroundCanvas" width="1400" height="950" style="display: none; position:absolute;"></canvas>
-        <canvas id="myCanvas" width="1400" height="750" style="display: none; position:absolute;"></canvas>
+        <canvas id="backgroundCanvas" width="1400" height="950" style="position:absolute;"></canvas>
+        <canvas id="myCanvas" width="1400" height="750" style="position:absolute;"></canvas>
     </div>
 
     <footer>

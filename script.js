@@ -379,7 +379,7 @@ function init() {
     reloadShotgun = document.getElementById("reloadShotgun");
     shotgun.reloadAnimation.reloadSprite = reloadShotgun;
 
-    gameStarted = true; 
+    gameStarted = true;
 
     //generateMapTeile(12);
 
@@ -502,6 +502,7 @@ function update() {
     updateEnemyAttackCooldown();
     updateEnemyAttackAnimation();
     attackPlayer();
+    checkPlayerHealth();
 }
 
 function draw() {
@@ -786,53 +787,57 @@ function drawEnemy (){
         enemy.dx = Math.cos(angle) * enemySpeed;
         enemy.dy = Math.sin(angle) * enemySpeed; 
 
-        let arrayDistance = [];
-
-        // Potentielle Bewegungen in vier Richtungen
-        let potentialMoves = [
-            { x: enemySpeed, y: 0 },
-            { x: -enemySpeed, y: 0 },
-            { x: 0, y: enemySpeed },
-            { x: 0, y: -enemySpeed }
-        ];
-
-        // Überprüfung jeder möglichen Bewegung
-        for (let move of potentialMoves) {
-            if (borderCheck(enemy.x + move.x, enemy.y + move.y, hitboxEnemy)) {
-                let distance = calculateDistance(enemy.x + move.x, enemy.y + move.y);
-                arrayDistance.push({ ...move, distance });
-            }
-        }
-
-        let tempDx;
-        let tempDy;
-
-        // Finden der besten Bewegung (die zum Spieler führt)
-        if (arrayDistance.length > 0) {
-            let bestMove = arrayDistance.reduce((min, move) => move.distance < min.distance ? move : min);
-
-            tempDx = bestMove.x;
-            tempDy = bestMove.y;
-        }
-
         if(enemy.health > 0){
             if(borderCheck(enemy.x + enemy.dx, enemy.y + enemy.dy, hitboxEnemy)){
                 enemy.x += enemy.dx;
                 enemy.y += enemy.dy;
-            } else if (enemy.evadeTime > 0 && borderCheck(enemy.x + enemy.evadeDx, enemy.y + enemy.evadeDy, hitboxEnemy)) {
-                // Wenn eine Ausweichbewegung aktiv ist, diese nutzen
-                enemy.x += enemy.evadeDx;
-                enemy.y += enemy.evadeDy;
-                enemy.evadeTime--;
-            } else if (tempDx !== undefined && tempDy !== undefined) {
-                // Wenn keine Ausweichbewegung aktiv ist, aber eine alternative Bewegung möglich ist
-                enemy.x += tempDx;
-                enemy.y += tempDy;
-                // Ausweichbewegung speichern und Zeit setzen
-                enemy.evadeDx = tempDx;
-                enemy.evadeDy = tempDy;
-                enemy.evadeTime = 90; // Zeit für die Ausweichbewegung (kann angepasst werden)
+            } 
+            else {
+                let arrayDistance = [];
+
+                // Potentielle Bewegungen in vier Richtungen
+                let potentialMoves = [
+                    { x: enemySpeed, y: 0 },
+                    { x: -enemySpeed, y: 0 },
+                    { x: 0, y: enemySpeed },
+                    { x: 0, y: -enemySpeed }
+                ];
+
+                // Überprüfung jeder möglichen Bewegung
+                for (let move of potentialMoves) {
+                    if (borderCheck(enemy.x + move.x, enemy.y + move.y, hitboxEnemy)) {
+                        let distance = calculateDistance(enemy.x + move.x, enemy.y + move.y);
+                        arrayDistance.push({ ...move, distance });
+                    }
+                }
+
+                let tempDx;
+                let tempDy;
+
+                // Finden der besten Bewegung (die zum Spieler führt)
+                if (arrayDistance.length > 0) {
+                    let bestMove = arrayDistance.reduce((min, move) => move.distance < min.distance ? move : min);
+
+                    tempDx = bestMove.x;
+                    tempDy = bestMove.y;
+                }
+
+                if(enemy.evadeTime > 0 && borderCheck(enemy.x + enemy.evadeDx, enemy.y + enemy.evadeDy, hitboxEnemy)) {
+                    // Wenn eine Ausweichbewegung aktiv ist, diese nutzen
+                    enemy.x += enemy.evadeDx;
+                    enemy.y += enemy.evadeDy;
+                    enemy.evadeTime--;
+                } else if (tempDx !== undefined && tempDy !== undefined) {
+                    // Wenn keine Ausweichbewegung aktiv ist, aber eine alternative Bewegung möglich ist
+                    enemy.x += tempDx;
+                    enemy.y += tempDy;
+                    // Ausweichbewegung speichern und Zeit setzen
+                    enemy.evadeDx = tempDx;
+                    enemy.evadeDy = tempDy;
+                    enemy.evadeTime = 90; // Zeit für die Ausweichbewegung (kann angepasst werden)
+                }
             }
+            
 
             var zombieAngle = angle * (180 / Math.PI) - 5;
             ctx.save();
@@ -1012,7 +1017,6 @@ function isEnemyInMeleeRange (enemy){
         angleDifference = (2 * Math.PI) - angleDifference;
     }
     return angleDifference <= 1.3;
-
 }
 
 function updateMeleeAttackAnimation() {
@@ -1461,11 +1465,31 @@ document.addEventListener("mousemove", mouseMoved);
 document.addEventListener("mousedown", mouseClicked);
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('start-game').addEventListener('click', () => {
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('game-container').style.display = 'flex';
-        document.getElementById('backgroundCanvas').style.display = 'block';
-        document.getElementById('myCanvas').style.display = 'block';
-        init();
-    });
-});
+    document.getElementById('start-game').addEventListener('click', startGame);
+    document.getElementById('exit-game').addEventListener('click', reloadGame);
+}); 
+
+function reloadGame (){
+    location.reload();
+}
+
+function startGame() {
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('gameover-screen').style.display = 'none';
+    document.getElementById('game-container').style.display = 'flex';
+
+    // Initialisierung des Spiels
+    init();
+}
+
+function gameOver() {
+    document.getElementById('game-container').style.display = 'none';
+    document.getElementById('gameover-screen').style.display = 'flex';
+}
+
+// Beispielhafte Funktion zur Überprüfung der Spieler-Gesundheit
+function checkPlayerHealth() {
+    if (inventory.health < 0) {
+        gameOver();
+    }
+}

@@ -22,6 +22,18 @@ body, html {
     align-items: center;
 }
 
+#gameover-screen {
+    background: url('assets/gameover.png') no-repeat center center fixed;
+    background-size: cover;
+    width: 100%;
+    height: calc(100% - 40px); /* Subtract footer height */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;  /* Nimmt den verbleibenden Platz ein */
+    justify-content: center;
+    align-items: center;
+}
+
 .container {
     text-align: center;
     background: rgba(0, 0, 0, 0.5);
