@@ -1054,9 +1054,11 @@ function updateMeleeAttackAnimation() {
         meleeAttackAnimation.lastFrameTime = now;
 
         if(meleeAttackAnimation.currentFrame === 6){
+            let enemyHasBeenHit = false;
             activeEnemys.forEach((enemy, index)=>{
-                if (isEnemyInMeleeRange(enemy)) {
+                if (isEnemyInMeleeRange(enemy)&&!enemyHasBeenHit) {
                     enemy.health -= knife.damage;
+                    enemyHasBeenHit = true;
                 }
             });
         }
