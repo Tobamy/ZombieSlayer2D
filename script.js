@@ -193,8 +193,8 @@
     var meleeAttackSheet;
     var meleeAttackAnimation = {
         currentFrame: 0,
-        totalFrames: 3, // Assuming the sprite sheet has 5 frames
-        frameDuration: 100, // Duration of each frame in milliseconds
+        totalFrames: 8, // Assuming the sprite sheet has 5 frames
+        frameDuration: 80, // Duration of each frame in milliseconds
         lastFrameTime: Date.now(), // Timestamp of the last frame update
         isPlaying: false // Indicates if the animation is currently playing
     };
@@ -740,10 +740,10 @@ function drawPlayer(){
     if(meleeAttackAnimation.isPlaying){
         ctx.drawImage(
             meleeAttackSheet, 
-            meleeAttackAnimation.currentFrame * meleeAttackSheet.width/3,0,
-            meleeAttackSheet.width/3, meleeAttackSheet.height,
-            -meleeAttackSheet.width/3/2, -meleeAttackSheet.height/2 + 15,
-            meleeAttackSheet.width/3, meleeAttackSheet.height
+            meleeAttackAnimation.currentFrame * meleeAttackSheet.width/8,0,
+            meleeAttackSheet.width/8, meleeAttackSheet.height,
+            -meleeAttackSheet.width/8/2 + 5, -meleeAttackSheet.height/2 + 20,
+            meleeAttackSheet.width/8, meleeAttackSheet.height
         )
     }else if(inventory.currentWeapon != knife && inventory.currentWeapon.reloadAnimation.isPlaying){
         ctx.drawImage(
@@ -1023,11 +1023,6 @@ function useKnife() {
             meleeAttackAnimation.currentFrame = 0;
             meleeAttackAnimation.lastFrameTime = Date.now();
         }
-        activeEnemys.forEach((enemy, index)=>{
-            if (isEnemyInMeleeRange(enemy)) {
-                enemy.health -= knife.damage;
-            }
-        });
     }
 }
 
@@ -1057,6 +1052,14 @@ function updateMeleeAttackAnimation() {
     if (now - meleeAttackAnimation.lastFrameTime >= meleeAttackAnimation.frameDuration) {
         meleeAttackAnimation.currentFrame++;
         meleeAttackAnimation.lastFrameTime = now;
+
+        if(meleeAttackAnimation.currentFrame === 6){
+            activeEnemys.forEach((enemy, index)=>{
+                if (isEnemyInMeleeRange(enemy)) {
+                    enemy.health -= knife.damage;
+                }
+            });
+        }
 
         if (meleeAttackAnimation.currentFrame >= meleeAttackAnimation.totalFrames) {
             meleeAttackAnimation.currentFrame = 0;
