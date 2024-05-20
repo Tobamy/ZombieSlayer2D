@@ -83,11 +83,6 @@
     }
 
     //Waffen 
-    var reloadHandgun; 
-    var reloadRifle;
-    var reloadShotgun;
-    var handgunShotSound, rifleShotSound, shotgunShotSound;
-
     var handgun = {
         shotspeed: 20, 
         initWeaponOffset: {
@@ -109,13 +104,17 @@
             reloadSprite: null,
             currentFrame: 0,
             totalFrames: 5,
-            frameDuration: 100,
+            frameDuration: 150,
             lastFrameTime: Date.now(),
             isPlaying: false,
             offSetX: -15,
             offSetY: +4,
         },
         shotSound: null,
+        reloadSound: {
+            firstSound: null,
+            secondSound: null,
+        },
     } 
     var shotgun = {
         shotspeed: 20, 
@@ -138,13 +137,17 @@
             reloadSprite: null,
             currentFrame: 0,
             totalFrames: 5,
-            frameDuration: 200,
+            frameDuration: 250,
             lastFrameTime: Date.now(),
             isPlaying: false,
             offSetX: -1,
             offSetY: +2,
         },
         shotSound: null,
+        reloadSound: {
+            firstSound: null,
+            secondSound: null,
+        },
     }
     var rifle = {
         shotspeed: 20, 
@@ -174,6 +177,10 @@
             offSetY: +2,
         },
         shotSound: null,
+        reloadSound: {
+            firstSound: null,
+            secondSound: null,
+        },
     }
 
     var knife= {
@@ -405,25 +412,30 @@ function init() {
     invShotgun = document.getElementById("invShotgun");
     invKnife = document.getElementById("invKnife");
 
-    reloadHandgun = document.getElementById("reloadHandgun");
-    handgun.reloadAnimation.reloadSprite = reloadHandgun;
+    handgun.reloadAnimation.reloadSprite = document.getElementById("reloadHandgun");
 
-    reloadRifle = document.getElementById("reloadRifle");
-    rifle.reloadAnimation.reloadSprite = reloadRifle;
+    rifle.reloadAnimation.reloadSprite = document.getElementById("reloadRifle");
 
-    reloadShotgun = document.getElementById("reloadShotgun");
-    shotgun.reloadAnimation.reloadSprite = reloadShotgun;
+    shotgun.reloadAnimation.reloadSprite = document.getElementById("reloadShotgun");
 
 
     //Soundeffekte
-    handgunShotSound = document.getElementById("handgunShotSound");
-    handgun.shotSound = handgunShotSound;
+    handgun.shotSound = document.getElementById("handgunShotSound");
 
-    rifleShotSound = document.getElementById("rifleShotSound");
-    rifle.shotSound = rifleShotSound;
+    rifle.shotSound = document.getElementById("rifleShotSound");
 
-    shotgunShotSound = document.getElementById("shotgunShotSound");
-    shotgun.shotSound = shotgunShotSound;
+    shotgun.shotSound = document.getElementById("shotgunShotSound");
+
+
+    handgun.reloadSound.firstSound = document.getElementById("handgunReloadSound1");
+    
+    handgun.reloadSound.secondSound = document.getElementById("handgunReloadSound2");
+
+    rifle.reloadSound.firstSound = document.getElementById("rifleReloadSound1");
+    rifle.reloadSound.secondSound = document.getElementById("rifleReloadSound2");
+
+    shotgun.reloadSound.firstSound = document.getElementById("shotgunReloadSound1");
+    shotgun.reloadSound.secondSound = document.getElementById("shotgunReloadSound2");
 
 
 
@@ -720,7 +732,6 @@ function getCookie(name) {
 function playAudio(audio){
     audio.currentTime = 0;
     audio.play();
-    console.log("asdf");
 }
 
 function calculatePositioningBetweenMouseAndPlayer (){
@@ -1172,6 +1183,17 @@ function updateReloadAnimation(){
     if(now - inventory.currentWeapon.reloadAnimation.lastFrameTime >= inventory.currentWeapon.reloadAnimation.frameDuration){
         inventory.currentWeapon.reloadAnimation.currentFrame++;
         inventory.currentWeapon.reloadAnimation.lastFrameTime = now;
+
+        if(inventory.currentWeapon.reloadAnimation.currentFrame === 2){
+            playAudio(inventory.currentWeapon.reloadSound.firstSound);
+        }else if(inventory.currentWeapon === handgun && inventory.currentWeapon.reloadAnimation.currentFrame === 5){
+            playAudio(inventory.currentWeapon.reloadSound.secondSound);
+        }else if(inventory.currentWeapon === rifle && inventory.currentWeapon.reloadAnimation.currentFrame === 4){
+            playAudio(inventory.currentWeapon.reloadSound.secondSound);
+        }else if(inventory.currentWeapon === shotgun && inventory.currentWeapon.reloadAnimation.currentFrame === 3){
+            playAudio(inventory.currentWeapon.reloadSound.secondSound);
+        }
+
         if(inventory.currentWeapon.reloadAnimation.currentFrame >= inventory.currentWeapon.reloadAnimation.totalFrames){
             inventory.currentWeapon.reloadAnimation.currentFrame = 0;
             inventory.currentWeapon.reloadAnimation.isPlaying = false;
