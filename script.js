@@ -2,8 +2,8 @@
 //doneT Laufanimation
     //Quelle Bilder für Spritesheet: https://opengameart.org/content/animated-top-down-survivor-player
 //doneT Waffe wechseln
-//todo Nahkampfangriff
-//todoS Schießen
+//done Nahkampfangriff
+//doneS Schießen
     //anderen Waffen Start deffinieren
     //shotgun drei Projektile pro Schuss (ggf. mit begrenzter Reichweite)
         //Schaden des einzelnen Projektils ist nur bei 50%
@@ -15,21 +15,21 @@
     //auch Reload
     //aber unendlich Munition in Reserve
 //todo Berechnung Winkel verstehen (also die Mathematik dahinter)
-//todoS map
+//doneS map
     //mehrere Level
     //evtl. Level automatisch generieren (Rougelike)
     //collision Detection 
-//todoT Gegner (mit Health Bar)
+//doneT Gegner (mit Health Bar)
     //evtl. Bildquelle: https://opengameart.org/content/animated-top-down-zombie
     //hit detection mit modulo? Torben fragen
     //evtl. line of sight etablieren, damit die Gegner nur auf einen zulaufen, wenn sie einen sehen
         //wenn sie einen nicht sehen, dann random bewegen
         // wenn sie gegen eine Wand laufen, etwas andere Richtung ausprobieren, weil die sonst festhängen
-//todoT Inventar
+//doneT Inventar
     //man sieht in einer Anzeige unten konstant alle Waffen und kann mit dem Mausrad durchscrollen
         //Quelle Waffensymbole: https://vladpenn.itch.io/weapon
     //oder mit den Zahlen durch die Waffen wechseln
-//todoT Health Bar (bspw. oben links)
+//doneT Health Bar (bspw. oben links)
     //mit Logik, Spieler soll Schaden bekommen können
 //todo Audio
     // Quellen:
@@ -39,20 +39,27 @@
     //Musik switch
     //Soundeffekte switch
     //evtl. Schwierigkeitsgrad
+    //in den Cookies speichern
 //todoS irgendwann Startbildschirm
-//todo Highscore
+//done Highscore
     //Punktesystem, bspw. ein Zombie gibt 10 Punkte
     // sollen wir ganz einfach in Cookies abspeicher können -> Name sollte nicht highsocre sein, sondern auf das Speil bezogen
     // Cookies sollen wohl nur eine Zeile Code sein in JS 
-//todo evtl. Mauern bauen/Eingänge temporär verschließen (CoD Zombies)
-    //Coin System, um die Coins ausgeben zu können
+//Wellen (werden immer schwerer)
+    //mit den Wellen skalierende Gegner (werden immer stärker und schneller)
+    //Waffen freischalten nach 10 bzw. 20 Wellen
+        //erst rifle, dann shotgun
+    //nur 6 Gegner gleichzeitig
+    //alle drei Wellen entweder MaxHealth oder Damage oder Geschwindigkeit der Zombies um x% erhöhen
+        //aber versetzt
+    //alle zwei Wellen ein Zombie mehr
+//ausdauerleiste zum Sprinten
+    //kleine gelbe oder orangene Leiste unter der Health Bar
 //todo falls noch Zeit da ist:
     //Waffe genau auf die Maus ausrichten (abhängig von der Entfernung der Maus zum Player)
     //Größe automatisch an die Fenstergröße anpassen
     //Nachladen mit Spritesheets animieren
-//Bug: 
-    //Diagonal läuft man schneller
-//todo Credits (u.a. Bilder vom Player)
+//todo Credits (u.a. Bilder vom Player) als eigener Button
 
 //Globale Variablen
     //#region Variablen
@@ -95,7 +102,7 @@
             calibrationX: 0,
             calibrationY: 0
         },
-        damage: 20, 
+        damage: 25, 
         numberOfShots: 10,
         tempNumberofShots: 10,
         delayPerShot: 0.2, 
@@ -161,10 +168,10 @@
             calibrationX: 0,
             calibrationY: 0
         },
-        damage: 30,
+        damage: 20,
         numberOfShots: 20,
         tempNumberofShots: 20,
-        delayPerShot: 0,
+        delayPerShot: 0.1,
         tempDelayPerShot: 0, 
         reloadAnimation: {
             reloadSprite: null,
@@ -207,10 +214,10 @@
     var meleeAttackSheet;
     var meleeAttackAnimation = {
         currentFrame: 0,
-        totalFrames: 8, // Assuming the sprite sheet has 5 frames
-        frameDuration: 80, // Duration of each frame in milliseconds
-        lastFrameTime: Date.now(), // Timestamp of the last frame update
-        isPlaying: false // Indicates if the animation is currently playing
+        totalFrames: 8,
+        frameDuration: 80,
+        lastFrameTime: Date.now(),
+        isPlaying: false,
     };
 
     //Gegner
@@ -1629,7 +1636,7 @@ function gameOver() {
 }
 
 function calculateScore(){
-    return slainEnemies * 10;
+    return slainEnemies * 10; //Pro Welle 100 Punkte, alle 10 Wellen 400 Punkte
 }
 
 function checkPlayerHealth() {
