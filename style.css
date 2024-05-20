@@ -90,3 +90,25 @@ footer a:hover {
 #mute-sound-effects:hover {
     color: #aa1818;
 }
+
+#music-icon{
+    padding: 10px;
+    background-color: transparent;
+    color: #000000;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+#music-icon:hover{
+    color: #aa1818;
+}
+
+#volume-slider {
+    width: 100px; /* Adjust width to your preference */
+    height: 10px; /* Adjust height to your preference */
+    cursor: pointer;
+    transition: background 0.15s ease-in-out;
+    writing-mode: bt-lr;
+    direction: ltr;
+}

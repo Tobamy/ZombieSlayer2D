@@ -83,6 +83,16 @@
     var background;
     var imgWall;
 
+    //Audio
+    var tracks = [
+        'track1', 'track2', 'track3', 'track4', 'track5',
+        'track6', 'track7', 'track8', 'track9', 'track10',
+        'track11', 'track12', 'track13', 'track14', 'track15',
+        'track16', 'track17', 'track18', 'track19', 'track20'
+    ];
+    var currentTrackIndex = 0;
+    var volumeLevel;
+
     //Hitbox 
     var hitboxPlayer = {
         width: 80,
@@ -452,6 +462,9 @@ function init() {
     shotgun.reloadSound.firstSound = document.getElementById("shotgunReloadSound1");
     shotgun.reloadSound.secondSound = document.getElementById("shotgunReloadSound2");
 
+    //Musik
+    volumeLevel = getCookie('lastmusicvolume');
+
     initialSoundEffectMute();
 
     gameStarted = true;
@@ -577,6 +590,7 @@ function update() {
     updateEnemyAttackAnimation();
     attackPlayer();
     checkPlayerHealth();
+    updateVolume();
 }
 
 function draw() {
@@ -747,6 +761,40 @@ function getCookie(name) {
 function playAudio(audio){
     audio.currentTime = 0;
     audio.play();
+}
+
+function switchMusicVolume(){
+    if(document.getElementById('volume-slider').value > 0){
+        let savedVolumeLevel = document.getElementById('volume-slider').value;
+        setCookie('savedVolumeLevel', savedVolumeLevel, 365)
+        document.getElementById('volume-slider').value = 0;
+    }else {
+        document.getElementById('volume-slider').value = getCookie('savedVolumeLevel');
+    }
+}
+
+function startBackgroundMusic() {
+    currentTrackIndex = 0;
+    playNextTrack();
+    document.getElementById('volume-slider').value = getCookie('lastmusicvolume');
+}
+
+function playNextTrack() {
+    var currentTrack = document.getElementById(tracks[currentTrackIndex]);
+    currentTrack.volume = volumeLevel;
+    currentTrack.play();
+
+    currentTrack.addEventListener('ended', () => {
+        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+        playNextTrack();
+    }, { once: true }); //das bedeutet, dass das für dieses Event nur einmal gemacht wird
+}
+
+function updateVolume(){
+    volumeLevel = document.getElementById('volume-slider').value;
+    var currentTrack = document.getElementById(tracks[currentTrackIndex]);
+    currentTrack.volume = volumeLevel;
+    setCookie('lastmusicvolume', volumeLevel, 365);
 }
 
 function initialSoundEffectMute(){
@@ -1668,13 +1716,20 @@ document.addEventListener("mousemove", mouseMoved);
 document.addEventListener("mousedown", mouseClicked);
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('start-game').addEventListener('click', startGame);
+    document.getElementById('start-game').addEventListener('click', () =>{
+        startGame();
+        startBackgroundMusic();
+    });
     document.getElementById('exit-game').addEventListener('click', reloadGame);
     document.getElementById('mute-sound-effects').addEventListener('click', muteSoundEffectsSwitch);
+    document.getElementById('music-switcher').addEventListener('click', switchMusicVolume);
 
     //Highscore anzeigen
     var highscore = parseInt(getCookie('highscore')) || 0;
     document.getElementById('highscore-display-start').innerText = "Highscore: " + highscore;
+
+    //Volume slider
+    document.getElementById('volume-slider').addEventListener('input', updateVolume);
 }); 
 
 function reloadGame (){
