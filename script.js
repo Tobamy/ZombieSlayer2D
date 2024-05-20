@@ -187,8 +187,8 @@
     var player;
     var feet;
     var frame=0;
-    var playerX = 650;
-    var playerY = 300;
+    var playerX;
+    var playerY;
     var feetX = playerX;
     var feetY = playerY;
     var schrittweite;
@@ -208,10 +208,35 @@
 
     //Gegner
     var enemySpeed = 2;
-    var activeEnemys = [];
+    var activeEnemies = [];
     var zombieWalk;
     var zombieAttack;
     var slainEnemies = 0;
+
+    var maxActiveEnemies = 6; 
+
+    var enemySpawnPoints = [
+        {
+            x: -80, 
+            y: 500
+        },
+        {
+            x: 400, 
+            y: -80
+        },
+        {
+            x: 1300, 
+            y: -80
+        },
+        {
+            x: 700, 
+            y: 650
+        },
+        {
+            x: 1400, 
+            y: 650
+        },
+    ]
 
     //einzelne Tastenanschläge speichern
     var upKey;
@@ -269,27 +294,25 @@
     const tileW = 50; 
     const tileH = 50; 
 
-    const gridRows = 15; 
-    const gridCols = 28;
+    const gridRows = 13; 
+    const gridCols = 32;
 
     var activeWalls = []; 
 
     var initalMap = [
-        [0,0,'x',0,0,0,0,0,0,0,0,0,0,0,'x',0,0,0,0,0,0,'x',0,,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'x',0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        ['x',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'x',0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0,0,0],
-        [0,0,'x',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        [0,0,'x',0,0,0,0,0,0,0,0,0,0,0,'x',0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'x',0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0,0],
+        ['x',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'x'],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'x',0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     ]; 
 
     var map = [];
@@ -363,6 +386,8 @@ function init() {
 
     //player
     player = document.getElementById("handgun");
+    playerX = canvas.width / 2;
+    playerY = canvas.height / 2; 
     //playerX -= player.width/2;
     //playerY -= player.height/2;
 
@@ -459,7 +484,6 @@ function generateMap(){
                             if(initalMap[eachRow + eachRowMapTeil] !== undefined && initalMap[eachRow + eachRowMapTeil][eachCol + eachColMapTeil] !== undefined) {
                                 initalMap[eachRow + eachRowMapTeil][eachCol + eachColMapTeil] = mapTeil[eachRowMapTeil][eachColMapTeil];
                             }
-                            
                         }
                     }
                 }else{
@@ -807,11 +831,11 @@ function calculatePositionBetweenEnemyAndPlayer(currentEnemy) {
     angle = Math.atan2(dyEnemy, dxEnemy);
 }
 
-function spawnEnemy (startX = 500, startY = 500){
+function spawnEnemy (startX = 500, startY = 500, enemySpawnPointIndex){
     // Erstelle ein neues Zombieobjekt mit der Richtung und Position des Spielers
     var enemy = {
-        x: 500,
-        y: 500,
+        x: startX,
+        y: startY,
         dx: 0,
         dy: 0,
         health: 100,
@@ -830,11 +854,13 @@ function spawnEnemy (startX = 500, startY = 500){
         },
         evadeDx: 0,
         evadeDy: 0, 
-        evadeTime: 0
+        evadeTime: 0,
+        enemySpawnPointIndex: enemySpawnPointIndex,
+        spawnTime: 42
     };
 
     // Füge den Schuss zum Array der aktiven Schüsse hinzu
-    activeEnemys.push(enemy);
+    activeEnemies.push(enemy);
 }
 
 function calculateDistance(enemyX, enemyY, x = 0, y = 0){
@@ -844,63 +870,75 @@ function calculateDistance(enemyX, enemyY, x = 0, y = 0){
 
 function drawEnemy (){
 
-    for (let j = 0; j < activeEnemys.length; j++) {
-        var enemy = activeEnemys[j];
+    for (let j = 0; j < activeEnemies.length; j++) {
+        var enemy = activeEnemies[j];
         calculatePositionBetweenEnemyAndPlayer(enemy);
         enemy.dx = Math.cos(angle) * enemySpeed;
         enemy.dy = Math.sin(angle) * enemySpeed; 
 
         if(enemy.health > 0){
-            if(borderCheck(enemy.x + enemy.dx, enemy.y + enemy.dy, hitboxEnemy)){
-                enemy.x += enemy.dx;
-                enemy.y += enemy.dy;
-            } 
-            else {
-                let arrayDistance = [];
 
-                // Potentielle Bewegungen in vier Richtungen
-                let potentialMoves = [
-                    { x: enemySpeed, y: 0 },
-                    { x: -enemySpeed, y: 0 },
-                    { x: 0, y: enemySpeed },
-                    { x: 0, y: -enemySpeed }
-                ];
-
-                // Überprüfung jeder möglichen Bewegung
-                for (let move of potentialMoves) {
-                    if (borderCheck(enemy.x + move.x, enemy.y + move.y, hitboxEnemy)) {
-                        let distance = calculateDistance(enemy.x + move.x, enemy.y + move.y);
-                        arrayDistance.push({ ...move, distance });
+            if(enemy.spawnTime > 0){
+            
+                switch(enemy.enemySpawnPointIndex){
+                    case 0: enemy.x += enemySpeed;break; 
+                    case 1: enemy.y += enemySpeed;break;
+                    case 2: enemy.y += enemySpeed;break;
+                    case 3: enemy.y -= enemySpeed;break;
+                    case 4: enemy.y -= enemySpeed;break; 
+                }
+                enemy.spawnTime--;
+            } else {
+                if(borderCheck(enemy.x + enemy.dx, enemy.y + enemy.dy, hitboxEnemy)){
+                    enemy.x += enemy.dx;
+                    enemy.y += enemy.dy;
+                } 
+                else {
+                    let arrayDistance = [];
+    
+                    // Potentielle Bewegungen in vier Richtungen
+                    let potentialMoves = [
+                        { x: enemySpeed, y: 0 },
+                        { x: -enemySpeed, y: 0 },
+                        { x: 0, y: enemySpeed },
+                        { x: 0, y: -enemySpeed }
+                    ];
+    
+                    // Überprüfung jeder möglichen Bewegung
+                    for (let move of potentialMoves) {
+                        if (borderCheck(enemy.x + move.x, enemy.y + move.y, hitboxEnemy)) {
+                            let distance = calculateDistance(enemy.x + move.x, enemy.y + move.y);
+                            arrayDistance.push({ ...move, distance });
+                        }
+                    }
+    
+                    let tempDx;
+                    let tempDy;
+    
+                    // Finden der besten Bewegung (die zum Spieler führt)
+                    if (arrayDistance.length > 0) {
+                        let bestMove = arrayDistance.reduce((min, move) => move.distance < min.distance ? move : min);
+    
+                        tempDx = bestMove.x;
+                        tempDy = bestMove.y;
+                    }
+    
+                    if(enemy.evadeTime > 0 && borderCheck(enemy.x + enemy.evadeDx, enemy.y + enemy.evadeDy, hitboxEnemy)) {
+                        // Wenn eine Ausweichbewegung aktiv ist, diese nutzen
+                        enemy.x += enemy.evadeDx;
+                        enemy.y += enemy.evadeDy;
+                        enemy.evadeTime--;
+                    } else if (tempDx !== undefined && tempDy !== undefined) {
+                        // Wenn keine Ausweichbewegung aktiv ist, aber eine alternative Bewegung möglich ist
+                        enemy.x += tempDx;
+                        enemy.y += tempDy;
+                        // Ausweichbewegung speichern und Zeit setzen
+                        enemy.evadeDx = tempDx;
+                        enemy.evadeDy = tempDy;
+                        enemy.evadeTime = 90; // Zeit für die Ausweichbewegung (kann angepasst werden)
                     }
                 }
-
-                let tempDx;
-                let tempDy;
-
-                // Finden der besten Bewegung (die zum Spieler führt)
-                if (arrayDistance.length > 0) {
-                    let bestMove = arrayDistance.reduce((min, move) => move.distance < min.distance ? move : min);
-
-                    tempDx = bestMove.x;
-                    tempDy = bestMove.y;
-                }
-
-                if(enemy.evadeTime > 0 && borderCheck(enemy.x + enemy.evadeDx, enemy.y + enemy.evadeDy, hitboxEnemy)) {
-                    // Wenn eine Ausweichbewegung aktiv ist, diese nutzen
-                    enemy.x += enemy.evadeDx;
-                    enemy.y += enemy.evadeDy;
-                    enemy.evadeTime--;
-                } else if (tempDx !== undefined && tempDy !== undefined) {
-                    // Wenn keine Ausweichbewegung aktiv ist, aber eine alternative Bewegung möglich ist
-                    enemy.x += tempDx;
-                    enemy.y += tempDy;
-                    // Ausweichbewegung speichern und Zeit setzen
-                    enemy.evadeDx = tempDx;
-                    enemy.evadeDy = tempDy;
-                    enemy.evadeTime = 90; // Zeit für die Ausweichbewegung (kann angepasst werden)
-                }
-            }
-            
+            }            
 
             var zombieAngle = angle * (180 / Math.PI) - 5;
             ctx.save();
@@ -943,7 +981,7 @@ function drawEnemy (){
             ctx.rect(enemy.x, enemy.y, hitboxEnemy.width, hitboxEnemy.height, 10);
             ctx.stroke();
         }else{
-            activeEnemys.splice(j,1);
+            activeEnemies.splice(j,1);
             slainEnemies++;
             j--;
         }
@@ -951,7 +989,7 @@ function drawEnemy (){
 }
 
 function attackPlayer(){
-    activeEnemys.forEach((enemy)=>{
+    activeEnemies.forEach((enemy)=>{
         if(isPlayerInAttackRange(enemy) && !enemy.isOnCooldown){
             enemy.lastAttack = Date.now();
             enemy.enemyAttackAnimation.isPlaying = true;
@@ -973,7 +1011,7 @@ function isPlayerInAttackRange(enemy, additionalRange = 0){
 }
 
 function updateEnemyAttackCooldown(){
-    activeEnemys.forEach((enemy)=>{
+    activeEnemies.forEach((enemy)=>{
         if(!enemy.isOnCooldown){
             return;
         } 
@@ -986,7 +1024,7 @@ function updateEnemyAttackCooldown(){
 
 //Hier wird auch Schaden gemacht
 function updateEnemyAttackAnimation() {
-    activeEnemys.forEach((enemy) => {
+    activeEnemies.forEach((enemy) => {
         if (!enemy.enemyAttackAnimation.isPlaying) return;
 
         var now = Date.now();
@@ -998,7 +1036,7 @@ function updateEnemyAttackAnimation() {
                 enemy.enemyAttackAnimation.currentFrame = 0;
                 enemy.enemyAttackAnimation.isPlaying = false; // Stop the animation after one cycle
 
-                activeEnemys.forEach((enemy) => {
+                activeEnemies.forEach((enemy) => {
                     if (enemy.damagePending) {
                         if(isPlayerInAttackRange(enemy, 30)){
                             inventory.health -= 5;
@@ -1012,10 +1050,10 @@ function updateEnemyAttackAnimation() {
 }
 
 function enemyHit (){
-    for (let j = 0; j < activeEnemys.length; j++) {
+    for (let j = 0; j < activeEnemies.length; j++) {
         for (let i = 0; i < activeShots.length; i++) {
-            if(hitCheck(activeEnemys[j], activeShots[i])){
-                activeEnemys[j].health -= activeShots[i].damage;
+            if(hitCheck(activeEnemies[j], activeShots[i])){
+                activeEnemies[j].health -= activeShots[i].damage;
                 activeShots.splice(i, 1);
                 i--;
             }
@@ -1083,7 +1121,7 @@ function updateMeleeAttackAnimation() {
 
         if(meleeAttackAnimation.currentFrame === 6){
             let enemyHasBeenHit = false;
-            activeEnemys.forEach((enemy, index)=>{
+            activeEnemies.forEach((enemy, index)=>{
                 if (isEnemyInMeleeRange(enemy)&&!enemyHasBeenHit) {
                     enemy.health -= knife.damage;
                     enemyHasBeenHit = true;
@@ -1468,7 +1506,11 @@ document.addEventListener('keydown', (event) => {
     }
 
     if(event.key === "j" || event.key === "J"){
-        spawnEnemy();
+
+        const enemySpawnPointIndex = Math.floor(Math.random() * enemySpawnPoints.length);
+        let enemySpawnPoint = enemySpawnPoints[enemySpawnPointIndex];
+
+        spawnEnemy(enemySpawnPoint.x, enemySpawnPoint.y, enemySpawnPointIndex);
     }
 
     if(event.key === "r" || event.key === "R"){
