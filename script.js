@@ -32,6 +32,9 @@
 //todoT Health Bar (bspw. oben links)
     //mit Logik, Spieler soll Schaden bekommen können
 //todo Audio
+    // Quellen:
+    //     https://f8studios.itch.io/snakes-authentic-gun-sounds
+    //     https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack
 //todo Einstellungsmöglichkeiten
     //Musik switch
     //Soundeffekte switch
