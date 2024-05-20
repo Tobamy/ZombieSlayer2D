@@ -251,8 +251,8 @@
     var invHandgun, invRifle, invShotgun, invKnife;
 
     var invDrawing = {
-        startingPointX: 100,
-        startingPointY: 850,
+        startingPointX: 50,
+        startingPointY: 750,
         imageWidth: 152,
         imageHeight: 77,
     }
@@ -558,12 +558,12 @@ function drawBackground(){
 
 
     //current ammo
-    backgroundCtx.clearRect(1200, 850, 500, 100);
+    backgroundCtx.clearRect(1200, 750, 500, 100);
 
     let currentAmmo = inventory.currentWeapon.tempNumberofShots;
     let maxAmmo = inventory.currentWeapon.numberOfShots;
     let ammoText = `${currentAmmo} / ${maxAmmo}`;
-    backgroundCtx.fillText(ammoText, 1200, 900);
+    backgroundCtx.fillText(ammoText, 1200, 800);
 
     
     //inventory
