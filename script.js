@@ -32,12 +32,20 @@
 //doneT Health Bar (bspw. oben links)
     //mit Logik, Spieler soll Schaden bekommen können
 //todo Audio
-    // Quellen:
+    // Quellen Sounds:
     //     https://f8studios.itch.io/snakes-authentic-gun-sounds
     //     https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack
+    //Quelle Musik:
+        //https://void1gaming.itch.io/free-action-music-pack
 //todo Einstellungsmöglichkeiten
     //Musik switch
     //Soundeffekte switch
+        //Quelle Icons: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css
+            //Lizenz: CC BY 4.0
+                //Font Awesome
+            //Links für weitere Infos:
+                //Versionen: https://fontawesome.com/versions
+                //Tutorial: https://www.w3schools.com/icons/fontawesome_icons_intro.asp
     //evtl. Schwierigkeitsgrad
     //in den Cookies speichern
 //todoS irgendwann Startbildschirm
@@ -444,7 +452,7 @@ function init() {
     shotgun.reloadSound.firstSound = document.getElementById("shotgunReloadSound1");
     shotgun.reloadSound.secondSound = document.getElementById("shotgunReloadSound2");
 
-
+    initialSoundEffectMute();
 
     gameStarted = true;
 
@@ -739,6 +747,65 @@ function getCookie(name) {
 function playAudio(audio){
     audio.currentTime = 0;
     audio.play();
+}
+
+function initialSoundEffectMute(){
+    if(getCookie('soundsMuted')){
+        handgun.shotSound.muted = true;
+        handgun.reloadSound.firstSound.muted = true;
+        handgun.reloadSound.secondSound.muted = true;
+
+        rifle.shotSound.muted = true;
+        rifle.reloadSound.firstSound.muted = true;
+        rifle.reloadSound.secondSound.muted = true;
+
+        shotgun.shotSound.muted = true;
+        shotgun.reloadSound.firstSound.muted = true;
+        shotgun.reloadSound.secondSound.muted = true;
+
+        var muteIcon = document.getElementById('mute-icon');
+        muteIcon.classList.remove('fa-volume-up');
+        muteIcon.classList.add('fa-volume-mute');
+    }
+}
+
+function muteSoundEffectsSwitch(){
+    var soundsMuted = getCookie('soundsMuted')||false;
+    var muteIcon = document.getElementById('mute-icon');
+
+    if(!soundsMuted){
+        setCookie('soundsMuted', true, 365);
+        handgun.shotSound.muted = true;
+        handgun.reloadSound.firstSound.muted = true;
+        handgun.reloadSound.secondSound.muted = true;
+
+        rifle.shotSound.muted = true;
+        rifle.reloadSound.firstSound.muted = true;
+        rifle.reloadSound.secondSound.muted = true;
+
+        shotgun.shotSound.muted = true;
+        shotgun.reloadSound.firstSound.muted = true;
+        shotgun.reloadSound.secondSound.muted = true;
+
+        muteIcon.classList.remove('fa-volume-up');
+        muteIcon.classList.add('fa-volume-mute');
+    }else if(soundsMuted){
+        setCookie('soundsMuted', false, 365);
+        handgun.shotSound.muted = false;
+        handgun.reloadSound.firstSound.muted = false;
+        handgun.reloadSound.secondSound.muted = false;
+
+        rifle.shotSound.muted = false;
+        rifle.reloadSound.firstSound.muted = false;
+        rifle.reloadSound.secondSound.muted = false;
+
+        shotgun.shotSound.muted = false;
+        shotgun.reloadSound.firstSound.muted = false;
+        shotgun.reloadSound.secondSound.muted = false;
+
+        muteIcon.classList.remove('fa-volume-mute');
+        muteIcon.classList.add('fa-volume-up');
+    }
 }
 
 function calculatePositioningBetweenMouseAndPlayer (){
@@ -1603,6 +1670,8 @@ document.addEventListener("mousedown", mouseClicked);
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('start-game').addEventListener('click', startGame);
     document.getElementById('exit-game').addEventListener('click', reloadGame);
+    document.getElementById('mute-sound-effects').addEventListener('click', muteSoundEffectsSwitch);
+
     //Highscore anzeigen
     var highscore = parseInt(getCookie('highscore')) || 0;
     document.getElementById('highscore-display-start').innerText = "Highscore: " + highscore;
