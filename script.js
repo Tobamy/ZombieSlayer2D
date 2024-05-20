@@ -204,6 +204,7 @@
     var activeEnemys = [];
     var zombieWalk;
     var zombieAttack;
+    var slainEnemies = 0;
 
     //einzelne Tastenanschläge speichern
     var upKey;
@@ -557,6 +558,13 @@ function drawBackground(){
     backgroundCtx.fillText(inventory.health, 20, 60);
 
 
+    //Score + Highscore
+    backgroundCtx.clearRect(900, 0, 700, 100);
+    let highscore = parseInt(getCookie('highscore')) || 0;
+    let score = calculateScore();
+    backgroundCtx.fillText(`Score: ${score}, Highscore: ${highscore}`, 900, 50);
+
+
     //current ammo
     backgroundCtx.clearRect(1200, 750, 500, 100);
 
@@ -634,6 +642,33 @@ function drawBackground(){
         backgroundCtx.rect(invDrawing.startingPointX+invDrawing.imageWidth*3, invDrawing.startingPointY, invDrawing.imageWidth, invDrawing.imageHeight);
         backgroundCtx.stroke();
     } 
+
+
+
+}
+
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function getCookie(name) {
+    var nameEQ = name + "=";
+    //Die durch ; getrennten Cookies im Cookie String in in Array packen
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        //führende Leerzeichen entfernen
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        //nach gewünschtem Cookie suchen und nur den Wert zurückgeben
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
 }
 
 function calculatePositioningBetweenMouseAndPlayer (){
@@ -881,6 +916,7 @@ function drawEnemy (){
             ctx.stroke();
         }else{
             activeEnemys.splice(j,1);
+            slainEnemies++;
             j--;
         }
     }       
@@ -893,7 +929,6 @@ function attackPlayer(){
             enemy.enemyAttackAnimation.isPlaying = true;
             enemy.enemyAttackAnimation.currentFrame = 0;
             enemy.enemyAttackAnimation.lastFrameTime = Date.now();
-            //inventory.health -= 5;
             enemy.isOnCooldown = true;
             enemy.damagePending = true;      
         }
@@ -941,7 +976,6 @@ function updateEnemyAttackAnimation() {
                             inventory.health -= 5;
                         }
                         enemy.damagePending = false;
-                        console.log(inventory.health);
                     }
                 });
             }
@@ -992,9 +1026,6 @@ function useKnife() {
         activeEnemys.forEach((enemy, index)=>{
             if (isEnemyInMeleeRange(enemy)) {
                 enemy.health -= knife.damage;
-                if (enemy.health <= 0){
-                    activeEnemys.splice(index, 1);
-                }
             }
         });
     }
@@ -1467,6 +1498,9 @@ document.addEventListener("mousedown", mouseClicked);
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('start-game').addEventListener('click', startGame);
     document.getElementById('exit-game').addEventListener('click', reloadGame);
+    //Highscore anzeigen
+    var highscore = parseInt(getCookie('highscore')) || 0;
+    document.getElementById('highscore-display-start').innerText = "Highscore: " + highscore;
 }); 
 
 function reloadGame (){
@@ -1483,8 +1517,21 @@ function startGame() {
 }
 
 function gameOver() {
+    // Highscore speichern
+    var currentHighscore = parseInt(getCookie('highscore')) || 0;
+    var score = calculateScore(); // Deine Funktion zur Berechnung des Scores
+    if (score > currentHighscore) {
+        setCookie('highscore', score, 365); // Highscore für ein Jahr speichern
+    }
+
     document.getElementById('game-container').style.display = 'none';
     document.getElementById('gameover-screen').style.display = 'flex';
+    //Highscore anzeigen
+    document.getElementById('highscore-display-gameover').innerText = "Highscore: " + parseInt(getCookie('highscore'));
+}
+
+function calculateScore(){
+    return slainEnemies * 10;
 }
 
 function checkPlayerHealth() {
