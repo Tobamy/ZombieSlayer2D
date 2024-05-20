@@ -83,6 +83,7 @@
     var reloadHandgun; 
     var reloadRifle;
     var reloadShotgun;
+    var handgunShotSound, rifleShotSound, shotgunShotSound;
 
     var handgun = {
         shotspeed: 20, 
@@ -111,6 +112,7 @@
             offSetX: -15,
             offSetY: +4,
         },
+        shotSound: null,
     } 
     var shotgun = {
         shotspeed: 20, 
@@ -139,6 +141,7 @@
             offSetX: -1,
             offSetY: +2,
         },
+        shotSound: null,
     }
     var rifle = {
         shotspeed: 20, 
@@ -167,6 +170,7 @@
             offSetX: -1,
             offSetY: +2,
         },
+        shotSound: null,
     }
 
     var knife= {
@@ -359,6 +363,8 @@ function init() {
     //playerX -= player.width/2;
     //playerY -= player.height/2;
 
+    //Animationen
+
     feet = document.getElementById("feet");
 
     zombieWalk = document.getElementById("zombieWalk");
@@ -379,6 +385,19 @@ function init() {
 
     reloadShotgun = document.getElementById("reloadShotgun");
     shotgun.reloadAnimation.reloadSprite = reloadShotgun;
+
+
+    //Soundeffekte
+    handgunShotSound = document.getElementById("handgunShotSound");
+    handgun.shotSound = handgunShotSound;
+
+    rifleShotSound = document.getElementById("rifleShotSound");
+    rifle.shotSound = rifleShotSound;
+
+    shotgunShotSound = document.getElementById("shotgunShotSound");
+    shotgun.shotSound = shotgunShotSound;
+
+
 
     gameStarted = true;
 
@@ -669,6 +688,12 @@ function getCookie(name) {
         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
     }
     return null;
+}
+
+function playAudio(audio){
+    audio.currentTime = 0;
+    audio.play();
+    console.log("asdf");
 }
 
 function calculatePositioningBetweenMouseAndPlayer (){
@@ -1153,6 +1178,7 @@ function fireShot() {
                 //shot.damage = (inventory.currentWeapon).damage;
                 // Füge den Schuss zum Array der aktiven Schüsse hinzu
                 activeShots.push(shot);
+                playAudio(inventory.currentWeapon.shotSound);
 
                 if(isShotgun)angle +=shotgunSpread;
             }
