@@ -72,12 +72,6 @@
         calibrationX: 40,
         calibrationY: 15
     }
-    var hitboxHandgunShot = {
-        width: 3,
-        height: 3,
-        calibrationX: 0,
-        calibrationY: 0
-    }
     var hitboxEnemy = {
         width: 80,
         height: 80,
@@ -98,7 +92,9 @@
         },
         hitboxShot: {
             width: 3,
-            height: 3
+            height: 3,
+            calibrationX: 0,
+            calibrationY: 0
         },
         damage: 20, 
         numberOfShots: 10,
@@ -124,7 +120,9 @@
         },
         hitboxShot: {
             width: 3,
-            height: 3
+            height: 3,
+            calibrationX: 0,
+            calibrationY: 0
         },
         damage: 17,
         numberOfShots: 5,
@@ -150,7 +148,9 @@
         },
         hitboxShot: {
             width: 3,
-            height: 3
+            height: 3,
+            calibrationX: 0,
+            calibrationY: 0
         },
         damage: 30,
         numberOfShots: 20,
@@ -219,7 +219,7 @@
 
     //Schuss
     activeShots = [];
-    var shotRadius = hitboxHandgunShot.width; 
+    var shotRadius = handgun.hitboxShot.width; 
     var weaponOffsetX;
     var weaponOffsetY; 
 
@@ -1137,7 +1137,7 @@ function drawShots() {
     for (let i = 0; i < activeShots.length; i++) {
         var shot = activeShots[i];
 
-        if(borderCheck(shot.x, shot.y, hitboxHandgunShot)){
+        if(borderCheck(shot.x, shot.y, inventory.currentWeapon.hitboxShot)){
             ctx.beginPath();
             ctx.arc(shot.x, shot.y, shotRadius, 0, Math.PI * 2);
             shot.x += shot.dx;
@@ -1487,9 +1487,8 @@ function gameOver() {
     document.getElementById('gameover-screen').style.display = 'flex';
 }
 
-// Beispielhafte Funktion zur Überprüfung der Spieler-Gesundheit
 function checkPlayerHealth() {
-    if (inventory.health < 0) {
+    if (inventory.health <= 0) {
         gameOver();
     }
 }
