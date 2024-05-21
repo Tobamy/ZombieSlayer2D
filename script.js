@@ -245,7 +245,13 @@
     var zombieAttack;
     var slainEnemies = 0;
 
-    var maxActiveEnemies = 6; 
+    var initEnemyHealth = 100;
+    var maxActiveEnemies = 4;
+    
+    var enemyDamage = 5; 
+
+    var timeBetweenEachSpawn = 100; 
+    var timeAfterLastSpawn = 0; 
 
     var enemySpawnPoints = [
         {
@@ -295,11 +301,11 @@
             isEquipped: true
         },
         rifle: {
-            isOwned: true,
+            isOwned: false,
             isEquipped: false
         },
         shotgun: {
-            isOwned: true,
+            isOwned: false,
             isEquipped: false
         },
         knife: {
@@ -399,6 +405,14 @@
             [0,0,1,1]
         ],
     ]
+
+    var wave = {
+        counter: 1,  
+        numberOfEnemiesPerWave: 5,
+        numberOfEnemiesSpawnedInAWave: 0,
+        isChangeWave: false,
+        typeIncreaseDifficultyLevel: 0
+    }
 
 //#endregion
 
@@ -582,6 +596,8 @@ function gameLoop() {
 }
 
 function update() {
+    updateWave();
+    spawnEnemy();
     paceChanger();
     updatePlayerPosition();
     updateReloadAnimation();
@@ -964,36 +980,80 @@ function calculatePositionBetweenEnemyAndPlayer(currentEnemy) {
     angle = Math.atan2(dyEnemy, dxEnemy);
 }
 
-function spawnEnemy (startX = 500, startY = 500, enemySpawnPointIndex){
-    // Erstelle ein neues Zombieobjekt mit der Richtung und Position des Spielers
-    var enemy = {
-        x: startX,
-        y: startY,
-        dx: 0,
-        dy: 0,
-        health: 100,
-        maxHealth: 100,
-        attackRange: 80,
-        isOnCooldown: false,
-        lastAttack: Date.now(),
-        attackCooldown: 2000, //2 Sekunden
-        damagePending: false,
-        enemyAttackAnimation: {
-            currentFrame: 0,
-            totalFrames: 2, // Assuming the sprite sheet has 5 frames
-            frameDuration: 200, // Duration of each frame in milliseconds
-            lastFrameTime: Date.now(), // Timestamp of the last frame update
-            isPlaying: false // Indicates if the animation is currently playing
-        },
-        evadeDx: 0,
-        evadeDy: 0, 
-        evadeTime: 0,
-        enemySpawnPointIndex: enemySpawnPointIndex,
-        spawnTime: 42
-    };
+function updateWave(){
 
-    // Füge den Schuss zum Array der aktiven Schüsse hinzu
-    activeEnemies.push(enemy);
+    if(wave.isChangeWave){
+        wave.counter++;
+        if(wave.counter % 2 === 0){
+            wave.numberOfEnemiesPerWave++; 
+        }
+
+        if(wave.counter % 3 === 0){
+            switch(wave.typeIncreaseDifficultyLevel){
+                case 0: initEnemyHealth *= 1.05; wave.typeIncreaseDifficultyLevel++; break;
+                case 1: enemyDamage *= 1.05; wave.typeIncreaseDifficultyLevel++; break;
+                case 2: enemySpeed *= 1.05; wave.typeIncreaseDifficultyLevel = 0; break; 
+            }
+        }
+
+        if(wave.counter === 5){
+            inventory.rifle.isOwned = true; 
+        }
+
+        if(wave.counter === 10){
+            inventory.shotgun.isOwned = true; 
+        }
+
+        //inventory.health += 5;
+        wave.numberOfEnemiesSpawnedInAWave = 0; 
+        wave.isChangeWave = false; 
+    }
+}
+
+function spawnEnemy (){
+
+    if(timeAfterLastSpawn > timeBetweenEachSpawn && !wave.isChangeWave && activeEnemies.length < maxActiveEnemies && wave.numberOfEnemiesSpawnedInAWave < wave.numberOfEnemiesPerWave){
+
+        const enemySpawnPointIndex = Math.floor(Math.random() * enemySpawnPoints.length);
+        let enemySpawnPoint = enemySpawnPoints[enemySpawnPointIndex];
+
+        // Erstelle ein neues Zombieobjekt mit der Richtung und Position des Spielers
+        var enemy = {
+            x: enemySpawnPoint.x,
+            y: enemySpawnPoint.y,
+            dx: 0,
+            dy: 0,
+            health: initEnemyHealth,
+            maxHealth: initEnemyHealth,
+            attackRange: 80,
+            isOnCooldown: false,
+            lastAttack: Date.now(),
+            attackCooldown: 2000, //2 Sekunden
+            damagePending: false,
+            enemyAttackAnimation: {
+                currentFrame: 0,
+                totalFrames: 2, // Assuming the sprite sheet has 5 frames
+                frameDuration: 200, // Duration of each frame in milliseconds
+                lastFrameTime: Date.now(), // Timestamp of the last frame update
+                isPlaying: false // Indicates if the animation is currently playing
+            },
+            evadeDx: 0,
+            evadeDy: 0, 
+            evadeTime: 0,
+            enemySpawnPointIndex: enemySpawnPointIndex,
+            spawnTime: 42
+        };
+
+        // Füge den Schuss zum Array der aktiven Schüsse hinzu
+        activeEnemies.push(enemy);
+        wave.numberOfEnemiesSpawnedInAWave++;
+        timeAfterLastSpawn = 0; 
+
+    }else if(!wave.isChangeWave && activeEnemies.length === 0 && wave.numberOfEnemiesSpawnedInAWave === wave.numberOfEnemiesPerWave){
+        wave.isChangeWave = true; 
+    }else{
+        timeAfterLastSpawn++;
+    }
 }
 
 function calculateDistance(enemyX, enemyY, x = 0, y = 0){
@@ -1172,7 +1232,7 @@ function updateEnemyAttackAnimation() {
                 activeEnemies.forEach((enemy) => {
                     if (enemy.damagePending) {
                         if(isPlayerInAttackRange(enemy, 30)){
-                            inventory.health -= 5;
+                            inventory.health -= enemyDamage;
                         }
                         enemy.damagePending = false;
                     }
@@ -1647,14 +1707,6 @@ document.addEventListener('keydown', (event) => {
         rightKey = true;
     }else if(event.key ==="Shift"){
         shiftKey = true;
-    }
-
-    if(event.key === "j" || event.key === "J"){
-
-        const enemySpawnPointIndex = Math.floor(Math.random() * enemySpawnPoints.length);
-        let enemySpawnPoint = enemySpawnPoints[enemySpawnPointIndex];
-
-        spawnEnemy(enemySpawnPoint.x, enemySpawnPoint.y, enemySpawnPointIndex);
     }
 
     if(event.key === "r" || event.key === "R"){
