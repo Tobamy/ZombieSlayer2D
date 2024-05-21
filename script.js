@@ -289,7 +289,7 @@
     var angle; 
 
     //Schuss
-    activeShots = [];
+    var activeShots = [];
     var shotRadius = handgun.hitboxShot.width; 
     var weaponOffsetX;
     var weaponOffsetY; 
@@ -1010,6 +1010,10 @@ function updateWave(){
         //inventory.health += 5;
         wave.numberOfEnemiesSpawnedInAWave = 0; 
         wave.isChangeWave = false; 
+        activeEnemies = null; 
+        activeEnemies = [];
+        activeShots = null; 
+        activeShots = []; 
     }
 }
 
@@ -1279,12 +1283,10 @@ function hitCheck(enemy, shot){
 }
 
 function useKnife() {
-    if(inventory.knife.isEquipped){
-        if (inventory.knife.isEquipped && !meleeAttackAnimation.isPlaying) {
-            meleeAttackAnimation.isPlaying = true;
-            meleeAttackAnimation.currentFrame = 0;
-            meleeAttackAnimation.lastFrameTime = Date.now();
-        }
+    if (!meleeAttackAnimation.isPlaying) {
+        meleeAttackAnimation.isPlaying = true;
+        meleeAttackAnimation.currentFrame = 0;
+        meleeAttackAnimation.lastFrameTime = Date.now();
     }
 }
 
@@ -1389,52 +1391,50 @@ function updateReloadAnimation(){
 
 
 function fireShot() {
-    if(!inventory.knife.isEquipped){
+    let isFromDrawShot = false
 
-        let isFromDrawShot = false
+    if(calculateDelay(isFromDrawShot) && !inventory.currentWeapon.reloadAnimation.isPlaying && !(inventory.currentWeapon.tempNumberofShots === 0)){
+        
+        calculatePositioningBetweenMouseAndWeapon();
 
-        if(calculateDelay(isFromDrawShot) && !inventory.currentWeapon.reloadAnimation.isPlaying && !(inventory.currentWeapon.tempNumberofShots === 0)){
-            
-            calculatePositioningBetweenMouseAndWeapon();
+        // Berechne die Startposition des Schusses unter Berücksichtigung der Waffenverschiebung
+        var shotStartPositionX = playerX + weaponOffsetX + player.width / 2;
+        var shotStartPositionY = playerY + weaponOffsetY + player.height / 2;
+        
+        let i; 
+        let shotgunSpread = 0.13; 
 
-            // Berechne die Startposition des Schusses unter Berücksichtigung der Waffenverschiebung
-            var shotStartPositionX = playerX + weaponOffsetX + player.width / 2;
-            var shotStartPositionY = playerY + weaponOffsetY + player.height / 2;
-            
-            let i; 
-            let shotgunSpread = 0.13; 
+        if(inventory.shotgun.isEquipped){
+            i = 0; 
+            var isShotgun = true;
+            angle -= shotgunSpread;
+        }else{
+            i = 2
+        };
 
-            if(inventory.shotgun.isEquipped){
-                i = 0; 
-                var isShotgun = true;
-                angle -= shotgunSpread;
-            }else{
-                i = 2
+        for(i; i < 3; i++){
+
+            // Erstelle ein neues Schussobjekt mit der Richtung und Position des Spielers
+            var shot = {
+                x: shotStartPositionX,
+                y: shotStartPositionY,
+                dx: Math.cos(angle) * inventory.currentWeapon.shotspeed, // Geschwindigkeit des Schusses in x-Richtung
+                dy: Math.sin(angle) * inventory.currentWeapon.shotspeed, // Geschwindigkeit des Schusses in y-Richtung
+                damage: (inventory.currentWeapon).damage
             };
 
-            for(i; i < 3; i++){
+            //shot.damage = (inventory.currentWeapon).damage;
+            // Füge den Schuss zum Array der aktiven Schüsse hinzu
+            activeShots.push(shot);
+            playAudio(inventory.currentWeapon.shotSound);
 
-                // Erstelle ein neues Schussobjekt mit der Richtung und Position des Spielers
-                var shot = {
-                    x: shotStartPositionX,
-                    y: shotStartPositionY,
-                    dx: Math.cos(angle) * inventory.currentWeapon.shotspeed, // Geschwindigkeit des Schusses in x-Richtung
-                    dy: Math.sin(angle) * inventory.currentWeapon.shotspeed, // Geschwindigkeit des Schusses in y-Richtung
-                    damage: (inventory.currentWeapon).damage
-                };
-
-                //shot.damage = (inventory.currentWeapon).damage;
-                // Füge den Schuss zum Array der aktiven Schüsse hinzu
-                activeShots.push(shot);
-                playAudio(inventory.currentWeapon.shotSound);
-
-                if(isShotgun)angle +=shotgunSpread;
-            }
-
-            inventory.currentWeapon.tempDelayPerShot = 0;
-            inventory.currentWeapon.tempNumberofShots -= 1;  
+            if(isShotgun)angle +=shotgunSpread;
         }
-    } 
+
+        inventory.currentWeapon.tempDelayPerShot = 0;
+        inventory.currentWeapon.tempNumberofShots -= 1;  
+    }
+
 }
 
 function drawShots() {
@@ -1600,9 +1600,11 @@ function drawWorld(){
 
 function mouseClicked(ev){
     //Wenn geklickt 
-    console.log(mouseX, mouseY);
-    fireShot();
-    useKnife();
+    if(inventory.knife.isEquipped){
+        useKnife();
+    }else{
+        fireShot();
+    }
 }
 
 function mouseMoved(ev){
