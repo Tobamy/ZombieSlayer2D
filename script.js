@@ -153,7 +153,7 @@
             calibrationX: 0,
             calibrationY: 0
         },
-        damage: 17,
+        damage: 30,
         numberOfShots: 5,
         tempNumberofShots: 5,
         delayPerShot: 0.5, 
@@ -195,7 +195,7 @@
             reloadSprite: null,
             currentFrame: 0,
             totalFrames: 5,
-            frameDuration: 150,
+            frameDuration: 250,
             lastFrameTime: Date.now(),
             isPlaying: false,
             offSetX: -1,
@@ -602,6 +602,7 @@ function update() {
     updateWave();
     spawnEnemy();
     paceChanger();
+    enemyHit();
     updatePlayerPosition();
     updateReloadAnimation();
     updateMeleeAttackAnimation();
@@ -624,7 +625,7 @@ function draw() {
 
     drawPlayer();
 
-    enemyHit();
+    
 
     drawEnemy();
 
@@ -1323,7 +1324,7 @@ function updateMeleeAttackAnimation() {
             let enemyHasBeenHit = false;
             activeEnemies.forEach((enemy, index)=>{
                 if (isEnemyInMeleeRange(enemy)&&!enemyHasBeenHit) {
-                    enemy.health -= knife.damage;
+                    enemy.health -= enemy.maxHealth;//knife.damage;
                     enemyHasBeenHit = true;
                 }
             });
