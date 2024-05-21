@@ -488,7 +488,8 @@ function init() {
     generateMap();
 
     //Gameloop starten
-    setInterval(gameLoop,16); //FPS = 1000/diese Zahl
+    //setInterval(gameLoop,16); //FPS = 1000/diese Zahl
+    requestAnimationFrame(gameLoop);
 }
 
 // ist noch nicht ausgereift 
@@ -591,8 +592,10 @@ function borderCheck(x, y, hitbox){
 }
 
 function gameLoop() {
+    if (!gameStarted) return;
     update(); 
     draw();
+    requestAnimationFrame(gameLoop);
 }
 
 function update() {
@@ -996,11 +999,11 @@ function updateWave(){
             }
         }
 
-        if(wave.counter === 5){
+        if(wave.counter >= 5){
             inventory.rifle.isOwned = true; 
         }
 
-        if(wave.counter === 10){
+        if(wave.counter >= 10){
             inventory.shotgun.isOwned = true; 
         }
 
@@ -1812,7 +1815,7 @@ function gameOver() {
 }
 
 function calculateScore(){
-    return slainEnemies * 10; //Pro Welle 100 Punkte, alle 10 Wellen 400 Punkte
+    return slainEnemies * 10 + wave.counter * 100 - 100; //Pro Welle 100 Punkte, alle 10 Wellen 400 Punkte
 }
 
 function checkPlayerHealth() {
