@@ -33,8 +33,13 @@
     //mit Logik, Spieler soll Schaden bekommen können
 //todo Audio
     // Quellen Sounds:
-    //     https://f8studios.itch.io/snakes-authentic-gun-sounds
-    //     https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack
+        //Schusswaffen:
+            //https://f8studios.itch.io/snakes-authentic-gun-sounds
+            //https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack
+        //Messer:
+            //https://opengameart.org/content/20-sword-sound-effects-attacks-and-clashes (CC0)
+        //Zombie:
+            //https://opengameart.org/content/zombies-sound-pack (CC0)
     //Quelle Musik:
         //https://void1gaming.itch.io/free-action-music-pack
 //todo Einstellungsmöglichkeiten
@@ -213,6 +218,7 @@
         range: 100,
         numberOfShots: "∞",
         tempNumberofShots: "∞",
+        swingSound: null,
     }
 
     //Player
@@ -244,6 +250,8 @@
     var zombieWalk;
     var zombieAttack;
     var slainEnemies = 0;
+
+    var zombieAttackSound = null;
 
     var initEnemyHealth = 100;
     var maxActiveEnemies = 4;
@@ -475,6 +483,9 @@ function init() {
 
     shotgun.reloadSound.firstSound = document.getElementById("shotgunReloadSound1");
     shotgun.reloadSound.secondSound = document.getElementById("shotgunReloadSound2");
+
+    knife.swingSound = document.getElementById("knifeSwing");
+    zombieAttackSound = document.getElementById("zombieAttackSound");
 
     //Musik
     volumeLevel = getCookie('lastmusicvolume');
@@ -1051,7 +1062,8 @@ function spawnEnemy (){
             evadeDy: 0, 
             evadeTime: 0,
             enemySpawnPointIndex: enemySpawnPointIndex,
-            spawnTime: 42
+            spawnTime: 42,
+            attackSound: zombieAttackSound,
         };
 
         // Füge den Schuss zum Array der aktiven Schüsse hinzu
@@ -1235,6 +1247,10 @@ function updateEnemyAttackAnimation() {
             enemy.enemyAttackAnimation.currentFrame++;
             enemy.enemyAttackAnimation.lastFrameTime = now;
 
+            if(enemy.enemyAttackAnimation.currentFrame === 1){
+                playAudio(enemy.attackSound);
+            }
+
             if (enemy.enemyAttackAnimation.currentFrame >= enemy.enemyAttackAnimation.totalFrames) {
                 enemy.enemyAttackAnimation.currentFrame = 0;
                 enemy.enemyAttackAnimation.isPlaying = false; // Stop the animation after one cycle
@@ -1319,7 +1335,9 @@ function updateMeleeAttackAnimation() {
     if (now - meleeAttackAnimation.lastFrameTime >= meleeAttackAnimation.frameDuration) {
         meleeAttackAnimation.currentFrame++;
         meleeAttackAnimation.lastFrameTime = now;
-
+        if(meleeAttackAnimation.currentFrame === 2){
+            playAudio(knife.swingSound);
+        }
         if(meleeAttackAnimation.currentFrame === 6){
             let enemyHasBeenHit = false;
             activeEnemies.forEach((enemy, index)=>{
@@ -1335,17 +1353,6 @@ function updateMeleeAttackAnimation() {
             meleeAttackAnimation.isPlaying = false; // Stop the animation after one cycle
         }
     }
-}
-
-//für später, wenn man Schaden bekommt
-function flashScreen() {
-    const originalFill = ctx.fillStyle;
-    ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';  // Flash a red overlay
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    setTimeout(() => {
-        ctx.fillStyle = originalFill;
-        draw();  // Redraw the original screen
-    }, 100);
 }
 
 function calculateDelay (isFromDrawShot){
