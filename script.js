@@ -614,9 +614,10 @@ function update() {
 
 function draw() {
     // Hintergrund
+    activeWalls = null;
+    activeWalls = [];
     ctx.clearRect(0,0,canvas.width, canvas.height);
 
-    drawWorld();
     drawMap();
 
     drawBackground();
@@ -631,6 +632,7 @@ function draw() {
 }
 
 function drawMap(){
+    ctx.drawImage(background, 0, 0);
     for(let eachRow = 0; eachRow < gridRows; eachRow++) {
         for(let eachCol = 0; eachCol < gridCols; eachCol++){
             if(map[eachRow][eachCol] === 1) {
@@ -1592,10 +1594,6 @@ function isMoving(){
     }else{
         return true;
     }
-}
-
-function drawWorld(){
-    ctx.drawImage(background, 0,0);
 }
 
 function mouseClicked(ev){
