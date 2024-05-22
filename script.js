@@ -1838,8 +1838,12 @@ function gameOver() {
 
     document.getElementById('game-container').style.display = 'none';
     document.getElementById('gameover-screen').style.display = 'flex';
+
+    //Score anzeigen
+    document.getElementById('score-display').innerText = "Score: " + score;
     //Highscore anzeigen
     document.getElementById('highscore-display-gameover').innerText = "Highscore: " + parseInt(getCookie('highscore'));
+    
     gameStarted = false; 
 }
 
