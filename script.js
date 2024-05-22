@@ -232,6 +232,8 @@
     var schrittweite;
     var normalPace = 3;
     var sprintPace = normalPace*2;
+    var maxSprintTime = 80; 
+    var actualSprintTime = maxSprintTime; 
     var playerAngle;
 
     //Messer
@@ -677,7 +679,17 @@ function drawBackground(){
     backgroundCtx.font = "45px Verdana";
     backgroundCtx.fillText(inventory.health, 20, 60);
 
+    //Sprintbar
+    var sprintTimePercentage = (actualSprintTime/maxSprintTime) * 500;
+    //Hintergrund der Health Bar
+    backgroundCtx.fillStyle = 'grey';
+    backgroundCtx.fillRect(0, 75, 500, 10);
 
+    //gefüllter Teil der Health Bar
+    backgroundCtx.fillStyle = 'lightblue';
+    backgroundCtx.fillRect(0, 75, sprintTimePercentage, 10);
+
+    backgroundCtx.fillStyle = 'black';
     //Score + Highscore
     backgroundCtx.clearRect(900, 0, 700, 100);
     let highscore = parseInt(getCookie('highscore')) || 0;
@@ -1021,7 +1033,6 @@ function updateWave(){
             inventory.shotgun.isOwned = true; 
         }
 
-        //inventory.health += 5;
         wave.numberOfEnemiesSpawnedInAWave = 0; 
         wave.isChangeWave = false; 
         activeEnemies = null; 
@@ -1620,10 +1631,16 @@ function mouseMoved(ev){
 }
 
 function paceChanger(ev){ //todo
-    if(shiftKey){
+    if(shiftKey && actualSprintTime > 0){
         schrittweite = sprintPace;
-    }
-    else{
+        actualSprintTime -= 0.2;
+    }else if(!shiftKey){
+        schrittweite = normalPace;
+        actualSprintTime += actualSprintTime < maxSprintTime ? 0.4 : 0;
+        if(actualSprintTime > maxSprintTime){
+            actualSprintTime = maxSprintTime;
+        }
+    }else{
         schrittweite = normalPace;
     }
 }
@@ -1820,6 +1837,7 @@ function gameOver() {
     document.getElementById('gameover-screen').style.display = 'flex';
     //Highscore anzeigen
     document.getElementById('highscore-display-gameover').innerText = "Highscore: " + parseInt(getCookie('highscore'));
+    gameStarted = false; 
 }
 
 function calculateScore(){
