@@ -73,6 +73,7 @@
     //Größe automatisch an die Fenstergröße anpassen
     //Nachladen mit Spritesheets animieren
 //todo Credits (u.a. Bilder vom Player) als eigener Button
+//death Sounds evtl. Quelle: https://opengameart.org/content/11-male-human-paindeath-sounds
 
 //Globale Variablen
     //#region Variablen
