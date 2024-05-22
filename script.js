@@ -434,11 +434,10 @@
 function init() {
     //Setup
     canvas = document.getElementById("myCanvas");
-    canvas.style.border="red 3px solid";
+    canvas.style.border="black 3px solid";
     ctx = canvas.getContext("2d");
 
     backgroundCanvas = document.getElementById("backgroundCanvas");
-    backgroundCanvas.style.border="green 3px solid";
     backgroundCtx = backgroundCanvas.getContext("2d");
 
     //Bilder
@@ -694,10 +693,10 @@ function drawBackground(){
 
     backgroundCtx.fillStyle = 'black';
     //Score + Highscore
-    backgroundCtx.clearRect(850, 0, 800, 100);
+    backgroundCtx.clearRect(830, 0, 800, 100);
     let highscore = parseInt(getCookie('highscore')) || 0;
     let score = calculateScore();
-    backgroundCtx.fillText(`Score: ${score} | Highscore: ${highscore}`, 850, 65);
+    backgroundCtx.fillText(`Score: ${score} | Highscore: ${highscore}`, 830, 65);
 
 
     //current ammo
@@ -709,9 +708,9 @@ function drawBackground(){
     backgroundCtx.fillText(ammoText, 1400, 815);
 
     //current wave
-    backgroundCtx.clearRect(550, 0, 250, 100);
+    backgroundCtx.clearRect(550, 0, 270, 100);
     let currentWave = wave.counter;
-    backgroundCtx.fillText(`Welle: ${currentWave}`, 600, 65);
+    backgroundCtx.fillText(`Welle: ${currentWave}`, 550, 65);
 
     
     //inventory
@@ -926,11 +925,6 @@ function drawPlayer(){
     }
     
     frame += 0.2;
-
-    //todo: Hitbox player anzeigen -> muss wieder weg 
-    ctx.beginPath();
-    ctx.rect(playerX+hitboxPlayer.calibrationX, playerY+hitboxPlayer.calibrationY, hitboxPlayer.width, hitboxPlayer.height);
-    ctx.stroke();
 
     calculatePositioningBetweenMouseAndPlayer(); 
     
@@ -1196,10 +1190,6 @@ function drawEnemy (){
             //gefüllter Teil der Health Bar
             ctx.fillStyle = 'red';
             ctx.fillRect(enemy.x, enemy.y - 10, healthPercentage, 10);
-
-            ctx.beginPath();
-            ctx.rect(enemy.x, enemy.y, hitboxEnemy.width, hitboxEnemy.height, 10);
-            ctx.stroke();
         }else{
             activeEnemies.splice(j,1);
             slainEnemies++;

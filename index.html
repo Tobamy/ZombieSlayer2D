@@ -11,9 +11,13 @@
 <body>
 
     <div id="start-screen">
-        <div style="margin-top: 150px;"></div>
+        <div style="margin-top: 200px;"></div>
         <div class="container">
             <button id="start-game">Starten</button>
+        </div>
+
+        <div class="container">
+            <button onclick="window.location.href='credits.html'">Credits</button>
         </div>
 
         <div class="container">
@@ -50,27 +54,27 @@
     <img id="imgBackground" style="display:none" width="1400" height="750" src="assets/map.png"/>
     <img id="imgWall" style="display:none" width="50" height="50" src="assets/wall.png"/>
 
-    <img id="handgun" style="display:none" width="156" height="103" src="assets/SpriteSheets/survivor-idle_handgun_0.png" />
-    <img id="rifle" style="display:none" width="156" height="103" src="assets/Top_Down_Survivor/rifle/idle/survivor-idle_rifle_0.png" />
-    <img id="shotgun" style="display:none" width="156" height="103" src="assets/Top_Down_Survivor/shotgun/idle/survivor-idle_shotgun_0.png" />
-    <img id="knife" style="display:none" width="156" height="103" src="assets/SpriteSheets/survivor-idle_knife_0.png" />
+    <img id="handgun" style="display:none" width="156" height="103" src="assets/playerandEnemy/survivor-idle_handgun_0.png" />
+    <img id="rifle" style="display:none" width="156" height="103" src="assets/playerandEnemy/survivor-idle_rifle_0.png" />
+    <img id="shotgun" style="display:none" width="156" height="103" src="assets/playerandEnemy/survivor-idle_shotgun_0.png" />
+    <img id="knife" style="display:none" width="156" height="103" src="assets/playerandEnemy/survivor-idle_knife_0.png" />
 
-    <img id="meleeAttack" style="display:none" src="assets/SpriteSheets/melee_animation.png"/>
+    <img id="meleeAttack" style="display:none" src="assets/playerandEnemy/melee_animation.png"/>
 
-    <img id="zombieWalk" style="display:none" src="assets/SpriteSheets/zombie_walk.png"/>
+    <img id="zombieWalk" style="display:none" src="assets/playerandEnemy/zombie_walk.png"/>
 
-    <img id="zombieAttack" style="display:none" src="assets/SpriteSheets/zombie_attack.png"/>
+    <img id="zombieAttack" style="display:none" src="assets/playerandEnemy/zombie_attack.png"/>
 
-    <img id="feet" style="display:none" src="assets/SpriteSheets/walk_feet_only.png"/>
+    <img id="feet" style="display:none" src="assets/playerandEnemy/walk_feet_only.png"/>
 
-    <img id="invHandgun" style="display:none" src="assets/SpriteSheets/Handgun.png"/>
-    <img id="invRifle" style="display:none" src="assets/SpriteSheets/Rifle.png"/>
-    <img id="invShotgun" style="display:none" src="assets/SpriteSheets/Shotgun.png"/>
-    <img id="invKnife" style="display:none" src="assets/SpriteSheets/Knife.png"/>
+    <img id="invHandgun" style="display:none" src="assets/playerandEnemy/Handgun.png"/>
+    <img id="invRifle" style="display:none" src="assets/playerandEnemy/Rifle.png"/>
+    <img id="invShotgun" style="display:none" src="assets/playerandEnemy/Shotgun.png"/>
+    <img id="invKnife" style="display:none" src="assets/playerandEnemy/Knife.png"/>
 
-    <img id="reloadHandgun" style="display:none" src="assets/SpriteSheets/reload_handgun.png"/>
-    <img id="reloadRifle" style="display:none" src="assets/SpriteSheets/reload_rifle.png"/>
-    <img id="reloadShotgun" style="display:none" src="assets/SpriteSheets/reload_shotgun.png"/>
+    <img id="reloadHandgun" style="display:none" src="assets/playerandEnemy/reload_handgun.png"/>
+    <img id="reloadRifle" style="display:none" src="assets/playerandEnemy/reload_rifle.png"/>
+    <img id="reloadShotgun" style="display:none" src="assets/playerandEnemy/reload_shotgun.png"/>
 
     <div id="game-container" style="display: none; justify-content: center; align-items: center; height: 100vh;">
         <canvas id="backgroundCanvas" width="1600" height="850" style="position:absolute;"></canvas>
