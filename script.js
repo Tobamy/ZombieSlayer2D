@@ -1828,6 +1828,8 @@ function startGame() {
 
 function gameOver() {
     // Highscore speichern
+    let playerDeathSound = document.getElementById("playerDeathSound");
+    playAudio(playerDeathSound)
     var currentHighscore = parseInt(getCookie('highscore')) || 0;
     var score = calculateScore(); // Deine Funktion zur Berechnung des Scores
     if (score > currentHighscore) {
