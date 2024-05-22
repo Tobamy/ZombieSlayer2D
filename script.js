@@ -837,8 +837,8 @@ function switchMusicVolume(screen) {
 }
 
 function startBackgroundMusic() {
-    
     playNextTrack();
+    document.removeEventListener('click', startBackgroundMusic);
 }
 
 function playNextTrack() {
