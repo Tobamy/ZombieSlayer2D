@@ -425,6 +425,10 @@
         typeIncreaseDifficultyLevel: 0
     }
 
+    //Musik
+
+    var soundsMuted;
+
 //#endregion
 
 function init() {
@@ -491,11 +495,11 @@ function init() {
     zombieAttackSound = document.getElementById("zombieAttackSound");
 
     //Musik
-    volumeLevel = getCookie('lastmusicvolume');
-
-    initialSoundEffectMute();
+    initialSoundEffectMute("game");
 
     gameStarted = true;
+
+    
 
     //generateMapTeile(12);
 
@@ -639,8 +643,6 @@ function draw() {
 
     drawPlayer();
 
-    
-
     drawEnemy();
 
     drawShots();
@@ -695,7 +697,7 @@ function drawBackground(){
     backgroundCtx.clearRect(850, 0, 800, 100);
     let highscore = parseInt(getCookie('highscore')) || 0;
     let score = calculateScore();
-    backgroundCtx.fillText(`Score: ${score}, Highscore: ${highscore}`, 850, 50);
+    backgroundCtx.fillText(`Score: ${score} | Highscore: ${highscore}`, 850, 65);
 
 
     //current ammo
@@ -704,12 +706,12 @@ function drawBackground(){
     let currentAmmo = inventory.currentWeapon.tempNumberofShots;
     let maxAmmo = inventory.currentWeapon.numberOfShots;
     let ammoText = `${currentAmmo} / ${maxAmmo}`;
-    backgroundCtx.fillText(ammoText, 1200, 800);
+    backgroundCtx.fillText(ammoText, 1400, 815);
 
     //current wave
     backgroundCtx.clearRect(550, 0, 250, 100);
     let currentWave = wave.counter;
-    backgroundCtx.fillText(`Welle: ${currentWave}`, 550, 50);
+    backgroundCtx.fillText(`Welle: ${currentWave}`, 600, 65);
 
     
     //inventory
@@ -810,30 +812,43 @@ function getCookie(name) {
 }
 
 function playAudio(audio){
+    if(soundsMuted) return; 
     audio.currentTime = 0;
     audio.play();
 }
 
-function switchMusicVolume(){
-    if(document.getElementById('volume-slider').value > 0){
-        let savedVolumeLevel = document.getElementById('volume-slider').value;
-        setCookie('savedVolumeLevel', savedVolumeLevel, 365)
-        document.getElementById('volume-slider').value = 0;
-    }else {
-        document.getElementById('volume-slider').value = getCookie('savedVolumeLevel');
+function switchMusicVolume(screen) {
+    let sliderId = (screen === "start") ? 'volume-slider-start' : 'volume-slider';
+    let slider = document.getElementById(sliderId);
+    let currentValue = slider.value;
+
+    if (currentValue > 0) {
+        setCookie('savedVolumeLevel', currentValue, 365);
+        slider.value = 0;
+    } else {
+        let savedVolumeLevel = getCookie('savedVolumeLevel');
+        if (savedVolumeLevel !== null) {
+            slider.value = savedVolumeLevel;
+        } else {
+            slider.value = 0.2; // Default value if no saved volume is found
+        }
     }
+
+    updateVolume(screen);
 }
 
 function startBackgroundMusic() {
-    currentTrackIndex = 0;
+    
     playNextTrack();
-    document.getElementById('volume-slider').value = getCookie('lastmusicvolume');
 }
 
 function playNextTrack() {
     var currentTrack = document.getElementById(tracks[currentTrackIndex]);
     currentTrack.volume = volumeLevel;
-    currentTrack.play();
+    currentTrack.play().catch(function(error) {
+        console.log("hallo ich war hier")
+        document.addEventListener('click', startBackgroundMusic);
+    });;
 
     currentTrack.addEventListener('ended', () => {
         currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
@@ -841,67 +856,40 @@ function playNextTrack() {
     }, { once: true }); //das bedeutet, dass das für dieses Event nur einmal gemacht wird
 }
 
-function updateVolume(){
-    volumeLevel = document.getElementById('volume-slider').value;
+function updateVolume(screen = "game"){
+    let sliderId = (screen === "start") ? 'volume-slider-start' : 'volume-slider';
+    volumeLevel = document.getElementById(sliderId).value;
     var currentTrack = document.getElementById(tracks[currentTrackIndex]);
     currentTrack.volume = volumeLevel;
     setCookie('lastmusicvolume', volumeLevel, 365);
 }
 
-function initialSoundEffectMute(){
+function initialSoundEffectMute(screen){
+    let muteIconId = (screen === "start") ? 'mute-icon-start' : 'mute-icon';
+    document.getElementById((screen === "start") ? 'volume-slider-start' : "volume-slider").value = getCookie('lastmusicvolume');
+    volumeLevel = getCookie('lastmusicvolume');
     if(getCookie('soundsMuted')){
-        handgun.shotSound.muted = true;
-        handgun.reloadSound.firstSound.muted = true;
-        handgun.reloadSound.secondSound.muted = true;
-
-        rifle.shotSound.muted = true;
-        rifle.reloadSound.firstSound.muted = true;
-        rifle.reloadSound.secondSound.muted = true;
-
-        shotgun.shotSound.muted = true;
-        shotgun.reloadSound.firstSound.muted = true;
-        shotgun.reloadSound.secondSound.muted = true;
-
-        var muteIcon = document.getElementById('mute-icon');
+        soundsMuted = true; 
+        var muteIcon = document.getElementById(muteIconId);
         muteIcon.classList.remove('fa-volume-up');
         muteIcon.classList.add('fa-volume-mute');
+    }else{
+        soundsMuted = false; 
     }
 }
 
-function muteSoundEffectsSwitch(){
-    var soundsMuted = getCookie('soundsMuted')||false;
-    var muteIcon = document.getElementById('mute-icon');
+function muteSoundEffectsSwitch(screen = "game"){
+    let muteIconId = (screen === "start") ? 'mute-icon-start' : 'mute-icon';
+    var muteIcon = document.getElementById(muteIconId);
 
     if(!soundsMuted){
         setCookie('soundsMuted', true, 365);
-        handgun.shotSound.muted = true;
-        handgun.reloadSound.firstSound.muted = true;
-        handgun.reloadSound.secondSound.muted = true;
-
-        rifle.shotSound.muted = true;
-        rifle.reloadSound.firstSound.muted = true;
-        rifle.reloadSound.secondSound.muted = true;
-
-        shotgun.shotSound.muted = true;
-        shotgun.reloadSound.firstSound.muted = true;
-        shotgun.reloadSound.secondSound.muted = true;
-
+        soundsMuted = true; 
         muteIcon.classList.remove('fa-volume-up');
         muteIcon.classList.add('fa-volume-mute');
     }else if(soundsMuted){
         setCookie('soundsMuted', false, 365);
-        handgun.shotSound.muted = false;
-        handgun.reloadSound.firstSound.muted = false;
-        handgun.reloadSound.secondSound.muted = false;
-
-        rifle.shotSound.muted = false;
-        rifle.reloadSound.firstSound.muted = false;
-        rifle.reloadSound.secondSound.muted = false;
-
-        shotgun.shotSound.muted = false;
-        shotgun.reloadSound.firstSound.muted = false;
-        shotgun.reloadSound.secondSound.muted = false;
-
+        soundsMuted = false;
         muteIcon.classList.remove('fa-volume-mute');
         muteIcon.classList.add('fa-volume-up');
     }
@@ -1802,21 +1790,28 @@ document.addEventListener("mousemove", mouseMoved);
 document.addEventListener("mousedown", mouseClicked);
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('start-game').addEventListener('click', () =>{
-        startGame();
-        startBackgroundMusic();
-    });
+    document.getElementById('start-game').addEventListener('click', startGame);
     document.getElementById('exit-game').addEventListener('click', reloadGame);
-    document.getElementById('mute-sound-effects').addEventListener('click', muteSoundEffectsSwitch);
-    document.getElementById('music-switcher').addEventListener('click', switchMusicVolume);
 
-    //Highscore anzeigen
+    // Highscore anzeigen
     var highscore = parseInt(getCookie('highscore')) || 0;
     document.getElementById('highscore-display-start').innerText = "Highscore: " + highscore;
 
-    //Volume slider
-    document.getElementById('volume-slider').addEventListener('input', updateVolume);
-}); 
+    // Sounds
+    initialSoundEffectMute("start");
+    startBackgroundMusic();
+
+    // Start screen
+    document.getElementById('mute-sound-effects-start').addEventListener('click', () => muteSoundEffectsSwitch("start"));
+    document.getElementById('music-switcher-start').addEventListener('click', () => switchMusicVolume("start"));
+    document.getElementById('volume-slider-start').addEventListener('input', () => updateVolume("start"));
+
+    // Game screen
+    document.getElementById('mute-sound-effects').addEventListener('click', () => muteSoundEffectsSwitch());
+    document.getElementById('music-switcher').addEventListener('click', () => switchMusicVolume());
+    document.getElementById('volume-slider').addEventListener('input', () => updateVolume());
+});
+
 
 function reloadGame (){
     location.reload();

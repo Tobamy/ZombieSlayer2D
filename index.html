@@ -11,18 +11,28 @@
 <body>
 
     <div id="start-screen">
+        <div style="margin-top: 150px;"></div>
         <div class="container">
             <button id="start-game">Starten</button>
         </div>
-        <div id="highscore-display-start">Highscore: 0</div>
-        <button id="mute-sound-effects-start" style="position: absolute; top: 10px; right: 10px;">
-            <i id="mute-icon-start" class="fa fa-volume-up"></i>
-        </button>
-        
-        <button id="music-switcher-start"style="position: absolute; top: 70px; right: 12px;">
-            <i id="music-icon-start" class="fa fa-music" ></i>
-        </button>
-        <input type="range" id="volume-slider-start" min="0" max="1.0" step="0.01" value="0.2" style="position: absolute; top: 190px; right: -25px; transform: rotate(270deg); height: 20px;">
+
+        <div class="container">
+            <div style="display: flex; align-items: center;">
+                <button id="mute-sound-effects-start">
+                    <i id="mute-icon-start" class="fa fa-volume-up"></i>
+                </button>
+                <div style="display: flex; flex-direction: column;">
+                    <button id="music-switcher-start">
+                        <i id="music-icon-start" class="fa fa-music"></i>
+                    </button>
+                    <input type="range" id="volume-slider-start" style="margin: 50;" min="0" max="1.0" step="0.01" value="0.2">
+                </div>
+            </div>     
+        </div>
+
+        <div class="container">
+            <div id="highscore-display-start" style="margin: 10px auto; color: white;">Highscore: 0</div>
+        </div>
     </div>
 
     <div id="gameover-screen" style="display: none;">
@@ -60,13 +70,13 @@
     <div id="game-container" style="display: none; justify-content: center; align-items: center; height: 100vh;">
         <canvas id="backgroundCanvas" width="1600" height="850" style="position:absolute;"></canvas>
         <canvas id="myCanvas" width="1600" height="650" style="position:absolute;"></canvas>
-        <button id="mute-sound-effects" style="position: absolute; top: 10px; right: 10px;">
+        <button id="mute-sound-effects" style="position: absolute; top: 10px; right: 8px;">
             <i id="mute-icon" class="fa fa-volume-up"></i>
         </button>
         <button id="music-switcher" style="position: absolute; top: 70px; right: 10px;">
             <i id="music-icon" class="fa fa-music" ></i>
         </button>
-        <input type="range" id="volume-slider" min="0" max="1.0" step="0.01" value="0.2" style="position: absolute; top: 170px; right: -20px; transform: rotate(270deg); height: 20px;">
+        <input type="range" id="volume-slider" min="0" max="1.0" step="0.01" value="0.2" style="position: absolute; top: 170px; right: -3px; transform: rotate(270deg); height: 20px;">
     </div>
 
     <footer>
