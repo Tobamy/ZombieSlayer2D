@@ -691,10 +691,10 @@ function drawBackground(){
 
     backgroundCtx.fillStyle = 'black';
     //Score + Highscore
-    backgroundCtx.clearRect(900, 0, 700, 100);
+    backgroundCtx.clearRect(850, 0, 800, 100);
     let highscore = parseInt(getCookie('highscore')) || 0;
     let score = calculateScore();
-    backgroundCtx.fillText(`Score: ${score}, Highscore: ${highscore}`, 900, 50);
+    backgroundCtx.fillText(`Score: ${score}, Highscore: ${highscore}`, 850, 50);
 
 
     //current ammo
@@ -704,6 +704,11 @@ function drawBackground(){
     let maxAmmo = inventory.currentWeapon.numberOfShots;
     let ammoText = `${currentAmmo} / ${maxAmmo}`;
     backgroundCtx.fillText(ammoText, 1200, 800);
+
+    //current wave
+    backgroundCtx.clearRect(550, 0, 250, 100);
+    let currentWave = wave.counter;
+    backgroundCtx.fillText(`Welle: ${currentWave}`, 550, 50);
 
     
     //inventory
