@@ -829,7 +829,7 @@ function switchMusicVolume(screen) {
         if (savedVolumeLevel !== null) {
             slider.value = savedVolumeLevel;
         } else {
-            slider.value = 0.2; // Default value if no saved volume is found
+            slider.value = 0.2;
         }
     }
 
@@ -1052,10 +1052,10 @@ function spawnEnemy (){
             damagePending: false,
             enemyAttackAnimation: {
                 currentFrame: 0,
-                totalFrames: 2, // Assuming the sprite sheet has 5 frames
-                frameDuration: 200, // Duration of each frame in milliseconds
-                lastFrameTime: Date.now(), // Timestamp of the last frame update
-                isPlaying: false // Indicates if the animation is currently playing
+                totalFrames: 2,
+                frameDuration: 200,
+                lastFrameTime: Date.now(),
+                isPlaying: false
             },
             evadeDx: 0,
             evadeDy: 0, 
@@ -1159,7 +1159,6 @@ function drawEnemy (){
             //Neue (0, 0) Position setzen
             ctx.translate(enemy.x + hitboxEnemy.width / 2, enemy.y + hitboxEnemy.height / 2);
             ctx.rotate(zombieAngle * Math.PI / 180 );
-            /*if(isMoving()){*/  //evtl. später was einbauen, dass der sich nicht im Stillstand bewegt. Momentan läuft er aber immer, also passt das erstmal so.
             if(enemy.enemyAttackAnimation.isPlaying){
                 ctx.drawImage(
                     zombieAttack, 
@@ -1176,9 +1175,6 @@ function drawEnemy (){
                     zombieWalk.width / 9, zombieWalk.height 
                 );
             }
-            
-                
-            /*}*/
                     ctx.restore(); 
 
             //aktuelle HP berechnen
@@ -1248,7 +1244,7 @@ function updateEnemyAttackAnimation() {
 
             if (enemy.enemyAttackAnimation.currentFrame >= enemy.enemyAttackAnimation.totalFrames) {
                 enemy.enemyAttackAnimation.currentFrame = 0;
-                enemy.enemyAttackAnimation.isPlaying = false; // Stop the animation after one cycle
+                enemy.enemyAttackAnimation.isPlaying = false;
 
                 activeEnemies.forEach((enemy) => {
                     if (enemy.damagePending) {
@@ -1287,7 +1283,6 @@ function hitCheck(enemy, shot){
         var enemyTop = enemy.y;
         var enemyBottom = enemy.y + hitboxEnemy.height;
     
-        // Check if the two rectangles intersect
         return (shotRight >= enemyLeft &&
                 shotLeft <= enemyRight &&
                 shotBottom >= enemyTop &&
@@ -1313,10 +1308,9 @@ function isEnemyInMeleeRange (enemy){
 
     let currentPlayerAngle = angle;
     let enemyAngle = Math.atan2(enemy.y - playerY, enemy.x - playerX);
-    // let fov = Math.Pi/4;
 
     let angleDifference = Math.abs(enemyAngle - currentPlayerAngle);
-    // Correct for angle wrap-around
+    // Winkel über 180 Grad korrigieren (wrap-around)
     if (angleDifference > Math.PI) {
         angleDifference = (2 * Math.PI) - angleDifference;
     }
@@ -1345,7 +1339,7 @@ function updateMeleeAttackAnimation() {
 
         if (meleeAttackAnimation.currentFrame >= meleeAttackAnimation.totalFrames) {
             meleeAttackAnimation.currentFrame = 0;
-            meleeAttackAnimation.isPlaying = false; // Stop the animation after one cycle
+            meleeAttackAnimation.isPlaying = false;
         }
     }
 }
@@ -1629,9 +1623,6 @@ function paceChanger(ev){ //todo
     }
 }
 
-//todo Diese Funktion kann man bestimmt auch schöner machen.
-//ChatGPT hat mir da schon Sachen vorgeschlagen. 
-//Das ist aber optional, momentan funktioniert es nämlich
 function updatePlayerPosition(ev){ 
     if (downKey && rightKey && !upKey && !leftKey) {
         if (borderCheck(playerX + schrittweite, playerY + schrittweite, hitboxPlayer)) {
