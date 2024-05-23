@@ -1,80 +1,3 @@
-//kommende Features
-//doneT Laufanimation
-    //Quelle Bilder für Spritesheet: https://opengameart.org/content/animated-top-down-survivor-player
-//doneT Waffe wechseln
-//done Nahkampfangriff
-//doneS Schießen
-    //anderen Waffen Start deffinieren
-    //shotgun drei Projektile pro Schuss (ggf. mit begrenzter Reichweite)
-        //Schaden des einzelnen Projektils ist nur bei 50%
-    //Unterschiedliche Delay zwischen den Schüssen in Abhängigkeit der Waffen
-    //unterschiedliche Schussgeschwindigkeit 
-        //Shotgun schnell aber nicht so weit 
-        //handgun langsam
-        //rifle deutlich schneller als handgun 
-    //auch Reload
-    //aber unendlich Munition in Reserve
-//todo Berechnung Winkel verstehen (also die Mathematik dahinter)
-//doneS map
-    //mehrere Level
-    //evtl. Level automatisch generieren (Rougelike)
-    //collision Detection 
-//doneT Gegner (mit Health Bar)
-    //evtl. Bildquelle: https://opengameart.org/content/animated-top-down-zombie
-    //hit detection mit modulo? Torben fragen
-    //evtl. line of sight etablieren, damit die Gegner nur auf einen zulaufen, wenn sie einen sehen
-        //wenn sie einen nicht sehen, dann random bewegen
-        // wenn sie gegen eine Wand laufen, etwas andere Richtung ausprobieren, weil die sonst festhängen
-//doneT Inventar
-    //man sieht in einer Anzeige unten konstant alle Waffen und kann mit dem Mausrad durchscrollen
-        //Quelle Waffensymbole: https://vladpenn.itch.io/weapon
-    //oder mit den Zahlen durch die Waffen wechseln
-//doneT Health Bar (bspw. oben links)
-    //mit Logik, Spieler soll Schaden bekommen können
-//todo Audio
-    // Quellen Sounds:
-        //Schusswaffen:
-            //https://f8studios.itch.io/snakes-authentic-gun-sounds
-            //https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack
-        //Messer:
-            //https://opengameart.org/content/20-sword-sound-effects-attacks-and-clashes (CC0)
-        //Zombie:
-            //https://opengameart.org/content/zombies-sound-pack (CC0)
-    //Quelle Musik:
-        //https://void1gaming.itch.io/free-action-music-pack
-//todo Einstellungsmöglichkeiten
-    //Musik switch
-    //Soundeffekte switch
-        //Quelle Icons: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css
-            //Lizenz: CC BY 4.0
-                //Font Awesome
-            //Links für weitere Infos:
-                //Versionen: https://fontawesome.com/versions
-                //Tutorial: https://www.w3schools.com/icons/fontawesome_icons_intro.asp
-    //evtl. Schwierigkeitsgrad
-    //in den Cookies speichern
-//todoS irgendwann Startbildschirm
-//done Highscore
-    //Punktesystem, bspw. ein Zombie gibt 10 Punkte
-    // sollen wir ganz einfach in Cookies abspeicher können -> Name sollte nicht highsocre sein, sondern auf das Speil bezogen
-    // Cookies sollen wohl nur eine Zeile Code sein in JS 
-//Wellen (werden immer schwerer)
-    //mit den Wellen skalierende Gegner (werden immer stärker und schneller)
-    //Waffen freischalten nach 10 bzw. 20 Wellen
-        //erst rifle, dann shotgun
-    //nur 6 Gegner gleichzeitig
-    //alle drei Wellen entweder MaxHealth oder Damage oder Geschwindigkeit der Zombies um x% erhöhen
-        //aber versetzt
-    //alle zwei Wellen ein Zombie mehr
-//ausdauerleiste zum Sprinten
-    //kleine gelbe oder orangene Leiste unter der Health Bar
-//todo falls noch Zeit da ist:
-    //Waffe genau auf die Maus ausrichten (abhängig von der Entfernung der Maus zum Player)
-    //Größe automatisch an die Fenstergröße anpassen
-    //Nachladen mit Spritesheets animieren
-//todo Credits (u.a. Bilder vom Player) als eigener Button
-//death Sounds evtl. Quelle: https://opengameart.org/content/11-male-human-paindeath-sounds
-
 //Globale Variablen
     //#region Variablen
     var canvas, ctx; 
@@ -447,9 +370,7 @@ function init() {
     //player
     player = document.getElementById("handgun");
     playerX = canvas.width / 2;
-    playerY = canvas.height / 2; 
-    //playerX -= player.width/2;
-    //playerY -= player.height/2;
+    playerY = canvas.height / 2;
 
     //Animationen
 
@@ -498,48 +419,11 @@ function init() {
 
     gameStarted = true;
 
-    
-
-    //generateMapTeile(12);
-
     generateMap();
 
     //Gameloop starten
-    //setInterval(gameLoop,16); //FPS = 1000/diese Zahl
     requestAnimationFrame(gameLoop);
 }
-
-// ist noch nicht ausgereift 
-// wenn man das noch irgendwie implementiert bekommt wäre das super
-// function generateMapTeile(count) {
-
-//     for (let i = 0; i < count; i++) {
-//         const rows = Math.floor(Math.random() * 3) + 1; // Zufällige Anzahl von Zeilen (1 bis 3)
-//         const cols = Math.floor(Math.random() * 4) + 1; // Zufällige Anzahl von Spalten (1 bis 4)
-
-//         const teil = [];
-//         let hasOne = false;
-
-//         for (let r = 0; r < rows; r++) {
-//             const row = [];
-//             for (let c = 0; c < cols; c++) {
-//                 const value = Math.floor(Math.random() * 2);
-//                 if (value === 1) hasOne = true;
-//                 row.push(value);
-//             }
-//             teil.push(row);
-//         }
-
-//         // Wenn das Teil keine 1 hat, eine zufällige Position auf 1 setzen
-//         if (!hasOne) {
-//             const randomRow = Math.floor(Math.random() * rows);
-//             const randomCol = Math.floor(Math.random() * cols);
-//             teil[randomRow][randomCol] = 1;
-//         }
-
-//         mapTeile.push(teil);
-//     }
-// }
 
 function generateMap(){
 
@@ -931,10 +815,6 @@ function drawPlayer(){
     // Winkel in Grad umwandeln
     playerAngle = angle * (180 / Math.PI) - 5;
 
-    //todo Idee: Waffe auf Maus ausrichten
-    //da muss dann die Variable playerAngle angepasst werden, 
-    //je nachdem, wie weit die Maus vom Spieler weg ist
-
     // Spieler drehen
     ctx.save();
     //Neue (0, 0) Position setzen
@@ -1037,7 +917,6 @@ function spawnEnemy (){
         const enemySpawnPointIndex = Math.floor(Math.random() * enemySpawnPoints.length);
         let enemySpawnPoint = enemySpawnPoints[enemySpawnPointIndex];
 
-        // Erstelle ein neues Zombieobjekt mit der Richtung und Position des Spielers
         var enemy = {
             x: enemySpawnPoint.x,
             y: enemySpawnPoint.y,
@@ -1065,7 +944,6 @@ function spawnEnemy (){
             attackSound: zombieAttackSound,
         };
 
-        // Füge den Schuss zum Array der aktiven Schüsse hinzu
         activeEnemies.push(enemy);
         wave.numberOfEnemiesSpawnedInAWave++;
         timeAfterLastSpawn = 0; 
@@ -1110,7 +988,6 @@ function drawEnemy (){
                 else {
                     let arrayDistance = [];
     
-                    // Potentielle Bewegungen in vier Richtungen
                     let potentialMoves = [
                         { x: enemySpeed, y: 0 },
                         { x: -enemySpeed, y: 0 },
@@ -1118,7 +995,6 @@ function drawEnemy (){
                         { x: 0, y: -enemySpeed }
                     ];
     
-                    // Überprüfung jeder möglichen Bewegung
                     for (let move of potentialMoves) {
                         if (borderCheck(enemy.x + move.x, enemy.y + move.y, hitboxEnemy)) {
                             let distance = calculateDistance(enemy.x + move.x, enemy.y + move.y);
@@ -1129,7 +1005,6 @@ function drawEnemy (){
                     let tempDx;
                     let tempDy;
     
-                    // Finden der besten Bewegung (die zum Spieler führt)
                     if (arrayDistance.length > 0) {
                         let bestMove = arrayDistance.reduce((min, move) => move.distance < min.distance ? move : min);
     
@@ -1138,18 +1013,15 @@ function drawEnemy (){
                     }
     
                     if(enemy.evadeTime > 0 && borderCheck(enemy.x + enemy.evadeDx, enemy.y + enemy.evadeDy, hitboxEnemy)) {
-                        // Wenn eine Ausweichbewegung aktiv ist, diese nutzen
                         enemy.x += enemy.evadeDx;
                         enemy.y += enemy.evadeDy;
                         enemy.evadeTime--;
                     } else if (tempDx !== undefined && tempDy !== undefined) {
-                        // Wenn keine Ausweichbewegung aktiv ist, aber eine alternative Bewegung möglich ist
                         enemy.x += tempDx;
                         enemy.y += tempDy;
-                        // Ausweichbewegung speichern und Zeit setzen
                         enemy.evadeDx = tempDx;
                         enemy.evadeDy = tempDy;
-                        enemy.evadeTime = 90; // Zeit für die Ausweichbewegung (kann angepasst werden)
+                        enemy.evadeTime = 90;
                     }
                 }
             }            
@@ -1331,7 +1203,7 @@ function updateMeleeAttackAnimation() {
             let enemyHasBeenHit = false;
             activeEnemies.forEach((enemy, index)=>{
                 if (isEnemyInMeleeRange(enemy)&&!enemyHasBeenHit) {
-                    enemy.health -= enemy.maxHealth;//knife.damage;
+                    enemy.health -= enemy.maxHealth;
                     enemyHasBeenHit = true;
                 }
             });
@@ -1422,8 +1294,6 @@ function fireShot() {
                 damage: (inventory.currentWeapon).damage
             };
 
-            //shot.damage = (inventory.currentWeapon).damage;
-            // Füge den Schuss zum Array der aktiven Schüsse hinzu
             activeShots.push(shot);
             playAudio(inventory.currentWeapon.shotSound);
 
@@ -1437,7 +1307,6 @@ function fireShot() {
 }
 
 function drawShots() {
-    // Gehe durch alle aktiven Schüsse und zeichne sie
     
     let isFromDrawShot = true; 
     
@@ -1451,7 +1320,7 @@ function drawShots() {
             ctx.arc(shot.x, shot.y, shotRadius, 0, Math.PI * 2);
             shot.x += shot.dx;
             shot.y += shot.dy; 
-            ctx.fillStyle = "black"; // Farbe des Schusses
+            ctx.fillStyle = "black";
             ctx.fill();
             ctx.closePath();
         }else{
@@ -1594,7 +1463,6 @@ function isMoving(){
 }
 
 function mouseClicked(ev){
-    //Wenn geklickt 
     if(inventory.knife.isEquipped){
         useKnife();
     }else{
@@ -1608,7 +1476,7 @@ function mouseMoved(ev){
     mouseY = ev.clientY - canvas.offsetTop;
 }
 
-function paceChanger(ev){ //todo
+function paceChanger(ev){
     if(shiftKey && actualSprintTime > 0){
         schrittweite = sprintPace;
         actualSprintTime -= 0.2;
@@ -1803,7 +1671,6 @@ function startGame() {
     document.getElementById('gameover-screen').style.display = 'none';
     document.getElementById('game-container').style.display = 'flex';
 
-    // Initialisierung des Spiels
     init();
 }
 
@@ -1812,9 +1679,9 @@ function gameOver() {
     let playerDeathSound = document.getElementById("playerDeathSound");
     playAudio(playerDeathSound)
     var currentHighscore = parseInt(getCookie('highscore')) || 0;
-    var score = calculateScore(); // Deine Funktion zur Berechnung des Scores
+    var score = calculateScore();
     if (score > currentHighscore) {
-        setCookie('highscore', score, 365); // Highscore für ein Jahr speichern
+        setCookie('highscore', score, 365);
     }
 
     document.getElementById('game-container').style.display = 'none';
