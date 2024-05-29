@@ -143,6 +143,12 @@
         numberOfShots: "∞",
         tempNumberofShots: "∞",
         swingSound: null,
+        hitboxShot: {
+            width: 0,
+            height: 0,
+            calibrationX: 0,
+            calibrationY: 0
+        },
     }
 
     //Player
@@ -554,6 +560,7 @@ function drawBackground(){
     //healthbar
     //aktuelle HP berechnen
     var playerHealthPercentage = (inventory.health/inventory.maxHealth) * 500;
+    playerHealthPercentage = parseFloat(playerHealthPercentage.toFixed(2));
     //Hintergrund der Health Bar
     backgroundCtx.fillStyle = 'red';
     backgroundCtx.fillRect(0, 20, 500, 50);

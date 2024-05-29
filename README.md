@@ -1,6 +1,84 @@
 # ZombieSlayer2D
 
-//kommende Features
+Was ist die Aufgabe des Projekts?
+Warum ist das Projekt sinnvoll?
+Wie können Benutzer am Projekt mitwirken?
+Wo erhalten Benutzer Hilfe zu deinem Projekt?
+Wer verwaltet das Projekt und trägt dazu bei?
+
+Browser Auswahl 
+Lizenzen 
+
+
+
+
+
+
+
+
+
+
+Heading	# H1
+## H2
+### H3
+Bold	**bold text**
+Italic	*italicized text*
+Blockquote	> blockquote
+Ordered List	
+1. First item
+2. Second item
+3. Third item
+
+Unordered List	- First item
+- Second item
+- Third item
+
+Code	
+`code`
+Horizontal Rule	
+---
+Link	[title](#custom-id)
+Image	![alt text](assets)
+
+
+| Syntax | Description |
+| ----------- | ----------- |
+| Header | Title |
+| Paragraph | Text |
+
+```
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "age": 25
+}
+```
+Here's a sentence with a footnote. [^1]
+
+[^1]: This is the footnote.
+
+Heading ID
+### My Great Heading {#custom-id}
+
+Definition List	
+
+term
+: definition
+
+Strikethrough	~~The world is flat.~~
+Task List	- [x] Write the press release
+- [ ] Update the website
+- [ ] Contact the media
+
+Emoji
+(see also Copying and Pasting Emoji)	That is so funny! :joy:
+
+Highlight	I need to highlight these ==very important words==.
+
+Subscript	H~2~O
+Superscript	X^2^
+
+<!-- //kommende Features
 //doneT Laufanimation
     //Quelle Bilder für Spritesheet: https://opengameart.org/content/animated-top-down-survivor-player
 //doneT Waffe wechseln
@@ -75,4 +153,4 @@
     //Größe automatisch an die Fenstergröße anpassen
     //Nachladen mit Spritesheets animieren
 //todo Credits (u.a. Bilder vom Player) als eigener Button
-//death Sounds evtl. Quelle: https://opengameart.org/content/11-male-human-paindeath-sounds
+//death Sounds evtl. Quelle: https://opengameart.org/content/11-male-human-paindeath-sounds -->
