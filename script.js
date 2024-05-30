@@ -736,7 +736,6 @@ function playNextTrack() {
     var currentTrack = document.getElementById(tracks[currentTrackIndex]);
     currentTrack.volume = volumeLevel;
     currentTrack.play().catch(function(error) {
-        console.log("hallo ich war hier")
         document.addEventListener('click', startBackgroundMusic);
     });;
 

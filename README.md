@@ -1,82 +1,66 @@
 # ZombieSlayer2D
 
-Was ist die Aufgabe des Projekts?
-Warum ist das Projekt sinnvoll?
-Wie können Benutzer am Projekt mitwirken?
-Wo erhalten Benutzer Hilfe zu deinem Projekt?
-Wer verwaltet das Projekt und trägt dazu bei?
-
-Browser Auswahl 
-Lizenzen 
+Ein webbasierter, 2D, topdown Shooter mit zufällig generierter Map und einem endlosen Wellenmodus.
 
 
 
+## Instructions
+
+| Key | Action |
+| --- | ------ |
+| W | Run up |
+| Arrow Up | Run up |
+| A | Run left |
+| Arrow Left | Run left |
+| S | Run down |
+| Arrow Down | Run down |
+| D | Run right |
+| Arrow Right | Run right |
+| Shift | Sprint |
+| Left Click | Shoot |
+| R | Reload |
+| Scroll Up | Previous weapon |
+| Scroll Down | Next weapon |
+| 1 / 2 / 3 / 4 | Switch to weapon 1 / 2 / 3 / 4 |
+
+## Browser compatibility
+
+| Browser | Status |
+| ------- | ------ |
+| Chrome | ✅ |
+| Firefox | works, but not optimized |
+| Other browser | Will probably also work |
+
+## Credits & Licenses of assets
+
+- Source code license: Apache License ([view LICENSE file](https://github.com/Tobamy/ZombieSlayer2D/blob/main/LICENSE))
+
+### Art and Graphics
+
+- **rileygombart** - Assets für den Player Character | [Link](https://opengameart.org/content/animated-top-down-survivor-player) | Lizenz: [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
+- **rileygombart** - Assets für die Zombies | [Link](https://opengameart.org/content/animated-top-down-zombie) | Lizenz: [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
+- **VladPenn** - Pixel Arts für das Inventar | [Link](https://vladpenn.itch.io/weapon) | Commercial use allowed
+- **Sebastian Thönes** - Hintergrundbilder Startbildschirm, Spiel, GameOver-Screen; Textur der Wände
+
+### Music and Sound
+
+- **SnakeF8** - Sounds für die Shotgun | [Link](https://f8studios.itch.io/snakes-authentic-gun-sounds) | Commercial use allowed
+- **SnakeF8** - Sounds für die Handgun und die Rifle | [Link](https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack) | Commercial use allowed
+- **StarNinjas** - Sound das Messer | [Link](https://opengameart.org/content/20-sword-sound-effects-attacks-and-clashes) | Lizenz: [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
+- **artisticdude** - Sound für die Zombies | [Link](https://opengameart.org/content/zombies-sound-pack) | Lizenz: [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
+- **VOiD1Gaming** - Hintergrundmusik | [Link](https://void1gaming.itch.io/free-action-music-pack) | Lizenz: Eigene | Commercial use allowed
+- **Michel Baradari** - Death Sound des Player Characters | [Link](https://opengameart.org/content/11-male-human-paindeath-sounds) | Lizenz: [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
+- **Font Awesome** - Icons | [Link](https://fontawesome.com) | Lizenz: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+
+
+## Development & Authors
+
+- Developer: Tobias van Heek und Sebastian Thönes
+
+The exact partial contributions can be found in the  [PSP-File](https://github.com/Tobamy/ZombieSlayer2D/blob/main/PSP%20V2%20mit%20Einteilung.png)
 
 
 
-
-
-
-
-Heading	# H1
-## H2
-### H3
-Bold	**bold text**
-Italic	*italicized text*
-Blockquote	> blockquote
-Ordered List	
-1. First item
-2. Second item
-3. Third item
-
-Unordered List	- First item
-- Second item
-- Third item
-
-Code	
-`code`
-Horizontal Rule	
----
-Link	[title](#custom-id)
-Image	![alt text](assets)
-
-
-| Syntax | Description |
-| ----------- | ----------- |
-| Header | Title |
-| Paragraph | Text |
-
-```
-{
-  "firstName": "John",
-  "lastName": "Smith",
-  "age": 25
-}
-```
-Here's a sentence with a footnote. [^1]
-
-[^1]: This is the footnote.
-
-Heading ID
-### My Great Heading {#custom-id}
-
-Definition List	
-
-term
-: definition
-
-Strikethrough	~~The world is flat.~~
-Task List	- [x] Write the press release
-- [ ] Update the website
-- [ ] Contact the media
-
-Emoji
-(see also Copying and Pasting Emoji)	That is so funny! :joy:
-
-Highlight	I need to highlight these ==very important words==.
-
-Subscript	H~2~O
-Superscript	X^2^
 
 <!-- //kommende Features
 //doneT Laufanimation
