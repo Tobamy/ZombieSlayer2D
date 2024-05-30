@@ -569,7 +569,7 @@ function drawBackground(){
     backgroundCtx.fillStyle = 'green';
     backgroundCtx.fillRect(0, 20, playerHealthPercentage, 50);
     backgroundCtx.fillStyle = 'black';
-    backgroundCtx.font = "45px Verdana";
+    backgroundCtx.font = "45px Roboto";
     backgroundCtx.fillText(inventory.health, 20, 60);
 
     //Sprintbar

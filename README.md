@@ -40,6 +40,8 @@ Ein webbasierter, 2D, topdown Shooter mit zufällig generierter Map und einem en
 - **rileygombart** - Assets für den Player Character | [Link](https://opengameart.org/content/animated-top-down-survivor-player) | Lizenz: [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
 - **rileygombart** - Assets für die Zombies | [Link](https://opengameart.org/content/animated-top-down-zombie) | Lizenz: [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
 - **VladPenn** - Pixel Arts für das Inventar | [Link](https://vladpenn.itch.io/weapon) | Commercial use allowed
+- **Font Awesome** - Icons | [Link](https://fontawesome.com) | Lizenz: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- **Christian Robertson** - Roboto Font | [Link](https://fonts.google.com/specimen/Roboto) | Lizenz: [APACHE LICENCE VERSION 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 - **Sebastian Thönes** - Hintergrundbilder Startbildschirm, Spiel, GameOver-Screen; Textur der Wände
 
 ### Music and Sound
@@ -48,9 +50,9 @@ Ein webbasierter, 2D, topdown Shooter mit zufällig generierter Map und einem en
 - **SnakeF8** - Sounds für die Handgun und die Rifle | [Link](https://f8studios.itch.io/snakes-second-authentic-gun-sounds-pack) | Commercial use allowed
 - **StarNinjas** - Sound das Messer | [Link](https://opengameart.org/content/20-sword-sound-effects-attacks-and-clashes) | Lizenz: [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
 - **artisticdude** - Sound für die Zombies | [Link](https://opengameart.org/content/zombies-sound-pack) | Lizenz: [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
-- **VOiD1Gaming** - Hintergrundmusik | [Link](https://void1gaming.itch.io/free-action-music-pack) | Lizenz: Eigene | Commercial use allowed
+- **VOiD1Gaming** - Hintergrundmusik | [Link](https://void1gaming.itch.io/free-action-music-pack) | Lizenz: [Eigene](https://github.com/Tobamy/ZombieSlayer2D/blob/main/assets/Audio/Musik/FREE_Action_Music_Pack_License.pdf) | Commercial use allowed
 - **Michel Baradari** - Death Sound des Player Characters | [Link](https://opengameart.org/content/11-male-human-paindeath-sounds) | Lizenz: [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
-- **Font Awesome** - Icons | [Link](https://fontawesome.com) | Lizenz: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+
 
 
 ## Development & Authors
