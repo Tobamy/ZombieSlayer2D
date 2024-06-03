@@ -1066,7 +1066,15 @@ function drawEnemy (){
             ctx.fillRect(enemy.x, enemy.y - 10, hitboxEnemy.width, 10);
 
             //gefüllter Teil der Health Bar
-            ctx.fillStyle = 'red';
+            if(wave.counter<=9){
+                ctx.fillStyle = 'red';
+            }else if(wave.counter<=18){
+                ctx.fillStyle = 'darkred';
+            }else if(wave.counter<=27){
+                ctx.fillStyle = 'purple';
+            }else {
+                ctx.fillStyle = 'gold';
+            }
             ctx.fillRect(enemy.x, enemy.y - 10, healthPercentage, 10);
         }else{
             activeEnemies.splice(j,1);
