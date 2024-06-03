@@ -29,7 +29,7 @@ Ein webbasierter, 2D, topdown Shooter mit zufällig generierter Map und einem en
 | ------- | ------ |
 | Chrome | ✅ |
 | Firefox | works, but not optimized |
-| Other browser | Will probably also work |
+| Other browser | will probably also work |
 
 ## Credits & Licenses of assets
 
@@ -57,7 +57,7 @@ Ein webbasierter, 2D, topdown Shooter mit zufällig generierter Map und einem en
 
 ## Development & Authors
 
-- Developer: Tobias van Heek und Sebastian Thönes
+- Developer: Tobias van Heek & Sebastian Thönes
 
 The exact partial contributions can be found in the  [PSP-File](https://github.com/Tobamy/ZombieSlayer2D/blob/main/PSP%20V2%20mit%20Einteilung.png)
 
