@@ -61,6 +61,15 @@ Ein webbasierter, 2D, topdown Shooter mit zufällig generierter Map und einem en
 
 The exact partial contributions can be found in the  [PSP-File](https://github.com/Tobamy/ZombieSlayer2D/blob/main/PSP%20V2%20mit%20Einteilung.png)
 
+## Notes
+
+Dieses Spiel wurde für Laptops und Computer mit Tastaturen entwickelt. Es hat keine Touch-Steuerung. Das Spiel lässt sich am besten mit einer Maus (und nicht mit einem Touchpad) spielen.
+
+## Known issues
+
+- Das Spiel skaliert nicht mit der Fenstergröße. Es ist für Full-HD (1920*1080) optimiert. Laptops skalieren die Größe von Apps oft hoch, dadurch kann es trotz ausreichender Bildschirmauflösung zu Anzeigeproblemen kommen.
+- Wenn das Fadenkreuz nah an der Mündung der Waffe ist, fliegen die Schüsse schief aus den Waffen.
+
 
 
 
