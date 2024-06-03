@@ -24,10 +24,10 @@
 
     //Hitbox 
     var hitboxPlayer = {
-        width: 80,
-        height: 80,
-        calibrationX: 40,
-        calibrationY: 15
+        width: 60,
+        height: 60,
+        calibrationX: 50,
+        calibrationY: 23
     }
     var hitboxEnemy = {
         width: 80,
@@ -428,7 +428,7 @@ function init() {
     generateMap();
 
     //Gameloop starten
-    requestAnimationFrame(gameLoop);
+    setInterval(gameLoop,16); //FPS = 1000/diese Zahl
 }
 
 function generateMap(){
@@ -502,7 +502,6 @@ function gameLoop() {
     if (!gameStarted) return;
     update(); 
     draw();
-    requestAnimationFrame(gameLoop);
 }
 
 function update() {
@@ -817,6 +816,11 @@ function drawPlayer(){
     frame += 0.2;
 
     calculatePositioningBetweenMouseAndPlayer(); 
+
+    //todo: Hitbox player anzeigen -> muss wieder weg 
+    // ctx.beginPath();
+    // ctx.rect(playerX+hitboxPlayer.calibrationX, playerY+hitboxPlayer.calibrationY, hitboxPlayer.width, hitboxPlayer.height);
+    // ctx.stroke();
     
     // Winkel in Grad umwandeln
     playerAngle = angle * (180 / Math.PI) - 5;
