@@ -14,10 +14,10 @@ body, html {
     background: url('assets/background.png') no-repeat center center fixed;
     background-size: cover;
     width: 100%;
-    height: calc(100% - 40px); /* Subtract footer height */
+    height: calc(100% - 40px); 
     display: flex;
     flex-direction: column;
-    flex-grow: 1;  /* Nimmt den verbleibenden Platz ein */
+    flex-grow: 1;  
     justify-content: center;
     align-items: center;
 }
@@ -26,10 +26,10 @@ body, html {
     background: url('assets/gameover.png') no-repeat center center fixed;
     background-size: cover;
     width: 100%;
-    height: calc(100% - 40px); /* Subtract footer height */
+    height: calc(100% - 40px); 
     display: flex;
     flex-direction: column;
-    flex-grow: 1;  /* Nimmt den verbleibenden Platz ein */
+    flex-grow: 1;  
     justify-content: center;
     align-items: center;
 }
@@ -115,8 +115,8 @@ footer a:hover {
 }
 
 #volume-slider {
-    width: 100px; /* Adjust width to your preference */
-    height: 10px; /* Adjust height to your preference */
+    width: 100px; 
+    height: 10px; 
     cursor: pointer;
     transition: background 0.15s ease-in-out;
     writing-mode: bt-lr;
