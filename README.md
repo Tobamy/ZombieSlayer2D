@@ -57,13 +57,13 @@ Ein webbasierter, 2D, topdown Shooter mit zufällig generierter Map und einem en
 
 ## Development & Authors
 
-- Developer: Tobias van Heek & Sebastian Thönes
+- Developer: Tobias van Heek & Sebastian Thönes; WTA122A, April - Juli 2024
 
 The exact partial contributions can be found in the  [PSP-File](https://github.com/Tobamy/ZombieSlayer2D/blob/main/PSP%20V2%20mit%20Einteilung.png)
 
 ## Notes
 
-Dieses Spiel wurde für Laptops und Computer mit Tastaturen entwickelt. Es hat keine Touch-Steuerung. Das Spiel lässt sich am besten mit einer Maus (und nicht mit einem Touchpad) spielen.
+Dieses Spiel wurde für Laptops und Computer mit Tastaturen entwickelt. Es hat keine Touch-Steuerung. Das Spiel lässt sich am besten mit einer Maus (und nicht mit einem Touchpad) spielen. Der Vollbildmodus (F11) wird empfohlen.
 
 ## Known issues
 
