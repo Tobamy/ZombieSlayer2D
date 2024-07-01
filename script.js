@@ -559,7 +559,6 @@ function drawBackground(){
     //healthbar
     //aktuelle HP berechnen
     var playerHealthPercentage = (inventory.health/inventory.maxHealth) * 500;
-    playerHealthPercentage = parseFloat(playerHealthPercentage.toFixed(2));
     //Hintergrund der Health Bar
     backgroundCtx.fillStyle = 'red';
     backgroundCtx.fillRect(0, 20, 500, 50);
@@ -569,7 +568,7 @@ function drawBackground(){
     backgroundCtx.fillRect(0, 20, playerHealthPercentage, 50);
     backgroundCtx.fillStyle = 'black';
     backgroundCtx.font = "45px Roboto";
-    backgroundCtx.fillText(inventory.health, 20, 60);
+    backgroundCtx.fillText(parseFloat(inventory.health.toFixed(2)), 20, 60);
 
     //Sprintbar
     var sprintTimePercentage = (actualSprintTime/maxSprintTime) * 500;
