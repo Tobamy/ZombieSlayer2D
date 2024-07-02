@@ -2,6 +2,8 @@
 
 Ein webbasierter, 2D, topdown Shooter mit zufällig generierter Map und einem endlosen Wellenmodus.
 
+## Version 1.0
+
 
 
 ## Instructions
