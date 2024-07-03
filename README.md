@@ -4,8 +4,6 @@ Ein webbasierter, 2D, topdown Shooter mit zufällig generierter Map und einem en
 
 ## Version 1.0
 
-
-
 ## Instructions
 
 | Key | Action |
@@ -62,6 +60,8 @@ Ein webbasierter, 2D, topdown Shooter mit zufällig generierter Map und einem en
 - Developer: Tobias van Heek & Sebastian Thönes; WTA122A, April - Juli 2024
 
 Die genauen Teilbeiträge befinden sich in dem [PSP-File](https://github.com/Tobamy/ZombieSlayer2D/blob/main/PSP%20V2%20mit%20Einteilung.png).
+
+<img src="PSP V2 mit Einteilung.png" alt="PSP V2 mit Einteilung">
 
 ## Notes
 
