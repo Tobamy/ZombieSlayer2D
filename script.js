@@ -787,7 +787,7 @@ function calculatePositioningBetweenMouseAndPlayer (){
     dx = mouseX - (playerX + player.width / 2);
     dy = mouseY - (playerY + player.height / 2);
     
-    // Berechne den Winkel zwischen der Spielerposition und der Mausposition
+    // Berechne den Winkel zwischen der Spielerposition und der Mausposition im Bogenmaß
     angle = Math.atan2(dy, dx);
 }
 
