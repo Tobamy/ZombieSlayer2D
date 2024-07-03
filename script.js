@@ -727,7 +727,6 @@ function switchMusicVolume(screen) {
 
 function startBackgroundMusic() {
     playNextTrack();
-    document.removeEventListener('click', startBackgroundMusic);
 }
 
 function playNextTrack() {
@@ -739,6 +738,8 @@ function playNextTrack() {
 
     currentTrack.addEventListener('ended', () => {
         currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+        document.removeEventListener('click', startBackgroundMusic);
+
         playNextTrack();
     }, { once: true }); //das bedeutet, dass das für dieses Event nur einmal gemacht wird
 }
